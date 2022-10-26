@@ -28,6 +28,8 @@ def my_form_post():
         result = {
             "output": firstname
         }
+
+        server.create_user(request.form)
         
         # TODO: ADD TO DATABASE HERE
         
