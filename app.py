@@ -1,6 +1,8 @@
 # https://pemagrg.medium.com/build-a-web-app-using-pythons-flask-for-beginners-f28315256893
 # https://stackoverflow.com/questions/42465768/jinja2-template-not-found-and-internal-server-error
 
+import server
+
 from flask import Flask, request, render_template, jsonify, redirect, url_for
 
 app = Flask(__name__)
@@ -24,7 +26,7 @@ def test():
 def my_form_post():
     if request.method == 'POST':
         firstname = request.form['firstname']
-
+        print(request.form)
         result = {
             "output": firstname
         }

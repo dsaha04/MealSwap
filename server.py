@@ -10,6 +10,9 @@ def create_user(details):
     netid = details['netid']
     year = details['year']
     plan = details['plan']
+    print(netid)
+    print(year)
+    print(plan)
 
     try:
         database_url = os.getenv('DATABASE_URL')
