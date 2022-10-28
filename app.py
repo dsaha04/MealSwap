@@ -26,7 +26,6 @@ def test():
 def my_form_post():
     if request.method == 'POST':
         firstname = request.form['firstname']
-        print(request.form)
         result = {
             "output": firstname
         }
