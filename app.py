@@ -29,6 +29,7 @@ def my_form_post():
         result = {
             "output": firstname
         }
+        print(request.form)
 
         server.create_user(request.form)
         

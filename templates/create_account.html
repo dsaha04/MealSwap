@@ -25,10 +25,16 @@
 <script>
 function createNewUser() {
 var firstname= $('#firstname').val();
+var lastname= $('#lastname').val();
+var netid= $('#netid').val();
+var year= $('#year').val();
+var plan= $('#plan').val();
+
+
   $.ajax({
               url: "/create-new-user",
               type: "POST",
-              data: {firstname:firstname}
+              data: {firstname:firstname, lastname:lastname, netid:netid, year:year, plan:plan}
           }).done(function(response) {
             // https://pemagrg.medium.com/build-a-web-app-using-pythons-flask-for-beginners-f28315256893
             var html= "<br><p> <b> Thanks for creating your account. We will note this in our databases. Your name is:  <b><p>";
