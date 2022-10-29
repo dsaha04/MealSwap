@@ -18,7 +18,27 @@ def create_user(details):
             with connection.cursor() as cursor:
                 cursor.execute("INSERT INTO users (netid, usertype, year, plan) "
                     + "VALUES (%s, %s, %s, %s)", val)
+    
 
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+def check_user(username):
+
+    username = str(username)
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM users WHERE netid = %s",[username])
+                row = cursor.fetchone()
+                if row is None:
+                    return -1
+                else:
+                    return 0
 
     except Exception as ex:
         print(ex, file=sys.stderr)
