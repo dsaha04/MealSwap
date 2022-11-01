@@ -49,6 +49,26 @@ def check_user(username):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
+def create_request(details, username):
+
+    username = str(username)
+    plan = details['plan']
+    times = details['times']
+    requested = (username, plan, times)
+
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                cursor.execute("INSERT INTO requested (netid, requested, times) "
+                    + "VALUES (%s, %s, %s)", requested)
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
 def profile_details(username):
 
     username = str(username)

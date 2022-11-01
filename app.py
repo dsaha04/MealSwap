@@ -21,17 +21,22 @@ def create():
     username = auth.authenticate()
     if server.check_user(username) == -1:
         if request.method == 'POST':
-            print('hi')
             server.create_user(request.form, username)
         return render_template('create_account.html')
     else: 
-        details = server.profile_details(username)
-        name = details[0][1]
-        year = details[0][3]
-        plan = details[0][4]
-        number = details[1][1]
-        return render_template('profile_page.html', name = name, netid = str(username), class_year = year, dining_plan = plan, phone_no = number)
-
+        return render_template('dashboard.html')
+        
+@app.route('/profile')
+def profile():
+    username = auth.authenticate()
+    if server.check_user(username) == -1:
+        return create()
+    details = server.profile_details(username)
+    name = details[0][1]
+    year = details[0][3]
+    plan = details[0][4]
+    number = details[1][1]
+    return render_template('profile_page.html', name = name, netid = str(username), class_year = year, dining_plan = plan, phone_no = number)
 
 @app.route('/test')
 def test():
@@ -72,6 +77,21 @@ def tutorial():
 def dashboard():
     return render_template('dashboard.html')
 
+@app.route('/submitrequest', methods = ['GET', 'POST'])
+def submit_request():
+    username = auth.authenticate()
+
+    if request.method == 'POST':
+        server.create_request(request.form, username)
+        return 
+
+    if server.check_user(username) != -1:
+        return render_template('submitrequest.html')       
+    else: 
+        return create()
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
+

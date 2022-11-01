@@ -22,16 +22,16 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 
-<!-- <script>
+<script>
 function createRequest() {
-var diningplan= $('#diningplan').val();
-var mealtime= $('#mealtime').val();
+var plan= $('#plan').val();
+var times= $('#times').val();
 
 
   $.ajax({
-              url: "/submit-request",
+              url: "/submitrequest",
               type: "POST",
-              data: {diningplan:diningplan, mealtime:mealtime}
+              data: {plan:plan, times:times}
           }).done(function(response) {
             // https://pemagrg.medium.com/build-a-web-app-using-pythons-flask-for-beginners-f28315256893
             var html= "<br><p> <b> Thanks for creating your account. We will note this in our databases. Your name is:  <b><p>";
@@ -45,7 +45,7 @@ var mealtime= $('#mealtime').val();
             });
             
 };
-</script> -->
+</script> 
 
 <body>
 
@@ -86,17 +86,17 @@ var mealtime= $('#mealtime').val();
     </div>
       
     <div style="padding-top: 30px; padding-left: 30px;">
-        <form>
+        <form action="/dashboard" method="get">
               <div class="form-group col-md-4">
                 <label for="inputAddress">Requested Dining Plan</label>
-                <input type="text" class="form-control" id="diningplan" placeholder="Colonial">
+                <input type="text" class="form-control" id="plan" placeholder="Colonial">
               </div>
               <div class="form-group col-md-4">
                 <label for="inputAddress2">Meal Time</label>
-                <input type="text" class="form-control" id="mealtime" placeholder="Breakfast">
+                <input type="text" class="form-control" id="times" placeholder="Breakfast">
               </div>
          
-              <!-- <button onclick="createNewUser()" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Create Account</button> -->
+              <button onclick="createRequest()" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Submit Request</button> 
 
         </form>
 
