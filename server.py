@@ -87,4 +87,38 @@ def profile_details(username):
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
-    
+
+
+def get_requests(username):
+
+    username = str(username)
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                requested = []
+
+                cursor.execute("SELECT plan FROM users WHERE netid = %s",[username])
+                plan = cursor.fetchone()
+
+                cursor.execute("SELECT * FROM requested WHERE requested = %s AND netid != %s",[plan, username])
+                rows = cursor.fetchall()
+                
+                if rows is not None:
+                    for row in rows:
+                        netid = row[0]
+                        requested_dining_plan = row[1]
+                        times = row[2]
+                        cursor.execute("SELECT plan FROM users WHERE netid = %s",[netid])
+                        offer_dining_plan = cursor.fetchone()
+                        request = [requested_dining_plan, offer_dining_plan[0], times, netid]
+                
+                        requested.append(request)
+
+                return requested    
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)

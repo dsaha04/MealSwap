@@ -60,7 +60,7 @@
 
     <div class="show-data" >
     </div>
-      
+    
     <div style="padding-top: 30px; padding-left: 45px; padding-right: 45px;">
         <table class="table">
             <thead class="thead-dark">
@@ -72,24 +72,22 @@
               </tr>
             </thead>
             <tbody>
+              {% for i in range(table|length): %}
               <tr>
-                <th scope="row">1</th>
-                <td>Tiger Inn</td>
-                <td>Tower</td>
-                <td>Dinner</td>
-              </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>Tiger Inn</td>
-                <td>Colonial</td>
-                <td>Brekky</td>
-              </tr>
-              <tr>
+                
+                <td>{{i+1}}</td>
+                {% for j in range(table[i]|length - 1): %}
+                  <td>{{table[i][j]}}</td> 
+                {% endfor %}
+              <tr> 
+              {% endfor %}
+
+              <!-- <tr>
                 <th scope="row">3</th>
                 <td>Tiger Inn</td>
                 <td>Ivy</td>
                 <td>Lunch</td>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
 

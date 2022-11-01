@@ -18,13 +18,14 @@ def home():
 
 @app.route('/create', methods = ['GET', 'POST'])
 def create():
+    # TODO: fix logic to mirror submit_request
     username = auth.authenticate()
     if server.check_user(username) == -1:
         if request.method == 'POST':
             server.create_user(request.form, username)
         return render_template('create_account.html')
     else: 
-        return render_template('dashboard.html')
+        return dashboard()
         
 @app.route('/profile')
 def profile():
@@ -75,7 +76,14 @@ def tutorial():
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    username = auth.authenticate()
+    req_table = server.get_requests(username)
+    print(req_table)
+    if server.check_user(username) != -1:
+        return render_template('dashboard.html', table = req_table)       
+    else: 
+        return create()
+
 
 @app.route('/submitrequest', methods = ['GET', 'POST'])
 def submit_request():
