@@ -3,6 +3,8 @@
 
 import server
 import auth
+from django.shortcuts import redirect
+
 
 from flask import Flask, request, render_template, jsonify, redirect, url_for
 
@@ -24,8 +26,9 @@ def create():
         if request.method == 'POST':
             server.create_user(request.form, username)
         return render_template('create_account.html')
-    else: 
-        return dashboard()
+    else:
+        # fix url
+        return redirect('/dashboard')
         
 @app.route('/profile')
 def profile():
@@ -82,7 +85,7 @@ def dashboard():
     if server.check_user(username) != -1:
         return render_template('dashboard.html', table = req_table)       
     else: 
-        return create()
+        return redirect('/create')
 
 
 @app.route('/submitrequest', methods = ['GET', 'POST'])
@@ -96,7 +99,7 @@ def submit_request():
     if server.check_user(username) != -1:
         return render_template('submitrequest.html')       
     else: 
-        return create()
+        return redirect('/create')
 
 
 
