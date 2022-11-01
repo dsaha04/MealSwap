@@ -9,7 +9,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <title>Requests</title>
+    <title>Submit Request</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
@@ -22,6 +22,30 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 
+<!-- <script>
+function createRequest() {
+var diningplan= $('#diningplan').val();
+var mealtime= $('#mealtime').val();
+
+
+  $.ajax({
+              url: "/submit-request",
+              type: "POST",
+              data: {diningplan:diningplan, mealtime:mealtime}
+          }).done(function(response) {
+            // https://pemagrg.medium.com/build-a-web-app-using-pythons-flask-for-beginners-f28315256893
+            var html= "<br><p> <b> Thanks for creating your account. We will note this in our databases. Your name is:  <b><p>";
+            response =response.result;
+                 $.each(response,function(key,val){
+                 console.log(val);
+                    html+="<p>"+val+"<p>"
+                });
+                html +="<br>";
+                $(".show-data").append(html);
+            });
+            
+};
+</script> -->
 
 <body>
 
@@ -55,46 +79,28 @@
 
 
     <h2 style="padding-top: 30px; padding-left: 45px;">
-        Requests
+        Submit Request
     </h2>
 
     <div class="show-data" >
     </div>
       
-    <div style="padding-top: 30px; padding-left: 45px; padding-right: 45px;">
-        <table class="table">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Requested Dining Plan</th>
-                <th scope="col">Offered Dining Plan</th>
-                <th scope="col">Meal Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>Tiger Inn</td>
-                <td>Tower</td>
-                <td>Dinner</td>
-              </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>Tiger Inn</td>
-                <td>Colonial</td>
-                <td>Brekky</td>
-              </tr>
-              <tr>
-                <th scope="row">3</th>
-                <td>Tiger Inn</td>
-                <td>Ivy</td>
-                <td>Lunch</td>
-              </tr>
-            </tbody>
-          </table>
+    <div style="padding-top: 30px; padding-left: 30px;">
+        <form>
+              <div class="form-group col-md-4">
+                <label for="inputAddress">Requested Dining Plan</label>
+                <input type="text" class="form-control" id="diningplan" placeholder="Colonial">
+              </div>
+              <div class="form-group col-md-4">
+                <label for="inputAddress2">Meal Time</label>
+                <input type="text" class="form-control" id="mealtime" placeholder="Breakfast">
+              </div>
+         
+              <!-- <button onclick="createNewUser()" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Create Account</button> -->
+
+        </form>
 
     </div>
 </body>
-
 
 
