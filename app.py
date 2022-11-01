@@ -22,9 +22,11 @@ def home():
 def create():
     # TODO: fix logic to mirror submit_request
     username = auth.authenticate()
+    if request.method == 'POST':
+        server.create_user(request.form, username)
+        return
+        
     if server.check_user(username) == -1:
-        if request.method == 'POST':
-            server.create_user(request.form, username)
         return render_template('create_account.html')
     else:
         # fix url
@@ -34,13 +36,28 @@ def create():
 def profile():
     username = auth.authenticate()
     if server.check_user(username) == -1:
-        return create()
+        return redirect('/create')
     details = server.profile_details(username)
     name = details[0][1]
     year = details[0][3]
     plan = details[0][4]
     number = details[1][1]
     return render_template('profile_page.html', name = name, netid = str(username), class_year = year, dining_plan = plan, phone_no = number)
+
+@app.route('/updatedetails', methods = ['GET', 'POST'])
+def update_details():
+    username = auth.authenticate()
+    if request.method == 'POST':
+        server.update_details(request.form, username)
+        return 
+
+    if server.check_user(username) != -1:
+        return render_template('update_details.html')       
+    else: 
+        return redirect('/create')
+
+
+
 
 @app.route('/test')
 def test():

@@ -29,6 +29,31 @@ def create_user(details, netid):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
+
+
+def update_details(details, netid):
+    netid = str(netid)
+    year = str(details['year'])
+    plan = str(details['plan'])
+    name = str(details['name'])
+    users = (name, year, plan, netid)
+
+    phone = str(details['number'])
+    contact = (phone, netid)
+
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                cursor.execute("UPDATE users SET name=%s, year=%s, plan=%s WHERE netid=%s", users)
+                cursor.execute("UPDATE contact SET phone=%s WHERE netid=%s", contact)
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
 def check_user(username):
 
     username = str(username)
