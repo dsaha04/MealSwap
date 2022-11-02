@@ -104,6 +104,12 @@ def dashboard():
     else: 
         return redirect('/create')
 
+@app.route('/yourrequests')
+def your_requests():
+    username = auth.authenticate()
+    req_table = server.get_your_requests(username)
+    
+    return render_template('your_requests.html', table= req_table)
 
 @app.route('/submitrequest', methods = ['GET', 'POST'])
 def submit_request():

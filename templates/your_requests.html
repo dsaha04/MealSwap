@@ -9,10 +9,9 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <title>Profile</title>
+    <title>Your Requests</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <!-- <link rel="stylesheet" href="style.css" id= "theme"> -->
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -26,42 +25,43 @@
 
 <body>
 
-  {% include 'navbar.html' %}
-
+    {% include 'navbar.html' %}
 
     <h2 style="padding-top: 30px; padding-left: 45px;">
-        Profile Details
+        Your Requests
     </h2>
 
     <div class="show-data" >
     </div>
-      
-    <div style="padding-top: 30px; padding-left: 30px;">
-        <table>
+    
+    <div style="padding-top: 30px; padding-left: 45px; padding-right: 45px;">
+        <table class="table">
+            <thead class="thead-dark">
               <tr>
-                <td>Preferred Name: </td>
-                <td>{{name}}</td>
+                <th scope="col">#</th>
+                <th scope="col">Requested Dining Plan</th>
+                <th scope="col">Meal Time</th>
               </tr>
+            </thead>
+            <tbody>
+              {% for i in range(table|length): %}
               <tr>
-                <td>Net ID: </td>
-                <td>{{netid}}</td>
-              </tr>
-              <tr>
-                <td>Class Year: </td>
-                <td>{{class_year}}</td>
-              </tr>
-              <tr>
-                <td>Dining Plan: </td>
-                <td>{{dining_plan}}</td>
-              </tr>
-              <tr>
-                <td>Phone Number: </td>
-                <td>{{phone_no}}</td>
-              </tr>
-        </table>
-        <form action = "/updatedetails" method="get">
-        <button type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Update Details</button>
-         </form>
+                
+                <td>{{i+1}}</td>
+                {% for j in range(table[i]|length - 1): %}
+                  <td>{{table[i][j]}}</td> 
+                {% endfor %}
+              <tr> 
+              {% endfor %}
+
+              <!-- <tr>
+                <th scope="row">3</th>
+                <td>Tiger Inn</td>
+                <td>Ivy</td>
+                <td>Lunch</td>
+              </tr> -->
+            </tbody>
+          </table>
 
     </div>
 </body>

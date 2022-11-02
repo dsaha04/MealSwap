@@ -40,64 +40,15 @@
   </head>
 
   <body>
-    <!-- <nav class="navbar gradient-custom-1" id="#" style="border-radius: 0px; padding-top: 10px; padding-bottom: 10px;">
-        <div class="float-left, navbar-logo" style="margin-left: 15px; font-size: 180%; font-weight: bolder;">
-            MealSwap
-        </div>
+    {% include 'navbar.html' %}
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-       
+    <h2 style="padding-top: 30px; padding-left: 45px;">
+        Tutorial
+    </h2>
+    <div style="padding-top: 30px; padding-left: 30px;">
+      <p tyle="padding-top: 30px; padding-left: 45px;">Welcome to MealSwap! This is a quick-start guide to help you get up to speed with how to most effectively use this site.</p>
+    </div>
+    
 
-        <div class="float-right, navbar-item" style="margin-right: 15px;">
-            <a class="nav-button" href="" id="intro-btn" style="text-decoration: none; margin-right: 10px; font-size: large;">About</a>
-            <a class="nav-button" href="" id="work-btn" style="text-decoration: none; font-size: large;">Tutorial</a>
-        </div>
-    </nav> -->
-
-    <nav
-      class="navbar navbar-expand-lg navbar-light bg-light"
-      style="border-radius: 0px; padding-top: 5px; padding-bottom: 5px"
-    >
-      <a
-        class="navbar-brand"
-        href="{{ url_for('home') }}"
-        style="margin-left: 15px; font-size: 160%; font-weight: bolder"
-        >MealSwap</a
-      >
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto"></ul>
-        <div class="float-right, navbar-item" style="margin-right: 15px">
-          <a
-            class="nav-button"
-            href="{{ url_for('about') }}"
-            id="intro-btn"
-            style="text-decoration: none; margin-right: 10px; font-size: large"
-            >About</a
-          >
-          <a
-            class="nav-button"
-            href="{{ url_for('tutorial') }}"
-            id="work-btn"
-            style="text-decoration: none; font-size: large"
-            >Tutorial</a
-          >
-        </div>
-      </div>
-    </nav>
-    <h1>Tutorial Under Construction :(</h1>
   </body>
 </html>
