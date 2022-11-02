@@ -127,7 +127,7 @@ def get_requests(username):
 
                 cursor.execute("SELECT plan FROM users WHERE netid = %s",[username])
                 plan = cursor.fetchone()
-
+                print(plan)
                 cursor.execute("SELECT * FROM requested WHERE requested = %s AND netid != %s",[plan, username])
                 rows = cursor.fetchall()
                 
