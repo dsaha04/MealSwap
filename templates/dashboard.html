@@ -22,6 +22,25 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 
+<script>
+function createRequest(id) {
+  console.log(id)
+
+
+  $.ajax({
+              url: "/viewrequest",
+              type: "POST",
+              data: {reqid:id},
+              success: function(){
+                  console.log("SUCCESS")
+                  window.location.href = "/viewrequest?reqid=" + id;
+              }
+          }).done(function(response) {
+
+            });
+            
+};
+</script> 
 
 <body>
 
@@ -42,6 +61,7 @@
                 <th scope="col">Requested Dining Plan</th>
                 <th scope="col">Offered Dining Plan</th>
                 <th scope="col">Meal Time</th>
+                <th scope="col">Accept Request</th>
               </tr>
             </thead>
             <tbody>
@@ -49,9 +69,16 @@
               <tr>
                 
                 <td>{{i+1}}</td>
-                {% for j in range(table[i]|length - 1): %}
+                {% for j in range(table[i]|length - 2): %}
                   <td>{{table[i][j]}}</td> 
                 {% endfor %}
+                <td>
+                  <form>
+                    <button onclick="createRequest({{table[i][4]}})" type="submit">
+                      Accept Request
+                    </button>
+                  </form>
+                </td>
               <tr> 
               {% endfor %}
 

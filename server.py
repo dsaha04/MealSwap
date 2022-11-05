@@ -132,21 +132,23 @@ def get_requests(username):
                 
                 if rows is not None:
                     for row in rows:
+                        reqid = row[0]
                         netid = row[1]
                         requested_dining_plan = row[2]
                         times = row[3]
                         cursor.execute("SELECT plan FROM users WHERE netid = %s",[netid])
                         offer_dining_plan = cursor.fetchone()
-                        request = [requested_dining_plan, offer_dining_plan[0], times, netid]
+                        request = [requested_dining_plan, offer_dining_plan[0], times, netid, reqid]
                 
                         requested.append(request)
 
                 return requested    
-
+            
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
 
+    
 
 def get_your_requests(username):
     username = str(username)
@@ -175,7 +177,33 @@ def get_your_requests(username):
                         requested.append(request)
 
                 return requested
+            
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+            
+def get_request(id):
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                requested = []
+                print("ID")
+                print(id)
+                cursor.execute(
+                    "SELECT * FROM requested WHERE reqid = %s", [id])
+                req = cursor.fetchone()
+
+        
+                return req
 
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
+        
+
+def accept_request(id):
+    print("accepting request")
