@@ -28,9 +28,6 @@ function createRequest(id) {
 
 
   $.ajax({
-              url: "/viewrequest",
-              type: "POST",
-              data: {reqid:id},
               success: function(){
                   console.log("SUCCESS")
                   window.location.href = "/viewrequest?reqid=" + id;

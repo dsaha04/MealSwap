@@ -131,13 +131,13 @@ def view_request():
     reqid = flask.request.args.get('reqid')
     req = server.get_request(reqid)
     
-    waspost = False
     if flask.request.method == 'POST':
-        waspost = True
+        print("REQUEST FORM:")
+        print()
+        reqid = int(flask.request.form['reqid'])
+        server.accept_request(reqid, username)
         return redirect('/about')
     
-    if waspost:
-        return redirect('/about')
     return flask.render_template('viewrequest.html', req=req)
 
 

@@ -23,11 +23,11 @@
 </head>
 
 <script>
-function acceptRequest() {
+function acceptRequest(id) {
   $.ajax({
               url: "/viewrequest",
               type: "POST",
-              data: {}
+              data: {reqid: id}
           }).done(function(response) {
 
             });
@@ -54,7 +54,7 @@ function acceptRequest() {
         time: {{req[3]}}
         <br/>
         <form action="/dashboard">
-            <button onclick="acceptRequest()" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Accept Request</button>
+            <button onclick="acceptRequest({{req[0]}})" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Confirm Request</button>
         </form>
         
     </div>

@@ -181,7 +181,6 @@ def get_your_requests(username):
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
-
             
 def get_request(id):
     try:
@@ -205,5 +204,35 @@ def get_request(id):
         sys.exit(1)
         
 
-def accept_request(id):
+def accept_request(id, username):
     print("accepting request")
+    
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                requested = []
+                print("ID")
+                print(id)
+                cursor.execute(
+                    "SELECT * FROM requested WHERE reqid = %s", [id])
+                req = cursor.fetchone()
+                print("REQ")
+                print(req)
+                print(username)
+                
+                info = (id, username, req[1], "FALSE")
+                print("INFO")
+                print(info)
+                
+                cursor.execute("INSERT INTO exchanges (reqid, netid, swapnetid, completed) "
+                               + "VALUES (%s, %s, %s, %s)", info)
+                
+                cursor.execute(
+                    "DELETE FROM requested WHERE reqid = %s", [id])
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
