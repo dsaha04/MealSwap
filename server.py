@@ -132,9 +132,9 @@ def get_requests(username):
                 
                 if rows is not None:
                     for row in rows:
-                        netid = row[0]
-                        requested_dining_plan = row[1]
-                        times = row[2]
+                        netid = row[1]
+                        requested_dining_plan = row[2]
+                        times = row[3]
                         cursor.execute("SELECT plan FROM users WHERE netid = %s",[netid])
                         offer_dining_plan = cursor.fetchone()
                         request = [requested_dining_plan, offer_dining_plan[0], times, netid]
@@ -164,9 +164,9 @@ def get_your_requests(username):
 
                 if rows is not None:
                     for row in rows:
-                        netid = row[0]
-                        requested_dining_plan = row[1]
-                        times = row[2]
+                        netid = row[1]
+                        requested_dining_plan = row[2]
+                        times = row[3]
                         cursor.execute(
                             "SELECT plan FROM users WHERE netid = %s", [netid])
                         offer_dining_plan = cursor.fetchone()
