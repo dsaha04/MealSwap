@@ -37,30 +37,26 @@
     <div style="padding-top: 30px; padding-left: 45px; padding-right: 45px;">
         <table class="table">
             <thead class="thead-dark">
-              <tr>
+              <tr align="center">
                 <th scope="col">#</th>
                 <th scope="col">Requested Dining Plan</th>
                 <th scope="col">Offered Dining Plan</th>
                 <th scope="col">Meal Time</th>
+                <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
               {% for i in range(table|length): %}
-              <tr>
+              <tr align="center">
                 
                 <td>{{i+1}}</td>
                 {% for j in range(table[i]|length - 1): %}
-                  <td>{{table[i][j]}}</td> 
+                  <td >{{table[i][j]}}</td> 
                 {% endfor %}
-              <tr> 
+                <td><button type="button" class="btn btn-primary btn-sm" >Accept Request</button>
+                </td>
+              </tr> 
               {% endfor %}
-
-              <!-- <tr>
-                <th scope="row">3</th>
-                <td>Tiger Inn</td>
-                <td>Ivy</td>
-                <td>Lunch</td>
-              </tr> -->
             </tbody>
           </table>
 
