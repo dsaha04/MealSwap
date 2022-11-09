@@ -51,8 +51,6 @@
             <tbody>
               {% for i in range(table|length): %}
               <tr>
-                
-                <td>{{i+1}}</td>
                 {% for j in range(table[i]|length): %}
                   <td>{{table[i][j]}}</td> 
                 {% endfor %}
