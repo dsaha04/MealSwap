@@ -254,6 +254,7 @@ def get_exchanges(username):
 
                 if rows is not None:
                     for row in rows:
+                        exchange_id = row[0]
                         netid = row[1]
                         swapnetid = row[2]
                         times = row[3]
@@ -271,7 +272,7 @@ def get_exchanges(username):
                         contact = cursor.fetchone()
                         phone = contact[1]
                         email = contact[2]
-                        request = [swapnetid, name, year, plan, phone, email, times, completed]
+                        request = [exchange_id, swapnetid, name, year, plan, phone, email, times, completed]
                         print(request)
                         requested.append(request)
 
