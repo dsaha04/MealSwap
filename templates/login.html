@@ -79,8 +79,8 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto"></ul>
-        <div class="float-right, navbar-item" style="margin-right: 15px">
+        <ul class="navbar-nav mr-auto">
+        <li class="nav-item active" style="margin-left: 15px">
           <a
             class="nav-button"
             href="{{ url_for('about') }}"
@@ -88,6 +88,8 @@
             style="text-decoration: none; margin-right: 10px; font-size: large"
             >About</a
           >
+        </li>
+        <li class="nav-item active" style="margin-left: 15px">
           <a
             class="nav-button"
             href="{{ url_for('tutorial') }}"
@@ -95,7 +97,8 @@
             style="text-decoration: none; font-size: large"
             >Tutorial</a
           >
-        </div>
+        </li>
+      </ul>
       </div>
     </nav>
     <div class="gradient-form row g-0">
