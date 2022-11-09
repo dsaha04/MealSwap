@@ -22,6 +22,23 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 
+<script>
+    function cancelExchange(id) {
+      console.log(id)
+    
+    
+      $.ajax({
+                  success: function(){
+                      console.log("SUCCESS")
+                      window.location.href = "/cancelexchange?reqid=" + id;
+                  }
+              }).done(function(response) {
+    
+                });
+                
+    };
+</script>
+
 
 <body>
 
@@ -51,9 +68,16 @@
             <tbody>
               {% for i in range(table|length): %}
               <tr>
-                {% for j in range(table[i]|length): %}
+                {% for j in range(1, table[i]|length): %}
                   <td>{{table[i][j]}}</td> 
                 {% endfor %}
+                <td>
+                    <form>
+                      <button onclick="cancelExchange({{table[i][0]}})" type="submit">
+                        Cancel Exchange
+                      </button>
+                    </form>
+                  </td>
               <tr> 
               {% endfor %}
 

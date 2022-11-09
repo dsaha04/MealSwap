@@ -143,9 +143,39 @@ def view_request():
         print()
         reqid = int(flask.request.form['reqid'])
         server.accept_request(reqid, username)
-        return redirect('/about')
+        return redirect('/exchanges')
     
     return flask.render_template('viewrequest.html', req=req)
+
+
+@app.route('/cancelexchange', methods = ['GET', 'POST'])
+def cancel_exchange():
+    username = auth.authenticate()
+    
+    reqid = flask.request.args.get('reqid')
+    req = server.get_exchange(reqid)
+    
+    if flask.request.method == 'POST':
+        reqid = int(flask.request.form['reqid'])
+        server.cancel_exchange(reqid)
+        return redirect('/exchanges')
+    
+    return flask.render_template('cancelexchange.html', req=req)
+
+
+@app.route('/cancelrequest', methods = ['GET', 'POST'])
+def cancel_request():
+    username = auth.authenticate()
+    
+    reqid = flask.request.args.get('reqid')
+    req = server.get_request(reqid)
+    
+    if flask.request.method == 'POST':
+        reqid = int(flask.request.form['reqid'])
+        server.cancel_request(reqid)
+        return redirect('/dashboard')
+    
+    return flask.render_template('cancelrequest.html', req=req)
 
 
 

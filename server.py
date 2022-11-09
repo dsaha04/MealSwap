@@ -166,13 +166,14 @@ def get_your_requests(username):
 
                 if rows is not None:
                     for row in rows:
+                        reqid = row[0]
                         netid = row[1]
                         requested_dining_plan = row[2]
                         times = row[3]
                         cursor.execute(
                             "SELECT plan FROM users WHERE netid = %s", [netid])
                         offer_dining_plan = cursor.fetchone()
-                        request = [requested_dining_plan, times, netid]
+                        request = [requested_dining_plan, times, netid, reqid]
 
                         requested.append(request)
 
@@ -203,6 +204,49 @@ def get_request(id):
         print(ex, file=sys.stderr)
         sys.exit(1)
         
+
+def get_exchange(id):
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                requested = []
+                print("ID")
+                print(id)
+                cursor.execute(
+                    "SELECT * FROM exchanges WHERE reqid = %s", [id])
+                req = cursor.fetchone()
+
+        
+                return req
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+def get_request(id):
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                requested = []
+                print("ID")
+                print(id)
+                cursor.execute(
+                    "SELECT * FROM requested WHERE reqid = %s", [id])
+                req = cursor.fetchone()
+
+        
+                return req
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
 
 def accept_request(id, username):
     print("accepting request")
@@ -236,6 +280,42 @@ def accept_request(id, username):
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
+
+
+def cancel_exchange(id):
+    print("cancelling exchange")
+    
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "DELETE FROM exchanges WHERE reqid = %s", [id])
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+
+def cancel_request(id):
+    print("cancelling exchange")
+    
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "DELETE FROM requested WHERE reqid = %s", [id])
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+
 
 def get_exchanges(username):
     username = str(username)
