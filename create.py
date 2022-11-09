@@ -17,30 +17,29 @@ def main():
         with psycopg2.connect(database_url) as connection:
 
             with connection.cursor() as cursor:
-
                 #-------------------------------------------------------
 
-                # cursor.execute("DROP TABLE IF EXISTS users")
-                # cursor.execute("CREATE TABLE users "
-                #     + "(netid TEXT, usertype TEXT, year INTEGER, plan TEXT)")
+                cursor.execute("DROP TABLE IF EXISTS users")
+                cursor.execute("CREATE TABLE users "
+                    + "(netid TEXT, name TEXT, usertype TEXT, year TEXT, plan TEXT)")
 
                 # #-------------------------------------------------------
 
-                # cursor.execute("DROP TABLE IF EXISTS contact")
-                # cursor.execute("CREATE TABLE contact "
-                #     + "(netid TEXT, phone INTEGER, email TEXT)")
+                cursor.execute("DROP TABLE IF EXISTS contact")
+                cursor.execute("CREATE TABLE contact "
+                    + "(netid TEXT, phone TEXT, email TEXT)")
 
                 # #-------------------------------------------------------
 
-                # cursor.execute("DROP TABLE IF EXISTS requested")
-                # cursor.execute("CREATE TABLE requested "
-                #     + "(netid TEXT, requested TEXT, times TEXT)")
+                cursor.execute("DROP TABLE IF EXISTS requested")
+                cursor.execute("CREATE TABLE requested "
+                    + "(reqid INT GENERATED ALWAYS AS IDENTITY, netid TEXT, requested TEXT, times TEXT)")
 
                 #-------------------------------------------------------
 
                 cursor.execute("DROP TABLE IF EXISTS exchanges")
                 cursor.execute("CREATE TABLE exchanges "
-                    + "(reqid INT, netid TEXT, swapnetid TEXT, completed TEXT)")
+                    + "(reqid INT, netid TEXT, swapnetid TEXT, times TEXT, completed TEXT)")
                 
                 #-------------------------------------------------------
 

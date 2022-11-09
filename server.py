@@ -274,3 +274,8 @@ def get_exchanges(username):
                         requested.append(request)
 
                 return requested
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+        

@@ -1,4 +1,3 @@
-import urllib.request
 import urllib.parse
 import re
 import flask
