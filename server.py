@@ -249,14 +249,17 @@ def get_exchanges(username):
 
                 cursor.execute(
                     "SELECT * FROM exchanges WHERE (netid = %s) OR (swapnetid = %s) ", [username, username])
-                    
+
                 rows = cursor.fetchall()
 
                 if rows is not None:
                     for row in rows:
+                        netid = row[1]
                         swapnetid = row[2]
                         times = row[3]
                         completed = row[4]
+                        if swapnetid == username:
+                            swapnetid = netid
                         cursor.execute(
                             "SELECT * FROM users WHERE netid = %s", [swapnetid])
                         user = cursor.fetchone()
