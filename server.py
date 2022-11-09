@@ -248,7 +248,8 @@ def get_exchanges(username):
                 requested = []
 
                 cursor.execute(
-                    "SELECT * FROM exchanges WHERE netid = %s", [username])
+                    "SELECT * FROM exchanges WHERE (netid = %s) OR (swapnetid = %s) ", [username, username])
+                    
                 rows = cursor.fetchall()
 
                 if rows is not None:
@@ -267,10 +268,8 @@ def get_exchanges(username):
                         contact = cursor.fetchone()
                         phone = contact[1]
                         email = contact[2]
-
-
-
-                        request = [swapnetid, name, year, plan, contact, email, times, completed]
+                        request = [swapnetid, name, year, plan, phone, email, times, completed]
+                        print(request)
                         requested.append(request)
 
                 return requested
