@@ -111,6 +111,13 @@ def your_requests():
     
     return flask.render_template('your_requests.html', table= req_table)
 
+@app.route('/exchanges')
+def your_exchanges():
+    username = auth.authenticate()
+    req_table = server.get_exchanges(username)
+    
+    return flask.render_template('your_exchanges.html', table= req_table)
+
 @app.route('/submitrequest', methods = ['GET', 'POST'])
 def submit_request():
     username = auth.authenticate()

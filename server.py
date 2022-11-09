@@ -223,12 +223,12 @@ def accept_request(id, username):
                 print(req)
                 print(username)
                 
-                info = (id, username, req[1], "FALSE")
+                info = (id, username, req[1], req[3], "FALSE")
                 print("INFO")
                 print(info)
                 
-                cursor.execute("INSERT INTO exchanges (reqid, netid, swapnetid, completed) "
-                               + "VALUES (%s, %s, %s, %s)", info)
+                cursor.execute("INSERT INTO exchanges (reqid, netid, swapnetid, times, completed) "
+                               + "VALUES (%s, %s, %s, %s, %s)", info)
                 
                 cursor.execute(
                     "DELETE FROM requested WHERE reqid = %s", [id])
@@ -236,3 +236,41 @@ def accept_request(id, username):
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
+
+def get_exchanges(username):
+    username = str(username)
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                requested = []
+
+                cursor.execute(
+                    "SELECT * FROM exchanges WHERE netid = %s", [username])
+                rows = cursor.fetchall()
+
+                if rows is not None:
+                    for row in rows:
+                        swapnetid = row[2]
+                        times = row[3]
+                        completed = row[4]
+                        cursor.execute(
+                            "SELECT * FROM users WHERE netid = %s", [swapnetid])
+                        user = cursor.fetchone()
+                        name = user[1]
+                        year = user[3]
+                        plan = user[4]
+                        cursor.execute(
+                            "SELECT * FROM contact WHERE netid = %s",[swapnetid])
+                        contact = cursor.fetchone()
+                        phone = contact[1]
+                        email = contact[2]
+
+
+
+                        request = [swapnetid, name, year, plan, contact, email, times, completed]
+                        requested.append(request)
+
+                return requested
