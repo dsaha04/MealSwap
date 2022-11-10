@@ -148,6 +148,33 @@ def view_request():
     return flask.render_template('viewrequest.html', req=req)
 
 
+@app.route('/deleterequest', methods = ['GET', 'POST'])
+def delete_request():
+    username = auth.authenticate()
+    
+    reqid = flask.request.args.get('reqid')
+    req = server.get_request(reqid)
+    
+    if flask.request.method == 'POST':
+        print("REQUEST FORM:")
+        print()
+        reqid = int(flask.request.form['reqid'])
+        server.delete_request(reqid, username)
+        return redirect('/trashrequest')
+    
+    return flask.render_template('deleterequest.html', req=req)
+
+@app.route('/trashrequest', methods = ['GET', 'POST'])
+def trash_request():
+    username = auth.authenticate()
+    req_table = server.trash_requests(username)
+    
+    if server.check_user(username) != -1:
+        return flask.render_template('trashrequest.html', table = req_table)       
+    else: 
+        return redirect('/create')
+
+
 @app.route('/cancelexchange', methods = ['GET', 'POST'])
 def cancel_exchange():
     username = auth.authenticate()

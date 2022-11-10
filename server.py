@@ -126,21 +126,71 @@ def get_requests(username):
 
                 cursor.execute("SELECT plan FROM users WHERE netid = %s",[username])
                 plan = cursor.fetchone()
-                print(plan)
+                
                 cursor.execute("SELECT * FROM requested WHERE requested = %s AND netid != %s",[plan, username])
                 rows = cursor.fetchall()
+
+                cursor.execute("SELECT reqid FROM deletedrequest WHERE netid = %s",[username])
+                deleted = cursor.fetchall()
+                
                 
                 if rows is not None:
                     for row in rows:
                         reqid = row[0]
-                        netid = row[1]
-                        requested_dining_plan = row[2]
-                        times = row[3]
-                        cursor.execute("SELECT plan FROM users WHERE netid = %s",[netid])
-                        offer_dining_plan = cursor.fetchone()
-                        request = [requested_dining_plan, offer_dining_plan[0], times, netid, reqid]
-                
-                        requested.append(request)
+
+                        flag = False
+                        for delete in deleted:
+                            if reqid == delete[0]:
+                                flag = True
+
+                        if flag == False:        
+                            
+                            netid = row[1]
+                            requested_dining_plan = row[2]
+                            times = row[3]
+                            cursor.execute("SELECT plan FROM users WHERE netid = %s",[netid])
+                            offer_dining_plan = cursor.fetchone()
+                            request = [requested_dining_plan, offer_dining_plan[0], times, netid, reqid]
+                    
+                            requested.append(request)
+
+                return requested    
+            
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+def trash_requests(username):
+
+    username = str(username)
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                requested = []
+
+                cursor.execute("SELECT reqid FROM deletedrequest WHERE netid = %s",[username])
+                deleted = cursor.fetchall()
+
+                if deleted is not None:
+                    for delete in deleted:
+
+                        cursor.execute("SELECT * FROM requested WHERE reqid = %s",[delete[0]])
+                        row = cursor.fetchone()
+
+                        if row is not None:
+                            netid = row[1]
+                            requested_dining_plan = row[2]
+                            times = row[3]
+                            cursor.execute("SELECT plan FROM users WHERE netid = %s",[netid])
+                            offer_dining_plan = cursor.fetchone()
+                            request = [requested_dining_plan, offer_dining_plan[0], times, netid, delete[0]]
+                    
+                            requested.append(request)
+
+                            
 
                 return requested    
             
@@ -276,6 +326,40 @@ def accept_request(id, username):
                 
                 cursor.execute(
                     "DELETE FROM requested WHERE reqid = %s", [id])
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+
+def delete_request(id, username):
+    print("deleting request")
+    
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                requested = []
+                print("ID")
+                print(id)
+                # cursor.execute(
+                #     "SELECT * FROM requested WHERE reqid = %s", [id])
+                # req = cursor.fetchone()
+                print("REQ")
+                # print(req)
+                print(username)
+                
+                info = (id, username)
+                print("INFO")
+                print(info)
+                
+                cursor.execute("INSERT INTO deletedrequest (reqid, netid) "
+                               + "VALUES (%s, %s)", info)
+                
+                # cursor.execute(
+                #     "DELETE FROM requested WHERE reqid = %s", [id])
 
     except Exception as ex:
         print(ex, file=sys.stderr)

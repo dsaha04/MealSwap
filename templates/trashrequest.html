@@ -38,20 +38,6 @@ function createRequest(id) {
             
 };
 
-function deleteRequest(id) {
-  console.log(id)
-
-
-  $.ajax({
-              success: function(){
-                  console.log("SUCCESS")
-                  window.location.href = "/deleterequest?reqid=" + id;
-              }
-          }).done(function(response) {
-
-            });
-            
-};
 </script> 
 
 <body>
@@ -73,8 +59,7 @@ function deleteRequest(id) {
                 <th scope="col">Requested Dining Plan</th>
                 <th scope="col">Offered Dining Plan</th>
                 <th scope="col">Meal Time</th>
-                <th scope="col">Accept Request</th>
-                <th scope="col">Decline Request</th>
+                <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
@@ -88,18 +73,12 @@ function deleteRequest(id) {
                 <td>
                   <form>
                     <button onclick="createRequest({{table[i][4]}})" type="submit">
-                      Accept Request
+                      Undo
                     </button>
                   </form>
                 </td>
                 
-                <td>
-                  <form>
-                    <button onclick="deleteRequest({{table[i][4]}})" type="submit">
-                      Decline Request
-                    </button>
-                  </form>
-                </td>
+               
               <tr> 
               {% endfor %}
 
