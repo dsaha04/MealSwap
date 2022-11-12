@@ -164,6 +164,20 @@ def delete_request():
     
     return flask.render_template('deleterequest.html', req=req)
 
+@app.route('/undorequest', methods = ['GET', 'POST'])
+def undo_request():
+    username = auth.authenticate()
+    
+    reqid = flask.request.args.get('reqid')
+    req = server.get_request(reqid)
+    
+    if flask.request.method == 'POST':
+        reqid = int(flask.request.form['reqid'])
+        server.undo_request(reqid, username)
+        return redirect('/dashboard')
+    
+    return flask.render_template('undorequest.html', req=req)
+
 @app.route('/trashrequest', methods = ['GET', 'POST'])
 def trash_request():
     username = auth.authenticate()

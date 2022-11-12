@@ -399,6 +399,21 @@ def cancel_request(id):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
+def undo_request(id, username):
+    
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "DELETE FROM deletedrequest WHERE reqid = %s AND netid = %s", [id, username])
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
 
 
 def get_exchanges(username):

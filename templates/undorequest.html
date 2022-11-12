@@ -9,7 +9,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <title>Requests</title>
+    <title>Your Requests</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
@@ -23,76 +23,41 @@
 </head>
 
 <script>
-function createRequest(id) {
-  console.log(id)
-
-
+function undoRequest(id) {
   $.ajax({
-              success: function(){
-                  console.log("SUCCESS")
-                  window.location.href = "/undorequest?reqid=" + id;
-              }
+              url: "/undorequest",
+              type: "POST",
+              data: {reqid: id}
           }).done(function(response) {
 
             });
             
 };
-
 </script> 
+
 
 <body>
 
     {% include 'navbar.html' %}
-    
+
     <h2 style="padding-top: 30px; padding-left: 45px;">
-        Trash
+        Request ID: {{req[0]}}
     </h2>
 
-    <div class="show-data" >
-    </div>
-    
     <div style="padding-top: 30px; padding-left: 45px; padding-right: 45px;">
-        <table class="table">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Requested Dining Plan</th>
-                <th scope="col">Offered Dining Plan</th>
-                <th scope="col">Meal Time</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for i in range(table|length): %}
-              <tr>
-                
-                <td>{{i+1}}</td>
-                {% for j in range(table[i]|length - 2): %}
-                  <td>{{table[i][j]}}</td> 
-                {% endfor %}
-                <td>
-                  <form>
-                    <button onclick="createRequest({{table[i][4]}})" type="submit">
-                      Undo
-                    </button>
-                  </form>
-                </td>
-                
-               
-              <tr> 
-              {% endfor %}
-
-              <!-- <tr>
-                <th scope="row">3</th>
-                <td>Tiger Inn</td>
-                <td>Ivy</td>
-                <td>Lunch</td>
-              </tr> -->
-            </tbody>
-          </table>
-
+        id: {{req[0]}}
+        <br/>
+        netid: {{req[1]}}
+        <br/>
+        plan: {{req[2]}}
+        <br/>
+        time: {{req[3]}}
+        <br/>
+        <form action="/trashrequest">
+            <button onclick="undoRequest({{req[0]}})" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Delete Request</button>
+        </form>
+        
     </div>
+
+    
 </body>
-
-
-
