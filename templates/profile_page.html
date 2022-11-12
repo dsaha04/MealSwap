@@ -23,6 +23,33 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 
+<script>
+  function updateDetails() {
+  var name= $('#name').val();
+  var number = $('#contact').val();
+  var year= $('#year').val();
+  var plan= $('#plan').val();
+  
+    $.ajax({
+      type: "POST",
+      url: "/updatedetails",
+      data: {name:name, number:number, year:year, plan:plan},
+      success: function() {   
+          location.reload();  
+      }
+  });
+    
+    // $.ajax({
+    //             url: "/updatedetails",
+    //             type: "POST",
+    //             data: {name:name, number:number, year:year, plan:plan}
+    //         }).done(function(response) {
+    //             location.reload()
+    //           });
+              
+  };
+</script>
+
 
 <body>
 
@@ -36,32 +63,74 @@
     <div class="show-data" >
     </div>
       
-    <div style="padding-top: 30px; padding-left: 30px;">
+    <div class = "container-fluid" style="padding-top: 30px; padding-left: 30px;">
         <table>
-              <tr>
-                <td>Preferred Name: </td>
-                <td>{{name}}</td>
-              </tr>
-              <tr>
-                <td>Net ID: </td>
-                <td>{{netid}}</td>
-              </tr>
-              <tr>
-                <td>Class Year: </td>
-                <td>{{class_year}}</td>
-              </tr>
-              <tr>
-                <td>Dining Plan: </td>
-                <td>{{dining_plan}}</td>
-              </tr>
-              <tr>
-                <td>Phone Number: </td>
-                <td>{{phone_no}}</td>
-              </tr>
+            <tr>
+              <td>Net ID: </td>
+              <td>{{netid}}</td>
+            </tr>
+            <tr>
+              <td>
+                <label for="inputEmail4">Preferred Name</label>
+              </td>
+              <td>
+                <input type="text" class="form-control" id="name" placeholder="{{name}}">
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <label for="inputAddress2">Class Year</label>
+              </td>
+              <td>
+                <input type="text" class="form-control" id="year" placeholder="{{class_year}}">
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <label for="inputCity">Dining Plan</label>
+              </td>
+              <td>
+                <select class="form-select" id="plan" aria-label="Default select example">
+                  <option selected>{{dining_plan}}</option>
+                  <option value="2D Co-Op">2D Co-Op</option>
+                  <option value="IFC Co-Op">IFC Co-Op</option>
+                  <option value="Brown Co-Op">Brown Co-Op</option>
+                  <option value="Scully Co-Op">Scully Co-Op</option>
+                  <option value="Colonial">Colonial</option>
+                  <option value="Tower">Tower</option>
+                  <option value="Tiger Inn">TI</option>
+                  <option value="Terrace">Terrace</option>
+                  <option value="Cap & Gown">Cap & Gown</option>
+                  <option value="Ivy">Ivy</option>
+                  <option value="Charter">Charter</option>
+                  <option value="Cloister">Cloister</option>
+                  <option value="Cottage">Cottage</option>
+                  <option value="Quad">Quad</option>
+                  <option value="Dining Hall">Dining Hall</option>
+                </select>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <label for="inputCity">Phone Number</label>
+              </td>
+              <td>
+                <input type="text" class="form-control" id="contact" placeholder="{{phone_no}}">
+              </td>
+            </tr>
+
+
         </table>
+
+        <button onclick="updateDetails()" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Update Details_new</button>
+
+
         <form action = "/updatedetails" method="get">
         <button type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Update Details</button>
-         </form>
+        </form>
 
     </div>
 </body>

@@ -32,13 +32,34 @@ def create_user(details, netid):
 
 
 def update_details(details, netid):
+
+    usersOld, contactOld = profile_details(netid)
+
     netid = str(netid)
-    year = str(details['year'])
-    plan = str(details['plan'])
-    name = str(details['name'])
+    name = str(usersOld[1])
+    year = str(usersOld[3])
+    plan = str(usersOld[4]) 
+    phone = str(contactOld[1])
+
+    if details['year'] != "":
+        year = str(details['year'])
+
+    if details['plan'] != "":
+        plan = str(details['plan'])
+
+    if details['name'] != "":
+        name = str(details['name'])
+
+    if details['number'] != "":
+        phone = str(details['number'])
+    
+
+    # year = str(details['year'])
+    # plan = str(details['plan'])
+    # name = str(details['name'])
     users = (name, year, plan, netid)
 
-    phone = str(details['number'])
+    # phone = str(details['number'])
     contact = (phone, netid)
 
     try:
@@ -49,7 +70,7 @@ def update_details(details, netid):
             with connection.cursor() as cursor:
                 cursor.execute("UPDATE users SET name=%s, year=%s, plan=%s WHERE netid=%s", users)
                 cursor.execute("UPDATE contact SET phone=%s WHERE netid=%s", contact)
-
+        
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
