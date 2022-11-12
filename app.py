@@ -32,6 +32,18 @@ def create():
         # fix url
         return redirect('/dashboard')
         
+
+@app.route('/logoutapp', methods=['GET'])
+def logoutapp():
+    return auth.logoutapp()
+
+@app.route('/logoutcas', methods=['GET'])
+def logoutcas():
+    return auth.logoutcas()
+
+
+
+
 @app.route('/profile')
 def profile():
     username = auth.authenticate()
@@ -187,7 +199,6 @@ def trash_request():
         return flask.render_template('trashrequest.html', table = req_table)       
     else: 
         return redirect('/create')
-
 
 @app.route('/cancelexchange', methods = ['GET', 'POST'])
 def cancel_exchange():

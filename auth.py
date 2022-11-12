@@ -78,7 +78,7 @@ def logoutapp():
 
     # Log out of the application.
     flask.session.clear()
-    html_code = flask.render_template('loggedout.html')
+    html_code = flask.render_template('login.html')
     response = flask.make_response(html_code)
     return response
 
@@ -90,4 +90,6 @@ def logoutcas():
     logout_url = (_CAS_URL + 'logout?service='
         + urllib.parse.quote(
             re.sub('logoutcas', 'logoutapp', flask.request.url)))
+
+    print(logout_url)
     flask.abort(flask.redirect(logout_url))
