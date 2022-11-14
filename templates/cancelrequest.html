@@ -23,73 +23,40 @@
 </head>
 
 <script>
-  function cancelRequest(id) {
-    console.log(id)
-  
-  
-    $.ajax({
-                success: function(){
-                    console.log("SUCCESS")
-                    window.location.href = "/cancelrequest?reqid=" + id;
-                }
-            }).done(function(response) {
-  
-              });
-              
-  };
-</script>
+function cancelRequest(id) {
+  $.ajax({
+              url: "/cancelrequest",
+              type: "POST",
+              data: {reqid: id}
+          }).done(function(response) {
+
+            });
+            
+};
+</script> 
+
 
 <body>
 
     {% include 'navbar.html' %}
 
     <h2 style="padding-top: 30px; padding-left: 45px;">
-        Your Requests
+        Request ID: {{req[0]}}
     </h2>
 
-    <div class="show-data" >
-    </div>
-    
     <div style="padding-top: 30px; padding-left: 45px; padding-right: 45px;">
-        <table class="table">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Requested Dining Plan</th>
-                <th scope="col">Meal Time</th>
-                <th scope="col">Netid</th>
-                <th scope="col">Cancel?</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for i in range(table|length): %}
-              <tr>
-                
-                <td>{{i+1}}</td>
-                {% for j in range(table[i]|length - 1): %}
-                  <td>{{table[i][j]}}</td> 
-                {% endfor %}
-                <td>
-                  <form>
-                    <button onclick="cancelRequest({{table[i][3]}})" type="submit">
-                      Cancel Request
-                    </button>
-                  </form>
-                </td>
-              <tr> 
-              {% endfor %}
-
-              <!-- <tr>
-                <th scope="row">3</th>
-                <td>Tiger Inn</td>
-                <td>Ivy</td>
-                <td>Lunch</td>
-              </tr> -->
-            </tbody>
-          </table>
-
+        id: {{req[0]}}
+        <br/>
+        netid: {{req[1]}}
+        <br/>
+        plan: {{req[2]}}
+        <br/>
+    
+        <form action="/dashboard">
+            <button onclick="cancelRequest({{req[0]}})" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Cancel Exchange</button>
+        </form>
+        
     </div>
+
+    
 </body>
-
-
-

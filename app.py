@@ -32,6 +32,18 @@ def create():
         # fix url
         return redirect('/dashboard')
         
+
+@app.route('/logoutapp', methods=['GET'])
+def logoutapp():
+    return auth.logoutapp()
+
+@app.route('/logoutcas', methods=['GET'])
+def logoutcas():
+    return auth.logoutcas()
+
+
+
+
 @app.route('/profile')
 def profile():
     username = auth.authenticate()
@@ -42,6 +54,7 @@ def profile():
     year = details[0][3]
     plan = details[0][4]
     number = details[1][1]
+    print(name, year, plan, number)
     return flask.render_template('profile_page.html', name = name, netid = str(username), class_year = year, dining_plan = plan, phone_no = number)
 
 @app.route('/updatedetails', methods = ['GET', 'POST'])
@@ -49,7 +62,7 @@ def update_details():
     username = auth.authenticate()
     if flask.request.method == 'POST':
         server.update_details(flask.request.form, username)
-        return 
+        return redirect("/profile")
 
     if server.check_user(username) != -1:
         return flask.render_template('update_details.html')       
@@ -111,6 +124,13 @@ def your_requests():
     
     return flask.render_template('your_requests.html', table= req_table)
 
+@app.route('/exchanges')
+def your_exchanges():
+    username = auth.authenticate()
+    req_table = server.get_exchanges(username)
+    
+    return flask.render_template('your_exchanges.html', table= req_table)
+
 @app.route('/submitrequest', methods = ['GET', 'POST'])
 def submit_request():
     username = auth.authenticate()
@@ -136,9 +156,79 @@ def view_request():
         print()
         reqid = int(flask.request.form['reqid'])
         server.accept_request(reqid, username)
-        return redirect('/about')
+        return redirect('/exchanges')
     
     return flask.render_template('viewrequest.html', req=req)
+
+
+@app.route('/deleterequest', methods = ['GET', 'POST'])
+def delete_request():
+    username = auth.authenticate()
+    
+    reqid = flask.request.args.get('reqid')
+    req = server.get_request(reqid)
+    
+    if flask.request.method == 'POST':
+        print("REQUEST FORM:")
+        print()
+        reqid = int(flask.request.form['reqid'])
+        server.delete_request(reqid, username)
+        return redirect('/trashrequest')
+    
+    return flask.render_template('deleterequest.html', req=req)
+
+@app.route('/undorequest', methods = ['GET', 'POST'])
+def undo_request():
+    username = auth.authenticate()
+    
+    reqid = flask.request.args.get('reqid')
+    req = server.get_request(reqid)
+    
+    if flask.request.method == 'POST':
+        reqid = int(flask.request.form['reqid'])
+        server.undo_request(reqid, username)
+        return redirect('/dashboard')
+    
+    return flask.render_template('undorequest.html', req=req)
+
+@app.route('/trashrequest', methods = ['GET', 'POST'])
+def trash_request():
+    username = auth.authenticate()
+    req_table = server.trash_requests(username)
+    
+    if server.check_user(username) != -1:
+        return flask.render_template('trashrequest.html', table = req_table)       
+    else: 
+        return redirect('/create')
+
+@app.route('/cancelexchange', methods = ['GET', 'POST'])
+def cancel_exchange():
+    username = auth.authenticate()
+    
+    reqid = flask.request.args.get('reqid')
+    req = server.get_exchange(reqid)
+    
+    if flask.request.method == 'POST':
+        reqid = int(flask.request.form['reqid'])
+        server.cancel_exchange(reqid)
+        return redirect('/exchanges')
+    
+    return flask.render_template('cancelexchange.html', req=req)
+
+
+@app.route('/cancelrequest', methods = ['GET', 'POST'])
+def cancel_request():
+    username = auth.authenticate()
+    
+    reqid = flask.request.args.get('reqid')
+    req = server.get_request(reqid)
+    
+    if flask.request.method == 'POST':
+        reqid = int(flask.request.form['reqid'])
+        server.cancel_request(reqid)
+        return redirect('/dashboard')
+    
+    return flask.render_template('cancelrequest.html', req=req)
 
 
 
