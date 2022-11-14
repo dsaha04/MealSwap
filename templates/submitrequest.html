@@ -64,7 +64,7 @@ var times= $('#times').val();
               <div class="form-group col-md-4">
                 <label for="inputAddress">Requested Dining Plan</label>
                 <select class="form-select" id="plan" aria-label="Default select example">
-                  <option selected>Meal Plan</option>
+                  <option value="" selected disabled>Meal Plan</option>
                   <option value="2D Co-Op">2D Co-Op</option>
                   <option value="IFC Co-Op">IFC Co-Op</option>
                   <option value="Brown Co-Op">Brown Co-Op</option>
@@ -82,9 +82,18 @@ var times= $('#times').val();
                   <option value="Dining Hall">Dining Hall</option>
                 </select>
               </div>
+
+              
               <div class="form-group col-md-4">
-                <label for="inputAddress2">Meal Time</label>
-                <input type="text" class="form-control" id="times" placeholder="Breakfast">
+                <label for="inputAddress">Requested Meal Time</label>
+                <select class="form-select" id="times" aria-label="Default select example">
+                  <option value="" selected disabled>Meal Time</option>
+                  <option value="Breakfast">Breakfast</option>
+                  <option value="Brunch">Brunch</option>
+                  <option value="Lunch">Lunch</option>
+                  <option value="Dinner">Dinner</option>
+                  <option value="Late Meal">Late Meal</option>
+                </select>
               </div>
          
               <button onclick="createRequest()" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Submit Request</button> 

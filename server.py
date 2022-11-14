@@ -98,9 +98,8 @@ def check_user(username):
 def create_request(details, username):
 
     username = str(username)
-    plan = details['plan']
+    requested_plan = details['plan']
     times = details['times']
-    requested = (username, plan, times)
 
     try:
         database_url = os.getenv('DATABASE_URL')
@@ -108,8 +107,31 @@ def create_request(details, username):
         with psycopg2.connect(database_url) as connection:
 
             with connection.cursor() as cursor:
-                cursor.execute("INSERT INTO requested (netid, requested, times) "
-                    + "VALUES (%s, %s, %s)", requested)
+
+                    cursor.execute("SELECT plan FROM users WHERE netid = %s",[username])
+                    user_plan = cursor.fetchone()
+
+                    # cursor.execute("SELECT netid FROM users WHERE plan = %s",[user_plan])
+                    # netids = []
+                    # netid = cursor.fetchone()
+                    # while netid is not None:
+                    #     netids.append(row)
+                    #     netid = cursor.fetchone
+                    # seperator = ', '
+                    # stmt_str = seperator.join(netids)
+                    
+                    cursor.execute("SELECT * FROM requested WHERE requested = %s AND times = %s AND netid IN (SELECT netid FROM users WHERE plan = %s)",[user_plan,times, requested_plan])
+                    req = cursor.fetchone()
+
+                    if req is None:
+                        requested = (username, requested_plan, user_plan, times)
+                        cursor.execute("INSERT INTO requested (netid, requested, offered, times) "
+                        + "VALUES (%s, %s, %s, %s)", requested)
+
+# need to add notification
+                    else:
+                        accept_request(req[0], username)
+
 
     except Exception as ex:
         print(ex, file=sys.stderr)
