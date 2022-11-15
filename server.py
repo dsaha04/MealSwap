@@ -378,32 +378,42 @@ def accept_request(id, username):
                 cursor.execute(
                     "DELETE FROM requested WHERE reqid = %s", [id])
 
-                # cursor.execute("SELECT phone FROM contact WHERE netid = %s", username)
-                # num1 = cursor.fetchone()
+                print('1')
 
-                # cursor.execute("SELECT phone FROM contact WHERE netid = %s", req[1])
-                # num2 = cursor.fetchone()
+                cursor.execute("SELECT phone FROM contact WHERE netid = %s", [username])
+                num1 = cursor.fetchone()
 
-                # cursor.execute("SELECT name FROM users WHERE netid = %s", username)
-                # name1 = cursor.fetchone()
+                print('2')
 
-                # cursor.execute("SELECT name FROM users WHERE netid = %s", req[1])
-                # name2 = cursor.fetchone()
+                cursor.execute("SELECT phone FROM contact WHERE netid = %s", [req[1]])
+                num2 = cursor.fetchone()
 
-                # print('NUM1')
-                # print(str(num1))
-                # print('num2: ',str(num2))
+                print('3')
+
+                cursor.execute("SELECT name FROM users WHERE netid = %s", [username])
+                name1 = cursor.fetchone()
+
+                print('4')
+
+                cursor.execute("SELECT name FROM users WHERE netid = %s", [req[1]])
+                name2 = cursor.fetchone()
+
+                print(req[3])
+
+                print(num1[0])
+                print(num2[0])
 
 
-                # print('name1: ',name1)
-                # print('name2: ',name2)
+                # msg = 'Hello, ' + str(name1[0]) + '! Great news, you have been matched with ' + str(name2[0]) + ' for ' + str(req[3])
+                # msg += '. Please visit https://mealswap.onrender.com/exchanges to view more details about your exchange.'
 
-                # def create_message(name1, name2):
-                #     msg = 'Hello, ' + name1 + '! Great news, you have been matched with ' + name2 + 'for ' + req[3]
-                #     msg += '. Please visit https://mealswap.onrender.com/exchanges to view more details about your exchange.'
-                #     return msg
+                def create_message(name1, name2):
+                    msg = 'Hello, ' + name1 + '! Great news, you have been matched with ' + name2 + ' for ' + req[3]
+                    msg += '. Please visit https://mealswap.onrender.com/exchanges to view more details about your exchange.'
+                    return msg
                 
-                # print('msg ', create_message(name1, name2))
+                print('msg ', create_message(name1[0], name2[0]))
+
 
     except Exception as ex:
         print(ex, file=sys.stderr)
