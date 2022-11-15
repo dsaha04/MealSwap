@@ -124,12 +124,14 @@ def create_request(details, username):
                     req = cursor.fetchone()
 
                     if req is None:
-                        requested = (username, requested_plan, user_plan, times)
-                        cursor.execute("INSERT INTO requested (netid, requested, offered, times) "
-                        + "VALUES (%s, %s, %s, %s)", requested)
+                        requested = (username, requested_plan, times)
+                        print(requested)
+                        cursor.execute("INSERT INTO requested (netid, requested, times) "
+                        + "VALUES (%s, %s, %s)", requested)
 
 # need to add notification
                     else:
+                        print('exchange')
                         accept_request(req[0], username)
 
 
