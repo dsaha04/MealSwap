@@ -55,18 +55,20 @@
 
   {% include 'navbar.html' %}
 
-
-    <h2 style="padding-top: 30px; padding-left: 45px;">
+    <div class="mx-sm-4 mt-4" style="padding-left: 20px">
+      <h2>
         Profile Details
-    </h2>
+      </h2>
+    </div>
 
     <div class="show-data" >
     </div>
       
-    <div class = "container-fluid" style="padding-top: 30px; padding-left: 30px;">
+    <div class = "container-fluid px-4">
+      <div class="mx-sm-4 mt-4">
         <table>
             <tr>
-              <td>Net ID: </td>
+              <td style="width:40%">Net ID: </td>
               <td>{{netid}}</td>
             </tr>
             <tr>
@@ -125,12 +127,13 @@
 
         </table>
 
-        <button onclick="updateDetails()" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Update Details_new</button>
+        <button onclick="updateDetails()" type="submit" class="btn btn-primary" style="margin-top: 10px;">Update Details_new</button>
 
 
         <form action = "/updatedetails" method="get">
-        <button type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Update Details</button>
+        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Update Details</button>
         </form>
+      </div>
 
     </div>
 </body>

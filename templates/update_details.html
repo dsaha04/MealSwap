@@ -46,29 +46,32 @@
 
   {% include 'navbar.html' %}
 
-
-    <h2 style="padding-top: 30px; padding-left: 45px;">
+    <div class="mx-sm-4 mt-4" style="padding-left: 20px">
+      <h2>
         Update Details
-    </h2>
+      </h2>
+    </div>
+
 
     <div class="show-data" >
     </div>
       
-    <div style="padding-top: 30px; padding-left: 30px;">
+    <div class = "container-fluid px-4">
+      <div class="mx-sm-4 mt-4">
         <form action="/dashboard" method="get">
-              <div class="form-row col-md-8">
-                <div class="form-group col-md-4">
+              <div class="form-row">
+                <div class="form-group">
                   <label for="inputEmail4">Preferred Name</label>
                   <input type="text" class="form-control" id="name" placeholder="Ansh">
                 </div>
               </div>
-              <div class="form-group col-md-4">
+              <div class="form-group">
                 <label for="inputAddress2">Class Year</label>
                 <input type="text" class="form-control" id="year" placeholder="2024">
               </div>
 
-              <div class="form-row col-md-8">
-                <div class="form-group col-md-4">
+              <div class="form-row">
+                <div class="form-group">
                   <label for="inputCity">Dining Plan</label>
                   <select class="form-select" id="plan" aria-label="Default select example">
                     <option selected>Meal Plan</option>
@@ -92,15 +95,16 @@
 
               </div>
 
-              <div class="form-group col-md-4">
+              <div class="form-group">
                 <label for="inputCity">Phone Number</label>
                 <input type="text" class="form-control" id="contact" placeholder="(201) 951 2312">
                 </div>
          
-              <button onclick="updateDetails()" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Update Details</button>
+              <button onclick="updateDetails()" type="submit" class="btn btn-primary" style="margin-top: 10px;">Update Details</button>
 
         </form>
 
+    </div>
     </div>
 </body>
 

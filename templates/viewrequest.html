@@ -40,11 +40,15 @@ function acceptRequest(id) {
 
     {% include 'navbar.html' %}
 
-    <h2 style="padding-top: 30px; padding-left: 45px;">
-        Request ID: {{req[0]}}
-    </h2>
+    
+    <div class="mx-sm-4 mt-4" style="padding-left: 20px">
+        <h2>
+            Request ID: {{req[0]}}
+        </h2>
+    </div>
 
-    <div style="padding-top: 30px; padding-left: 45px; padding-right: 45px;">
+      <div class = "container-fluid px-4">
+        <div class="mx-sm-4 mt-4">
         id: {{req[0]}}
         <br/>
         netid: {{req[1]}}
@@ -54,8 +58,9 @@ function acceptRequest(id) {
         time: {{req[3]}}
         <br/>
         <form action="/exchanges">
-            <button onclick="acceptRequest({{req[0]}})" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Confirm Request</button>
+            <button onclick="acceptRequest({{req[0]}})" type="submit" class="btn btn-primary" style="margin-top: 10px;">Confirm Request</button>
         </form>
+        </div>
         
     </div>
 
