@@ -63,8 +63,8 @@ var times= $('#times').val();
         <form action="/dashboard" method="get">
               <div class="form-group col-md-4">
                 <label for="inputAddress">Requested Dining Plan</label>
-                <select class="form-select" id="plan" aria-label="Default select example">
-                  <option selected>Meal Plan</option>
+                <select class="form-select" id="plan" aria-label="Default select example" required>
+                  <option value="" selected disabled>Meal Plan</option>
                   <option value="2D Co-Op">2D Co-Op</option>
                   <option value="IFC Co-Op">IFC Co-Op</option>
                   <option value="Brown Co-Op">Brown Co-Op</option>
@@ -85,7 +85,7 @@ var times= $('#times').val();
 
               <div class="form-group col-md-4">
                 <label for="inputAddress2">Meal Time</label>
-                <select class="form-select" id="times" aria-label="Default select example">
+                <select class="form-select" id="times" aria-label="Default select example" required>
                   <option value ="" selected disabled>Meal Time</option>
                   <option value="Breakfast">Breakfast</option>
                   <option value="Lunch">Lunch</option>
