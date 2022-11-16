@@ -136,6 +136,7 @@ def submit_request():
     username = auth.authenticate()
 
     if flask.request.method == 'POST':
+        print('hi')
         server.create_request(flask.request.form, username)
         return 
 

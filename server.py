@@ -2,6 +2,7 @@ import sys
 import app
 import os
 import psycopg2
+import notifications
 
 def create_user(details, netid):
     netid = str(netid)
@@ -125,11 +126,13 @@ def create_request(details, username):
 
                     if req is None:
                         requested = (username, requested_plan, times)
+                        print(requested)
                         cursor.execute("INSERT INTO requested (netid, requested, times) "
                         + "VALUES (%s, %s, %s)", requested)
 
 # need to add notification
                     else:
+                        print('exchange')
                         accept_request(req[0], username)
 
 
@@ -363,12 +366,54 @@ def accept_request(id, username):
                 info = (id, username, req[1], req[3], "FALSE")
                 print("INFO")
                 print(info)
+
+                # notifications.send_message(num1, create_message(name1, name2))
+                # notifications.send_message(num2, create_message(name2, name1))
+
+
                 
                 cursor.execute("INSERT INTO exchanges (reqid, netid, swapnetid, times, completed) "
                                + "VALUES (%s, %s, %s, %s, %s)", info)
                 
                 cursor.execute(
                     "DELETE FROM requested WHERE reqid = %s", [id])
+
+                print('1')
+
+                cursor.execute("SELECT phone FROM contact WHERE netid = %s", [username])
+                num1 = cursor.fetchone()
+
+                print('2')
+
+                cursor.execute("SELECT phone FROM contact WHERE netid = %s", [req[1]])
+                num2 = cursor.fetchone()
+
+                print('3')
+
+                cursor.execute("SELECT name FROM users WHERE netid = %s", [username])
+                name1 = cursor.fetchone()
+
+                print('4')
+
+                cursor.execute("SELECT name FROM users WHERE netid = %s", [req[1]])
+                name2 = cursor.fetchone()
+
+                print(req[3])
+
+                print(num1[0])
+                print(num2[0])
+
+
+                # msg = 'Hello, ' + str(name1[0]) + '! Great news, you have been matched with ' + str(name2[0]) + ' for ' + str(req[3])
+                # msg += '. Please visit https://mealswap.onrender.com/exchanges to view more details about your exchange.'
+
+                def create_message(name1, name2):
+                    msg = 'Hello, ' + name1 + '! Great news, you have been matched with ' + name2 + ' for ' + req[3]
+                    msg += '. Please visit https://mealswap.onrender.com/exchanges to view more details about your exchange.'
+                    return msg
+                
+                print('msg ', create_message(name1[0], name2[0]))
+
 
     except Exception as ex:
         print(ex, file=sys.stderr)
