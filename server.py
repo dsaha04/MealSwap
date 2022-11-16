@@ -121,7 +121,7 @@ def create_request(details, username):
                     # seperator = ', '
                     # stmt_str = seperator.join(netids)
                     
-                    cursor.execute("SELECT * FROM requested WHERE requested = %s AND times = %s AND netid IN (SELECT netid FROM users WHERE plan = %s)",[user_plan,times, requested_plan])
+                    cursor.execute("SELECT * FROM requested WHERE requested = %s AND times = %s AND netid IN (SELECT netid FROM users WHERE plan = %s AND netid != %s)",[user_plan,times, requested_plan, username])
                     req = cursor.fetchone()
 
                     if req is None:
