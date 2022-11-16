@@ -21,13 +21,13 @@ def main():
 
                 cursor.execute("DROP TABLE IF EXISTS users")
                 cursor.execute("CREATE TABLE users "
-                    + "(netid TEXT, name TEXT, usertype TEXT, year TEXT, plan TEXT)")
+                    + "(netid TEXT PRIMARY KEY, name TEXT, usertype TEXT, year TEXT, plan TEXT)")
 
                 # #-------------------------------------------------------
 
                 cursor.execute("DROP TABLE IF EXISTS contact")
                 cursor.execute("CREATE TABLE contact "
-                    + "(netid TEXT, phone TEXT, email TEXT)")
+                    + "(netid TEXT PRIMARY KEY, phone TEXT, email TEXT)")
 
                 # #-------------------------------------------------------
 
@@ -39,9 +39,16 @@ def main():
 
                 cursor.execute("DROP TABLE IF EXISTS exchanges")
                 cursor.execute("CREATE TABLE exchanges "
-                    + "(reqid INT, netid TEXT, swapnetid TEXT, times TEXT, completed TEXT)")
+                    + "(reqid INT PRIMARY KEY, netid TEXT, swapnetid TEXT, times TEXT, completed TEXT)")
                 
                 #-------------------------------------------------------
+
+                cursor.execute("DROP TABLE IF EXISTS deletedrequest")
+                cursor.execute("CREATE TABLE deletedrequest "
+                    + "(reqid INT PRIMARY KEY, netid TEXT)")
+                
+                #-------------------------------------------------------
+
 
     except Exception as ex:
         print(ex, file=sys.stderr)
