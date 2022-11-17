@@ -74,7 +74,7 @@
                 {% endfor %}
                 <td>
                   <form>
-                    <button onclick="cancelRequest({{table[i][3]}})" type="submit">
+                    <button onclick="cancelRequest({{table[i][3]}})" ontouchstart="cancelRequest({{table[i][3]}})" type="submit">
                       Cancel Request
                     </button>
                   </form>

@@ -86,19 +86,19 @@ var plan= $('#plan').val();
               <div class="form-row col-md-8">
                 <div class="form-group col-md-4">
                   <label for="inputEmail4">Preferred Name</label>
-                  <input type="text" class="form-control" id="name" placeholder="Ansh">
+                  <input type="text" class="form-control" id="name" placeholder="Ansh" required>
                 </div>
               </div>
               <div class="form-group col-md-4">
                 <label for="inputAddress2">Class Year</label>
-                <input type="text" class="form-control" id="year" placeholder="2024">
+                <input type="text" class="form-control" id="year" placeholder="2024" required>
               </div>
 
               <div class="form-row col-md-8">
                 <div class="form-group col-md-4">
                   <label for="inputCity">Dining Plan</label>
-                  <select class="form-select" id="plan" aria-label="Default select example">
-                    <option selected>Meal Plan</option>
+                  <select required class="form-select" id="plan" aria-label="Default select example">
+                    <option value ="" selected disabled>Meal Plan</option>
                     <option value="2D Co-Op">2D Co-Op</option>
                     <option value="IFC Co-Op">IFC Co-Op</option>
                     <option value="Brown Co-Op">Brown Co-Op</option>
@@ -121,10 +121,10 @@ var plan= $('#plan').val();
 
               <div class="form-group col-md-4">
                 <label for="inputCity">Phone Number</label>
-                <input type="text" class="form-control" id="contact" placeholder="(201) 951 2312">
+                <input type="text" class="form-control" id="contact" placeholder="(201) 951 2312" required>
                 </div>
          
-              <button onclick="createNewUser()" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Create Account</button>
+              <button onclick="createNewUser()" ontouchstart="createNewUser()" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Create Account</button>
 
         </form>
 

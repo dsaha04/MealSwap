@@ -75,7 +75,7 @@ function createRequest(id) {
                 {% endfor %}
                 <td>
                   <form>
-                    <button onclick="createRequest({{table[i][4]}})" type="submit">
+                    <button onclick="createRequest({{table[i][4]}})" ontouchstart="createRequest({{table[i][4]}})" type="submit">
                       Undo
                     </button>
                   </form>
