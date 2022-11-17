@@ -412,7 +412,9 @@ def accept_request(id, username):
                     msg += '. Please visit https://mealswap.onrender.com/exchanges to view more details about your exchange.'
                     return msg
                 
-                print('msg ', create_message(name1[0], name2[0]))
+                notifications.send_message(num1[0], create_message(name1[0], name2[0]))
+                notifications.send_message(num2[0], create_message(name2[0], name1[0]))
+
 
 
     except Exception as ex:
