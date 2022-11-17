@@ -513,6 +513,7 @@ def block_user(block_netid, username):
 
             with connection.cursor() as cursor:
                 row = (username, block_netid)
+                print('blocking', row)
                 cursor.execute("INSERT INTO blocked (netid, block_id) "
                     + "VALUES (%s, %s)", row)
 

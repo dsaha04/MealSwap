@@ -23,24 +23,7 @@
 </head>
 
 <script>
-    function cancelExchange(id) {
-      console.log(id)
-    
-    
-      $.ajax({
-                  success: function(){
-                      console.log("SUCCESS")
-                      window.location.href = "/cancelexchange?reqid=" + id;
-                  }
-              }).done(function(response) {
-    
-                });
-                
-    };
-
-    function blockuser(netid) {
-      console.log(netid)
-    
+    function blockuser(netid) {    
     
       $.ajax({
                   success: function(){
@@ -52,6 +35,25 @@
                 });
                 
     };
+</script>
+
+<script>
+
+function cancelExchange(id) {
+  console.log(id)
+
+
+  $.ajax({
+              success: function(){
+                  console.log("SUCCESS")
+                  window.location.href = "/cancelexchange?reqid=" + id;
+              }
+          }).done(function(response) {
+
+            });
+            
+};
+
 </script>
 
 
@@ -92,18 +94,14 @@
                   <td>{{table[i][j]}}</td> 
                 {% endfor %}
                 <td>
-                    <form>
                       <button onclick="cancelExchange({{table[i][0]}})" type="button">
                         Cancel Exchange
                       </button>
-                    </form>
                   </td>
                   <td>
-                    <form>
-                      <button onclick="blockuser({{table[i][1]}})" type="button">
+                      <button onclick="blockuser('{{table[i][1]}}')" type="button">
                         Block User
                       </button>
-                    </form>
                   </td>
               <tr> 
               {% endfor %}

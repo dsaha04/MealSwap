@@ -74,14 +74,10 @@ def update_details():
 def block_user():
     print('in block')
     username = auth.authenticate()
-    if flask.request.method == 'POST':
-        server.block_user(flask.request.form, username)
-        return redirect("/profile")
+    server.block_user(flask.request.args.get('netid'), username)
+    return redirect("/profile")
 
-    if server.check_user(username) != -1:
-        return redirect('/profile')       
-    else: 
-        return redirect('/create')
+
 
 @app.route('/test')
 def test():
