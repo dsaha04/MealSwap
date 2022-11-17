@@ -89,7 +89,7 @@ function deleteRequest(id) {
                 {% endfor %}
                 <td>
                   <form>
-                    <button onclick="createRequest({{table[i][4]}})" type="submit">
+                    <button onclick="createRequest({{table[i][4]}})" ontouchstart="createRequest({{table[i][4]}})" type="submit">
                       Accept Request
                     </button>
                   </form>
@@ -97,7 +97,7 @@ function deleteRequest(id) {
                 
                 <td>
                   <form>
-                    <button onclick="deleteRequest({{table[i][4]}})" type="submit">
+                    <button onclick="deleteRequest({{table[i][4]}})" ontouchstart="deleteRequest({{table[i][4]}})" type="submit">
                       Decline Request
                     </button>
                   </form>
