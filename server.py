@@ -173,7 +173,7 @@ def get_requests(username):
                 cursor.execute("SELECT plan FROM users WHERE netid = %s",[username])
                 plan = cursor.fetchone()
                 
-                cursor.execute("SELECT * FROM requested WHERE requested = %s AND netid != %s",[plan, username])
+                cursor.execute("SELECT * FROM requested WHERE requested = %s AND netid NOT IN (SELECT block_id FROM blocked WHERE netid = %s) AND netid != %s",[plan, username, username])
                 rows = cursor.fetchall()
 
                 cursor.execute("SELECT reqid FROM deletedrequest WHERE netid = %s",[username])
@@ -499,6 +499,22 @@ def undo_request(id, username):
             with connection.cursor() as cursor:
                 cursor.execute(
                     "DELETE FROM deletedrequest WHERE reqid = %s AND netid = %s", [id, username])
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+def block_user(block_netid, username):
+    
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                row = (username, block_netid)
+                cursor.execute("INSERT INTO blocked (netid, block_id) "
+                    + "VALUES (%s, %s)", row)
 
     except Exception as ex:
         print(ex, file=sys.stderr)

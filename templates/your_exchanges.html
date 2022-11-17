@@ -37,6 +37,21 @@
                 });
                 
     };
+
+    function blockuser(netid) {
+      console.log(netid)
+    
+    
+      $.ajax({
+                  success: function(){
+                      console.log("SUCCESS")
+                      window.location.href = "/blockuser?netid=" + netid;
+                  }
+              }).done(function(response) {
+    
+                });
+                
+    };
 </script>
 
 
@@ -65,7 +80,9 @@
                 <th scope="col">Email</th>
                 <th scope="col">Meal Time</th>
                 <th scope="col">Completed</th>
-                <th scope="col">Cancel?</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+
               </tr>
             </thead>
             <tbody>
@@ -76,8 +93,15 @@
                 {% endfor %}
                 <td>
                     <form>
-                      <button onclick="cancelExchange({{table[i][0]}})" ontouchstart="cancelExchange({{table[i][0]}})" type="submit">
+                      <button onclick="cancelExchange({{table[i][0]}})" type="button">
                         Cancel Exchange
+                      </button>
+                    </form>
+                  </td>
+                  <td>
+                    <form>
+                      <button onclick="blockuser({{table[i][1]}})" type="button">
+                        Block User
                       </button>
                     </form>
                   </td>
