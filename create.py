@@ -50,6 +50,13 @@ def main():
                 #-------------------------------------------------------
 
 
+                cursor.execute("DROP TABLE IF EXISTS blocked")
+                cursor.execute("CREATE TABLE blocked "
+                    + "(netid TEXT, block_id TEXT)")
+                
+                #-------------------------------------------------------
+
+
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
