@@ -62,7 +62,7 @@ function cancelExchange(id) {
     {% include 'navbar.html' %}
     <div class="mx-sm-4 mt-4" style="padding-left: 20px">
       <h2>
-        Your Exchanges
+        Dashboard
       </h2>
     </div>
 
@@ -71,6 +71,10 @@ function cancelExchange(id) {
     
     <div class="container-fluid px-0">
       <div class="mx-sm-5 mt-4">
+        {% with %}
+            {% set activeTab = ["", "", "active"] %}
+            {% include 'tabnav.html' %}
+        {% endwith %}
         <table class="table">
             <thead class="thead-dark">
               <tr>
