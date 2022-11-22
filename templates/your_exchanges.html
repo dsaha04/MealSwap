@@ -26,10 +26,9 @@
     function blockuser(netid) {    
     
       $.ajax({
-                  success: function(){
-                      console.log("SUCCESS")
-                      window.location.href = "/blockuser?netid=" + netid;
-                  }
+                  url: "/blockuser",
+                  type: "POST",
+                  data: {netid: netid}   
               }).done(function(response) {
     
                 });
@@ -40,14 +39,10 @@
 <script>
 
 function cancelExchange(id) {
-  console.log(id)
-
-
   $.ajax({
-              success: function(){
-                  console.log("SUCCESS")
-                  window.location.href = "/cancelexchange?reqid=" + id;
-              }
+              url: "/cancelexchange",
+              type: "POST",
+              data: {reqid: id}
           }).done(function(response) {
 
             });

@@ -23,20 +23,16 @@
 </head>
 
 <script>
-  function cancelRequest(id) {
-    console.log(id)
-  
-  
-    $.ajax({
-                success: function(){
-                    console.log("SUCCESS")
-                    window.location.href = "/cancelrequest?reqid=" + id;
-                }
-            }).done(function(response) {
-  
-              });
-              
-  };
+ function cancelRequest(id) {
+  $.ajax({
+              url: "/cancelrequest",
+              type: "POST",
+              data: {reqid: id}
+          }).done(function(response) {
+
+            });
+            
+};
 </script>
 
 <body>

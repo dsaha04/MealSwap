@@ -30,14 +30,10 @@
 
 <script>
 function createRequest(id) {
-  console.log(id)
-
-
   $.ajax({
-              success: function(){
-                  console.log("SUCCESS")
-                  window.location.href = "/viewrequest?reqid=" + id;
-              }
+              url: "/viewrequest",
+              type: "POST",
+              data: {reqid: id}
           }).done(function(response) {
 
             });
@@ -45,14 +41,10 @@ function createRequest(id) {
 };
 
 function deleteRequest(id) {
-  console.log(id)
-
-
   $.ajax({
-              success: function(){
-                  console.log("SUCCESS")
-                  window.location.href = "/deleterequest?reqid=" + id;
-              }
+              url: "/deleterequest",
+              type: "POST",
+              data: {reqid: id}
           }).done(function(response) {
 
             });

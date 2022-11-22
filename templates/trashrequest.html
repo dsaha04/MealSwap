@@ -23,15 +23,11 @@
 </head>
 
 <script>
-function createRequest(id) {
-  console.log(id)
-
-
+function undoRequest(id) {
   $.ajax({
-              success: function(){
-                  console.log("SUCCESS")
-                  window.location.href = "/undorequest?reqid=" + id;
-              }
+              url: "/undorequest",
+              type: "POST",
+              data: {reqid: id}
           }).done(function(response) {
 
             });
@@ -75,7 +71,7 @@ function createRequest(id) {
                 {% endfor %}
                 <td>
                   <form onSubmit="if(!confirm('Is the form filled out correctly?')){return false;}">
-                    <button onclick="createRequest({{table[i][4]}})" type="submit">
+                    <button onclick="undoRequest({{table[i][4]}})" type="submit">
                       Undo
                     </button>
                   </form>
