@@ -77,9 +77,12 @@
                   <td>{{table[i][j]}}</td> 
                 {% endfor %}
                 <td>
-                    <button onclick="cancelRequest({{table[i][3]}})" type="button">
+                  <form onSubmit="if(!confirm('Is the form filled out correctly?')){return false;}">
+                    <button onclick="cancelRequest({{table[i][3]}})" type="submit">
                       Cancel Request
                     </button>
+                  </form>
+                    
                 </td>
               <tr> 
               {% endfor %}
