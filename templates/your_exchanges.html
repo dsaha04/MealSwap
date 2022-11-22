@@ -98,14 +98,20 @@ function cancelExchange(id) {
                   <td>{{table[i][j]}}</td> 
                 {% endfor %}
                 <td>
-                      <button onclick="cancelExchange({{table[i][0]}})" type="button">
-                        Cancel Exchange
-                      </button>
+                  <form onSubmit="if(!confirm('Is the form filled out correctly?')){return false;}">
+                    <button onclick="cancelExchange({{table[i][0]}})" type="submit">
+                      Cancel Exchange
+                    </button>
+                  </form>
+                      
                   </td>
                   <td>
-                      <button onclick="blockuser('{{table[i][1]}}')" type="button">
+                    <form onSubmit="if(!confirm('Is the form filled out correctly?')){return false;}">
+                      <button onclick="blockuser('{{table[i][1]}}')" type="submit">
                         Block User
                       </button>
+                    </form>
+                      
                   </td>
               <tr> 
               {% endfor %}

@@ -100,16 +100,16 @@ function deleteRequest(id) {
                   <td>{{table[i][j]}}</td> 
                 {% endfor %}
                 <td>
-                  <form>
-                    <button onclick="createRequest({{table[i][4]}})" type="button">
+                  <form onSubmit="if(!confirm('Is the form filled out correctly?')){return false;}">
+                    <button onclick="createRequest({{table[i][4]}})" type="submit">
                       Accept Request
                     </button>
                   </form>
                 </td>
                 
                 <td>
-                  <form>
-                    <button onclick="deleteRequest({{table[i][4]}})" type="button">
+                  <form onSubmit="if(!confirm('Is the form filled out correctly?')){return false;}">
+                    <button onclick="deleteRequest({{table[i][4]}})" type="submit">
                       Decline Request
                     </button>
                   </form>

@@ -74,8 +74,8 @@ function createRequest(id) {
                   <td>{{table[i][j]}}</td> 
                 {% endfor %}
                 <td>
-                  <form>
-                    <button onclick="createRequest({{table[i][4]}})" type="button">
+                  <form onSubmit="if(!confirm('Is the form filled out correctly?')){return false;}">
+                    <button onclick="createRequest({{table[i][4]}})" type="submit">
                       Undo
                     </button>
                   </form>
