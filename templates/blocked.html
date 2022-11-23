@@ -9,7 +9,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
  
-    <title>Requests</title>
+    <title>Blocked Users</title>
  
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
  
@@ -20,14 +20,21 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <!-- AJAX for Flask -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+ 
+    <!-- MDB -->
+    <script
+    type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.js"
+  ></script>
 </head>
  
 <script>
-function undoRequest(id) {
+function unblock(id) {
+    console.log(id)
   $.ajax({
-              url: "/undorequest",
+              url: "/unblock",
               type: "POST",
-              data: {reqid: id}
+              data: {netid: id}
           }).done(function(response) {
  
             });
@@ -39,29 +46,24 @@ function undoRequest(id) {
 <body>
  
     {% include 'navbar.html' %}
-   
     <div class="mx-sm-4 mt-4" style="padding-left: 20px">
       <h2>
-        Declined Requests
+      Blocked Users
       </h2>
     </div>
+   
  
     <div class="show-data" >
     </div>
-   
     <div class="container-fluid px-0">
-      <div class="mx-sm-5 mt-4">
-        {% with %}
-            {% set activeTab = ["", "", "", "active"] %}
-            {% include 'tabnav.html' %}
-        {% endwith %}
+    <div class="mx-sm-5 mt-4">
+       
         <table class="table">
             <thead class="thead-dark">
               <tr>
                 <!-- <th scope="col">#</th> -->
-                <th scope="col">Requested Dining Plan</th>
-                <th scope="col">Offered Dining Plan</th>
-                <th scope="col">Meal Time</th>
+                <!-- <th scope="col">Requested Dining Plan</th> -->
+                <th scope="col">Name</th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -70,18 +72,16 @@ function undoRequest(id) {
               <tr>
                
                 <!-- <td>{{i+1}}</td> -->
-                {% for j in range(table[i]|length - 2): %}
+                {% for j in range(table[i]|length): %}
                   <td>{{table[i][j]}}</td>
                 {% endfor %}
                 <td>
-                  <form onSubmit="if(confirm('Is the form filled out correctly?')){undoRequest({{table[i][4]}})}">
-                    <button type="submit">
-                      Undo
+                  <form onSubmit="if(confirm('Is the form filled out correctly?')){unblock(''+{{table[i][0]}});}">
+                    <button type="submit" class="btn btn-primary">
+                      Unblock User
                     </button>
                   </form>
                 </td>
-               
-               
               <tr>
               {% endfor %}
  
@@ -91,11 +91,12 @@ function undoRequest(id) {
                 <td>Ivy</td>
                 <td>Lunch</td>
               </tr> -->
+ 
             </tbody>
           </table>
  
     </div>
-    </div>
+  </div>
 </body>
  
  

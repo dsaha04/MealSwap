@@ -30,6 +30,26 @@ def create_user(details, netid):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
+def get_blocked(username):
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM blocked WHERE netid = %s", [username])
+                rows = cursor.fetchall()
+                table = []
+
+                if rows is not None:
+                    for row in rows:
+                        table.append(row[1])
+            print(table)
+            return table
+        
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
 
 
 def update_details(details, netid):
@@ -529,6 +549,19 @@ def block_user(reqid, username):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
+def unblock_user(netid, username):
+    
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                cursor.execute("DELETE FROM blocked WHERE netid = %s AND block_id = %s", [netid, username])
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
 
 
 def get_exchanges(username):

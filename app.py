@@ -23,8 +23,8 @@ def create():
     # TODO: fix logic to mirror submit_request
     username = auth.authenticate()
     if flask.request.method == 'POST':
-        server.create_user(flask.request.form, username)
-        return
+        req_table = server.create_user(flask.request.form, username)
+        return flask.render_template('blocked.html', )
         
     if server.check_user(username) == -1:
         return flask.render_template('create_account.html')
@@ -42,7 +42,13 @@ def logoutcas():
     return auth.logoutcas()
 
 
-
+@app.route('/blocked')
+def blocked():
+    username = auth.authenticate()
+    if server.check_user(username) == -1:
+        return redirect('/create')
+    blocked = server.get_blocked(username)
+    return flask.render_template('blocked.html', table = blocked)
 
 @app.route('/profile')
 def profile():
@@ -76,6 +82,14 @@ def block_user():
     reqid = int(flask.request.form['reqid'])
     print(reqid)
     server.block_user(reqid, username)
+    return redirect("/profile")
+
+@app.route('/unblockuser', methods = ['GET', 'POST'])
+def unblock_user():
+    username = auth.authenticate()
+    netid = str(flask.request.form['netid'])
+    print(netid)
+    server.unblock_user(netid, username)
     return redirect("/profile")
 
 
