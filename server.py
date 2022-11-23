@@ -43,8 +43,7 @@ def get_blocked(username):
 
                 if rows is not None:
                     for row in rows:
-                        table.append(row[1])
-            print(table)
+                        table.append([row[0], row[2]])
             return table
         
     except Exception as ex:
@@ -193,7 +192,7 @@ def get_requests(username):
                 cursor.execute("SELECT plan FROM users WHERE netid = %s",[username])
                 plan = cursor.fetchone()
                 
-                cursor.execute("SELECT * FROM requested WHERE requested = %s AND netid NOT IN (SELECT block_id FROM blocked WHERE netid = %s) AND netid != %s",[plan, username, username])
+                cursor.execute("SELECT * FROM requested WHERE requested = %s AND netid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND netid != %s",[plan, username, username])
                 rows = cursor.fetchall()
 
                 cursor.execute("SELECT reqid FROM deletedrequest WHERE netid = %s",[username])
@@ -542,14 +541,14 @@ def block_user(reqid, username):
                 if netid == username:
                     netid = exchange[2]
 
-                cursor.execute("INSERT INTO blocked (netid, block_id) "
+                cursor.execute("INSERT INTO blocked (netid, block_netid) "
                     + "VALUES (%s, %s)", [username, netid])
 
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-def unblock_user(netid, username):
+def unblock_user(blockid, username):
     
     try:
         database_url = os.getenv('DATABASE_URL')
@@ -557,7 +556,7 @@ def unblock_user(netid, username):
         with psycopg2.connect(database_url) as connection:
 
             with connection.cursor() as cursor:
-                cursor.execute("DELETE FROM blocked WHERE netid = %s AND block_id = %s", [netid, username])
+                cursor.execute("DELETE FROM blocked WHERE blockid = %s", [blockid])
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -575,7 +574,7 @@ def get_exchanges(username):
                 requested = []
 
                 cursor.execute(
-                    "SELECT * FROM exchanges WHERE (netid = %s OR swapnetid = %s) AND netid NOT IN (SELECT block_id FROM blocked WHERE netid = %s) AND swapnetid NOT IN (SELECT block_id FROM blocked WHERE netid = %s)", [username, username, username, username])
+                    "SELECT * FROM exchanges WHERE (netid = %s OR swapnetid = %s) AND netid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND swapnetid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s)", [username, username, username, username])
 
                 rows = cursor.fetchall()
                 print(rows)
