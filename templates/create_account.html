@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-
+ 
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+ 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+ 
     <title>Create Account</title>
-
+ 
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
+ 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -21,15 +21,15 @@
     <!-- AJAX for Flask -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
-
+ 
 <script>
 function createNewUser() {
 var name= $('#name').val();
 var number = $('#contact').val();
 var year= $('#year').val();
 var plan= $('#plan').val();
-
-
+ 
+ 
   $.ajax({
               url: "/create",
               type: "POST",
@@ -45,42 +45,42 @@ var plan= $('#plan').val();
                 html +="<br>";
                 $(".show-data").append(html);
             });
-            
+           
 };
 </script>
-
+ 
 <body>
-
+ 
     <nav class="navbar navbar-expand-lg navbar-light gradient-custom-1" style="border-radius: 0px; padding-top: 5px; padding-bottom: 5px;">
-        <a class="navbar-brand" href="{{ url_for('home') }}" style="margin-left: 15px; font-size: 160%; font-weight: bolder;">MealSwap</a>
+        <a class="navbar-brand" href="{{ url_for('home') }}" style="margin-left: 15px; font-size: 160%; font-weight: bolder; color:#f58025">MealSwap</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-      
+     
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item active" style="margin-left: 15px">
-              <a class="nav-button" href="" id="intro-btn" style="text-decoration: none; margin-right: 10px; font-size: large;">About</a>
+              <a class="nav-button" href="" id="intro-btn" style="text-decoration: none; margin-right: 10px; font-size: large; color:#f58025">About</a>
             </li>
             <li class="nav-item active" style="margin-left: 15px"></li>
-              <a class="nav-button" href="" id="intro-btn" style="text-decoration: none; margin-right: 10px; font-size: large;">Tutorial</a>
+              <a class="nav-button" href="" id="intro-btn" style="text-decoration: none; margin-right: 10px; font-size: large; color:#f58025">Tutorial</a>
             </li>
             <li class="nav-item active" style="margin-left: 15px">
-              <a class="nav-button" href="" id="work-btn" style="text-decoration: none; font-size: large;">Log In</a>
+              <a class="nav-button" href="" id="work-btn" style="text-decoration: none; font-size: large; color:#f58025">Log In</a>
             </li>
             </div>
           </ul>
         </div>
       </nav>
-
-
+ 
+ 
     <h2 style="padding-top: 30px; padding-left: 45px;">
         Create Your Account
     </h2>
-
+ 
     <div class="show-data" >
     </div>
-      
+     
     <div style="padding-top: 30px; padding-left: 30px;">
         <form action="/dashboard" method="get">
               <div class="form-row col-md-8">
@@ -93,7 +93,7 @@ var plan= $('#plan').val();
                 <label for="inputAddress2">Class Year</label>
                 <input type="text" class="form-control" id="year" placeholder="2024" required>
               </div>
-
+ 
               <div class="form-row col-md-8">
                 <div class="form-group col-md-4">
                   <label for="inputCity">Dining Plan</label>
@@ -116,19 +116,21 @@ var plan= $('#plan').val();
                     <option value="Dining Hall">Dining Hall</option>
                   </select>
                 </div>
-
+ 
               </div>
-
+ 
               <div class="form-group col-md-4">
                 <label for="inputCity">Phone Number</label>
                 <input type="text" class="form-control" id="contact" placeholder="(201) 951 2312" required>
                 </div>
          
               <button onclick="createNewUser()" type="button" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Create Account</button>
-
+ 
         </form>
-
+ 
     </div>
 </body>
-
+ 
+ 
+ 
 

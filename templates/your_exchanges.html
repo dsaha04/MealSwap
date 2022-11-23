@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-
+ 
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+ 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+ 
     <title>Your Exchanges</title>
-
+ 
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
+ 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -21,96 +21,100 @@
     <!-- AJAX for Flask -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
-
+ 
 <script>
-    function blockuser(netid) {    
-    
+    function blockuser(id) {    
+      console.log(id)
+
+   
       $.ajax({
                   url: "/blockuser",
                   type: "POST",
-                  data: {netid: netid}   
+                  data: {reqid: id}  
               }).done(function(response) {
-    
+   
                 });
-                
+               
     };
 </script>
-
+ 
 <script>
-
+ 
 function cancelExchange(id) {
   $.ajax({
               url: "/cancelexchange",
               type: "POST",
               data: {reqid: id}
           }).done(function(response) {
-
+ 
             });
-            
+           
 };
-
+ 
 </script>
-
-
+ 
+ 
 <body>
-
+ 
     {% include 'navbar.html' %}
     <div class="mx-sm-4 mt-4" style="padding-left: 20px">
       <h2>
         Dashboard
       </h2>
     </div>
-
+ 
     <div class="show-data" >
     </div>
-    
+   
     <div class="container-fluid px-0">
       <div class="mx-sm-5 mt-4">
         {% with %}
-            {% set activeTab = ["", "", "active"] %}
+            {% set activeTab = ["", "", "active", ""] %}
             {% include 'tabnav.html' %}
         {% endwith %}
         <table class="table">
             <thead class="thead-dark">
               <tr>
-                <th scope="col">Swapnetid</th>
+                <!-- <th scope="col">Netid</th> -->
                 <th scope="col">Name</th>
-                <th scope="col">Year</th>
+                <!-- <th scope="col">Year</th> -->
                 <th scope="col">Plan</th>
                 <th scope="col">Contact</th>
-                <th scope="col">Email</th>
+                <!-- <th scope="col">Email</th> -->
                 <th scope="col">Meal Time</th>
                 <th scope="col">Completed</th>
                 <th scope="col"></th>
                 <th scope="col"></th>
-
+ 
               </tr>
             </thead>
             <tbody>
               {% for i in range(table|length): %}
               <tr>
                 {% for j in range(1, table[i]|length): %}
-                  <td>{{table[i][j]}}</td> 
+                  {% if j != 6 and j != 1 and j != 3: %}
+                  <td>{{table[i][j]}}</td>
+                  {% endif %}
                 {% endfor %}
                 <td>
-                  <form onSubmit="if(!confirm('Is the form filled out correctly?')){return false;}">
-                    <button onclick="cancelExchange({{table[i][0]}})" type="submit">
+                  <form onSubmit="if(confirm('Is the form filled out correctly?')){cancelExchange({{table[i][0]}});}">
+                    <button type="submit" class="btn btn-warning">
                       Cancel Exchange
                     </button>
                   </form>
-                      
+                     
                   </td>
                   <td>
-                    <form onSubmit="if(!confirm('Is the form filled out correctly?')){return false;}">
-                      <button onclick="blockuser('{{table[i][1]}}')" type="submit">
+                    <form onSubmit="if(confirm('Is the form filled out correctly?')){blockuser({{table[i][0]}});}">
+                      <button type="submit" class="btn btn-danger">
                         Block User
                       </button>
                     </form>
-                      
+                     
                   </td>
-              <tr> 
+              <tr>
               {% endfor %}
-
+ 
               <!-- <tr>
                 <th scope="row">3</th>
                 <td>Tiger Inn</td>
@@ -119,10 +123,12 @@ function cancelExchange(id) {
               </tr> -->
             </tbody>
           </table>
-
+ 
     </div>
     </div>
 </body>
-
-
+ 
+ 
+ 
+ 
 

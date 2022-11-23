@@ -7,7 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-
+ 
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -15,11 +15,11 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
-
+ 
     <title>Tutorial</title>
-
+ 
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}", id="theme">
-
+ 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script
@@ -38,24 +38,26 @@
       crossorigin="anonymous"
     ></script>
   </head>
-
+ 
   <body>
     {% include 'navbar.html' %}
-
-    <h2 style="padding-top: 30px; padding-left: 45px;">
+ 
+    <div class="mx-sm-4 mt-4" style="padding-left: 20px">
+      <h2>
         Tutorial
-    </h2>
-    <div style="padding-top: 30px; padding-left: 30px;">
+      </h2>
+    </div>
+    <div class="mx-sm-4 mt-4 px-4">
       <p tyle="padding-top: 30px; padding-left: 45px;">Welcome to MealSwap! This is a quick-start guide to help you get up to speed with how to most effectively use this site.</p>
-      When you first press login in the application, you'll be prompted by an account creation screen. 
-      Here, you'll enter all your relevant meal plan information so that you can be properly matched with other Princeton students! 
+      When you first press login in the application, you'll be prompted by an account creation screen.
+      Here, you'll enter all your relevant meal plan information so that you can be properly matched with other Princeton students!
       <br />
       <br />
       <img src="static/images/Creation.png" style="width: 80%" alt="logo" />
       <br />
       <br />
-
-      In the form, we also ask you to supply your phone number. We'll use this number to ping you with notifications of any new exchanges, 
+ 
+      In the form, we also ask you to supply your phone number. We'll use this number to ping you with notifications of any new exchanges,
       as well as reminding you right before any upcoming meetups!
       <br />
       <div class="panel panel-primary">
@@ -64,9 +66,9 @@
       <div class="panel-body">
         <p>...</p>
       </div>
-      Once you log in, you'll be re-directed to the main dashboard page. Here, you'll see all the users that want to eat at 
-      your meal plan! User names and netids will be hidden on this dashboard for anonymity, but they will be unmasked if you choose to 
-      accept their request! 
+      Once you log in, you'll be re-directed to the main dashboard page. Here, you'll see all the users that want to eat at
+      your meal plan! User names and netids will be hidden on this dashboard for anonymity, but they will be unmasked if you choose to
+      accept their request!
       <br />
       <br />
       <img src="static/images/Dashboard.png" style="width: 80%" alt="logo" />
@@ -83,14 +85,16 @@
       <img src="static/images/Menu.png" style="width: 20%" alt="logo" />
       <br />
       <br />
-      Here, you can view the main page (Dashboard), see your pending requests, submit requests, and view the Tutorial (where you are now!), and the 
-      About page (where you can view FAQs and also look at the beautiful creators of this app!). Additionally, you can view and change your account information 
+      Here, you can view the main page (Dashboard), see your pending requests, submit requests, and view the Tutorial (where you are now!), and the
+      About page (where you can view FAQs and also look at the beautiful creators of this app!). Additionally, you can view and change your account information
       in your profile.
       <br />
       <br />
     </div>
-    
-    
-
+   
+   
+ 
   </body>
 </html>
+ 
+

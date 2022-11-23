@@ -72,9 +72,10 @@ def update_details():
 
 @app.route('/blockuser', methods = ['GET', 'POST'])
 def block_user():
-    print('in block')
     username = auth.authenticate()
-    server.block_user(flask.request.args.get('netid'), username)
+    reqid = int(flask.request.form['reqid'])
+    print(reqid)
+    server.block_user(reqid, username)
     return redirect("/profile")
 
 

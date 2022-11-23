@@ -504,7 +504,7 @@ def undo_request(id, username):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-def block_user(block_netid, username):
+def block_user(reqid, username):
     
     try:
         database_url = os.getenv('DATABASE_URL')
@@ -512,10 +512,18 @@ def block_user(block_netid, username):
         with psycopg2.connect(database_url) as connection:
 
             with connection.cursor() as cursor:
-                row = (username, block_netid)
-                print('blocking', row)
+                print(reqid)
+                cursor.execute("SELECT * FROM exchanges WHERE reqid = %s", [reqid])
+
+                exchange = cursor.fetchone()
+                print(exchange)
+
+                netid = exchange[1]
+                if netid == username:
+                    netid = exchange[2]
+
                 cursor.execute("INSERT INTO blocked (netid, block_id) "
-                    + "VALUES (%s, %s)", row)
+                    + "VALUES (%s, %s)", [username, netid])
 
     except Exception as ex:
         print(ex, file=sys.stderr)
