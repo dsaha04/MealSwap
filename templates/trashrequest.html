@@ -71,11 +71,11 @@ function undoRequest(id) {
                
                 <!-- <td>{{i+1}}</td> -->
                 {% for j in range(table[i]|length - 2): %}
-                  <td>{{table[i][j]}}</td>
+                  <td style="padding-top: 20px;">{{table[i][j]}}</td>
                 {% endfor %}
                 <td>
                   <form onSubmit="if(confirm('Is the form filled out correctly?')){undoRequest({{table[i][4]}})}">
-                    <button type="submit">
+                    <button type="submit" class="btn btn-primary">
                       Undo
                     </button>
                   </form>

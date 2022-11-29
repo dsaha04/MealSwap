@@ -70,7 +70,7 @@
                
                 <!-- <td>{{i+1}}</td> -->
                 {% for j in range(table[i]|length - 1): %}
-                  <td>{{table[i][j]}}</td>
+                  <td style="padding-top: 20px;">{{table[i][j]}}</td>
                 {% endfor %}
                 <td>
                   <form onSubmit="if(confirm('Is the form filled out correctly?')){cancelRequest({{table[i][3]}});}">
