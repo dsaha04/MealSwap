@@ -124,7 +124,7 @@ var plan= $('#plan').val();
  
               <div class="form-group col-md-4">
                 <label for="inputCity">Phone Number</label>
-                <input type="text" class="form-control" id="contact" placeholder="(201) 951 2312" required>
+                <input type="tel" class="form-control" id="contact" pattern = "[0-9]{10}" placeholder="(201) 951 2312" required>
                 </div>
          
               <button onclick="createNewUser()" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Create Account</button>

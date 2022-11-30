@@ -71,7 +71,6 @@ function submitForm(para) {
                 <!-- <th scope="col">#</th> -->
                 <th scope="col">Requested Dining Plan</th>
                 <th scope="col">Meal Time</th>
-                <th scope="col">Netid</th>
                 <th scope="col">Cancel?</th>
               </tr>
             </thead>
@@ -81,7 +80,9 @@ function submitForm(para) {
                
                 <!-- <td>{{i+1}}</td> -->
                 {% for j in range(table[i]|length - 1): %}
+                {% if (j != 2): %}
                   <td style="padding-top: 20px;">{{table[i][j]}}</td>
+                  {% endif %}
                 {% endfor %}
                 <td>
                   <form action='/dashboard' onSubmit="return submitForm({{table[i][3]}})">
