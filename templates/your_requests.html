@@ -33,6 +33,17 @@
             });
            
 };
+
+function submitForm(para) {
+  var string = "Do you want to cancel this request?"
+  var answer = confirm(string)
+  if (answer){
+    cancelRequest(para);
+    return true;
+  }
+  return false;
+}
+
 </script>
  
 <body>
@@ -73,7 +84,7 @@
                   <td style="padding-top: 20px;">{{table[i][j]}}</td>
                 {% endfor %}
                 <td>
-                  <form action='/dashboard' onSubmit="if(confirm('Is the form filled out correctly?')){cancelRequest({{table[i][3]}});}">
+                  <form action='/dashboard' onSubmit="return submitForm({{table[i][3]}})">
                     <button type="submit" class="btn btn-danger">
                       Cancel Request
                     </button>

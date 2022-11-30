@@ -50,6 +50,28 @@ function deleteRequest(id) {
             });
            
 };
+
+function submitForm(para) {
+  var string = "Do you want to accept this request?"
+  var answer = confirm(string)
+  if (answer){
+    createRequest(para);
+    return true;
+  }
+  return false;
+}
+
+function submitForm1(para) {
+  var string = "Do you want to decline this request?"
+  var answer = confirm(string)
+  if (answer){
+    deleteRequest(para);
+    return true;
+  }
+  return false;
+}
+
+
 </script>
  
 <body>
@@ -92,7 +114,7 @@ function deleteRequest(id) {
                   <td style="padding-top: 20px;">{{table[i][j]}}</td>
                 {% endfor %}
                 <td>
-                  <form action='/exchanges' onSubmit="if(confirm('Is the form filled out correctly?')){createRequest({{table[i][4]}});}">
+                  <form action='/exchanges' onSubmit="return submitForm({{table[i][4]}})">
                     <button type="submit" class="btn btn-primary">
                       Accept Request
                     </button>
@@ -100,7 +122,7 @@ function deleteRequest(id) {
                 </td>
                
                 <td>
-                  <form action='/trashrequest' onSubmit="if(confirm('Is the form filled out correctly?')){deleteRequest({{table[i][4]}});}">
+                  <form action='/trashrequest' onSubmit="return submitForm1({{table[i][4]}})">
                     <button type="submit" class="btn btn-danger">
                       Decline Request
                     </button>

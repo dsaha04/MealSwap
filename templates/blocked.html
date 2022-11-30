@@ -40,6 +40,17 @@ function unblock(id) {
             });
            
 };
+
+function submitForm(para) {
+  var string = "Are you sure you want to unblock this user?"
+  var answer = confirm(string)
+  if (answer){
+    unblock(para);
+    return true;
+  }
+  console.log("WHHYYYY")
+  return false;
+}
  
 </script>
  
@@ -74,8 +85,8 @@ function unblock(id) {
                 <td> {{table[i][2]}}</td>
                 <td> {{table[i][1]}}</td>
                 <td>
-                  <form action='/dashboard' onSubmit="if(confirm('Is the form filled out correctly?')){unblock({{table[i][0]}});}">
-                    <button type="submit" class="btn btn-primary">
+                  <form action='/dashboard' onSubmit="return submitForm({{table[i][0]}})">
+                    <button type="submit" class="btn btn-danger">
                       Unblock User
                     </button>
                   </form>

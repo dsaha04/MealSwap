@@ -33,6 +33,16 @@ function undoRequest(id) {
             });
            
 };
+
+function submitForm(para) {
+  var string = "Do you want to undo this trashed request?"
+  var answer = confirm(string)
+  if (answer){
+    undoRequest(para);
+    return true;
+  }
+  return false;
+}
  
 </script>
  
@@ -74,7 +84,7 @@ function undoRequest(id) {
                   <td style="padding-top: 20px;">{{table[i][j]}}</td>
                 {% endfor %}
                 <td>
-                  <form onSubmit="if(confirm('Is the form filled out correctly?')){undoRequest({{table[i][4]}})}">
+                  <form action="/dashboard" onSubmit="return submitForm({{table[i][4]}})">
                     <button type="submit" class="btn btn-primary">
                       Undo
                     </button>
