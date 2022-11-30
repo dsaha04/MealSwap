@@ -97,7 +97,7 @@ function cancelExchange(id) {
                   {% endif %}
                 {% endfor %}
                 <td>
-                  <form onSubmit="if(confirm('Is the form filled out correctly?')){cancelExchange({{table[i][0]}});}">
+                  <form action='/dashboard' onSubmit="if(confirm('Is the form filled out correctly?')){cancelExchange({{table[i][0]}});}">
                     <button type="submit" class="btn btn-warning">
                       Cancel Exchange
                     </button>
@@ -105,7 +105,7 @@ function cancelExchange(id) {
                      
                   </td>
                   <td>
-                    <form onSubmit="if(confirm('Is the form filled out correctly?')){blockuser({{table[i][0]}});}">
+                    <form action='/blocked' onSubmit="if(confirm('Is the form filled out correctly?')){blockuser({{table[i][0]}});}">
                       <button type="submit" class="btn btn-danger">
                         Block User
                       </button>
