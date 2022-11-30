@@ -72,7 +72,7 @@ function unblock(id) {
               <tr>
                 <td> {{table[i][1]}}</td>
                 <td>
-                  <form onSubmit="if(confirm('Is the form filled out correctly?')){unblock({{table[i][0]}});}">
+                  <form action='/dashboard' onSubmit="if(confirm('Is the form filled out correctly?')){unblock({{table[i][0]}});}">
                     <button type="submit" class="btn btn-primary">
                       Unblock User
                     </button>

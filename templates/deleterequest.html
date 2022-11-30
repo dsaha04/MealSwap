@@ -53,8 +53,8 @@ function deleteRequest(id) {
         <br/>
         time: {{req[3]}}
         <br/>
-        <form action="/trashrequest">
-            <button onclick="deleteRequest({{req[0]}})" type="button" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Delete Request</button>
+        <form action="/dashboard">
+            <button onclick="deleteRequest({{req[0]}})" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Delete Request</button>
         </form>
         
     </div>
