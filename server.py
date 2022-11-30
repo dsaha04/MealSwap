@@ -45,7 +45,9 @@ def get_blocked(username):
 
                 if rows is not None:
                     for row in rows:
-                        table.append([row[0], row[2]])
+                        cursor.execute("SELECT name FROM users WHERE netid = %s", [row[2]])
+                        name = cursor.fetchone()
+                        table.append([row[0], row[2], name[0]])
             return table
         
     except Exception as ex:
