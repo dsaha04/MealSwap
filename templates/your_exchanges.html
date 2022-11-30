@@ -50,6 +50,25 @@ function cancelExchange(id) {
             });
            
 };
+
+function submitForm(para) {
+  var string = "Do you want to cancel this exchange?"
+  var answer = confirm(string)
+  if (answer){
+    cancelExchange(para);
+    return true;
+  }
+  return false;
+}
+
+function submitForm1(para) {
+  var answer = confirm('Do you wish to block this user?')
+  if (answer){
+    blockuser(para);
+    return true;
+  }
+  return false;
+}
  
 </script>
  
@@ -97,7 +116,7 @@ function cancelExchange(id) {
                   {% endif %}
                 {% endfor %}
                 <td>
-                  <form action='/dashboard' onSubmit="if(confirm('Is the form filled out correctly?')){cancelExchange({{table[i][0]}});}">
+                  <form action='/dashboard' onSubmit="return submitForm({{table[i][0]}})">
                     <button type="submit" class="btn btn-warning">
                       Cancel Exchange
                     </button>
@@ -105,7 +124,7 @@ function cancelExchange(id) {
                      
                   </td>
                   <td>
-                    <form action='/blocked' onSubmit="if(confirm('Is the form filled out correctly?')){blockuser({{table[i][0]}});}">
+                    <form action='/blocked' onSubmit="return submitForm1({{table[i][0]}})">
                       <button type="submit" class="btn btn-danger">
                         Block User
                       </button>
