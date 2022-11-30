@@ -49,7 +49,7 @@
 
   {% include 'navbar.html' %}
 
-    <div class="mx-sm-4 mt-4" style="padding-left: 20px">
+    <div class="mx-sm-4 mt-4 d-flex justify-content-center" style="padding-left: 20px">
       <h2>
         Profile Details
       </h2>
@@ -58,16 +58,16 @@
     <div class="show-data" >
     </div>
       
-    <div class = "container-fluid px-4">
+    <div class = "container-fluid px-4 d-flex justify-content-center">
       <div class="mx-sm-4 mt-4">
-        <table>
+        <table cellpadding="5" cellspacing="0">
             <tr>
-              <td style="width:40%">Net ID: </td>
+              <td style="width:40%" align="right">Net ID:</td>
               <td>{{netid}}</td>
             </tr>
             <tr>
-              <td>
-                <label for="inputEmail4">Preferred Name</label>
+              <td align="right">
+                <label for="inputEmail4">Preferred Name:</label>
               </td>
               <td>
                 <input type="text" class="form-control" style="color:black" id="name" value="{{name}}">
@@ -75,8 +75,8 @@
             </tr>
 
             <tr>
-              <td>
-                <label for="inputAddress2">Class Year</label>
+              <td align="right">
+                <label for="inputAddress2">Class Year:</label>
               </td>
               <td>
                 <input type="text" class="form-control" style="color:black" id="year" value="{{class_year}}">
@@ -84,8 +84,8 @@
             </tr>
 
             <tr>
-              <td>
-                <label for="inputCity">Dining Plan</label>
+              <td align="right">
+                <label for="inputCity">Dining Plan:</label>
               </td>
               <td>
                 <select class="form-select" id="plan" aria-label="Default select example">
@@ -110,8 +110,8 @@
             </tr>
 
             <tr>
-              <td>
-                <label for="inputCity">Phone Number</label>
+              <td align="right">
+                <label for="inputCity">Phone Number:</label>
               </td>
               <td>
                 <form>
