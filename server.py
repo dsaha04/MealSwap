@@ -4,6 +4,8 @@ import os
 import psycopg2
 import notifications
 
+numbers = {'6506958443', '2485332973', '2489466588', '2019522343', '3124592594', '7035019474', '6092582211', '2672261984'}
+
 def create_user(details, netid):
     netid = str(netid)
     year = str(details['year'])
@@ -411,11 +413,17 @@ def accept_request(id, username):
 
                 cursor.execute("SELECT name FROM users WHERE netid = %s", [username])
                 name1 = cursor.fetchone()
+                cursor.execute("SELECT plan FROM users WHERE netid = %s", [username])
+                place1 = cursor.fetchone()
+
+
 
                 print('4')
 
                 cursor.execute("SELECT name FROM users WHERE netid = %s", [req[1]])
                 name2 = cursor.fetchone()
+                cursor.execute("SELECT plan FROM users WHERE netid = %s", [req[1]])
+                place2 = cursor.fetchone()
 
                 print(req[3])
 
@@ -426,13 +434,14 @@ def accept_request(id, username):
                 # msg = 'Hello, ' + str(name1[0]) + '! Great news, you have been matched with ' + str(name2[0]) + ' for ' + str(req[3])
                 # msg += '. Please visit https://mealswap.onrender.com/exchanges to view more details about your exchange.'
 
-                def create_message(name1, name2):
+                def create_message(name1, name2, place):
                     msg = 'Hello, ' + name1 + '! Great news, you have been matched with ' + name2 + ' for ' + req[3]
-                    msg += '. Please visit https://mealswap.onrender.com/exchanges to view more details about your exchange.'
+                    msg += ' at ' + place + '. Please visit https://mealswap.onrender.com/exchanges to view more details about your exchange.'
                     return msg
-                
-                notifications.send_message(num1[0], create_message(name1[0], name2[0]))
-                notifications.send_message(num2[0], create_message(name2[0], name1[0]))
+
+                if num1[0] in numbers and num2[0] in numbers:           
+                    notifications.send_message(num1[0], create_message(name1[0], name2[0], place2[0]))
+                    notifications.send_message(num2[0], create_message(name2[0], name1[0], place1[0]))
 
 
 
@@ -484,8 +493,60 @@ def cancel_exchange(id):
         with psycopg2.connect(database_url) as connection:
 
             with connection.cursor() as cursor:
+                
+                cursor.execute(
+                    "SELECT * FROM exchanges WHERE reqid = %s", [id])
+                
+                exchange = cursor.fetchone()
+
+                netid = exchange[1]
+                swapid = exchange[2]    
+
+                cursor.execute(
+                    "SELECT * FROM users WHERE netid = %s", [netid])  
+
+                row = cursor.fetchone()
+                name1 = row[1]  
+                place1 = row[4]  
+
+                cursor.execute(
+                    "SELECT phone FROM contact WHERE netid = %s", [netid])  
+                
+                phone = cursor.fetchone()
+                num1 = phone[0]
+
+                cursor.execute(
+                    "SELECT * FROM users WHERE netid = %s", [swapid])  
+
+                row = cursor.fetchone()
+                name2 = row[1]  
+                place2 = row[4]  
+
+                cursor.execute(
+                    "SELECT phone FROM contact WHERE netid = %s", [swapid])  
+                
+                phone = cursor.fetchone()
+                num2 = phone[0]
+
                 cursor.execute(
                     "DELETE FROM exchanges WHERE reqid = %s", [id])
+
+                def create_message(name1, name2, place):
+                    msg = 'Hello, ' + name1 + '! Unfortunately, your exchange with ' + name2 + ' at ' + place + ' has been cancelled. '
+                    msg += 'Please visit https://mealswap.onrender.com/exchanges to view your current exchanges.'
+                    return msg
+
+                print(num1)
+                print(name1)
+                print(name2)
+                print(place2)
+
+                if num1 in numbers and num2 in numbers: 
+                    notifications.send_message(num1, create_message(name1, name2, place2))
+                    notifications.send_message(num2, create_message(name2, name1, place1))
+
+                
+
 
     except Exception as ex:
         print(ex, file=sys.stderr)
