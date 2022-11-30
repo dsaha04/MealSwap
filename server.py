@@ -10,7 +10,7 @@ numbers = {'6506958443', '2485332973', '2489466588', '2019522343', '3124592594',
 
 def create_user(details, netid):
     netid = str(netid)
-    year = str(details['year'])
+    # year = str(details['year'])
     plan = str(details['plan'])
     user = 'user'
     nickname = str(details['name'])
