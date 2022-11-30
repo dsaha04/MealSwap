@@ -64,12 +64,14 @@ function unblock(id) {
                 <!-- <th scope="col">#</th> -->
                 <!-- <th scope="col">Requested Dining Plan</th> -->
                 <th scope="col">Name</th>
-                <th scope="col"></th>
+                <th scope="col">NetID</th>
+                <th scope="col">Unblock?</th>
               </tr>
             </thead>
             <tbody>
               {% for i in range(table|length): %}
               <tr>
+                <td> {{table[i][2]}}</td>
                 <td> {{table[i][1]}}</td>
                 <td>
                   <form action='/dashboard' onSubmit="if(confirm('Is the form filled out correctly?')){unblock({{table[i][0]}});}">
