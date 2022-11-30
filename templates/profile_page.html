@@ -26,7 +26,8 @@
 <script>
   function updateDetails() {
   var name= $('#name').val();
-  var number = $('#contact').val();
+  // var number = $('#contact').val();
+  var number = document.getElementById('contact').value;
   var year= $('#year').val();
   var plan= $('#plan').val();
   
@@ -69,7 +70,7 @@
                 <label for="inputEmail4">Preferred Name</label>
               </td>
               <td>
-                <input type="text" class="form-control" id="name" value="{{name}}">
+                <input type="text" class="form-control" style="color:black" id="name" value="{{name}}">
               </td>
             </tr>
 
@@ -78,7 +79,7 @@
                 <label for="inputAddress2">Class Year</label>
               </td>
               <td>
-                <input type="text" class="form-control" id="year" value="{{class_year}}">
+                <input type="text" class="form-control" style="color:black" id="year" value="{{class_year}}">
               </td>
             </tr>
 
@@ -113,14 +114,22 @@
                 <label for="inputCity">Phone Number</label>
               </td>
               <td>
-                <input type="text" class="form-control" id="contact" value="{{phone_no}}">
+                <form>
+                <input class="form-control profileInput" type="tel" pattern="[0-9]{10}" style="color:black" id="contact" value="{{phone_no}}" required="required">
+                <tr>
+                  <td></td>
+                  <td>
+                    <input type="submit" onclick="updateDetails()" type="button" class="btn btn-primary" style="margin-top: 10px;"></button>
+                  </td>
+                </tr>
+              </form>
               </td>
             </tr>
 
 
         </table>
 
-        <button onclick="updateDetails()" type="button" class="btn btn-primary" style="margin-top: 10px;">Update Details</button>
+        <!-- <button onclick="updateDetails()" type="button" class="btn btn-primary" style="margin-top: 10px;">Update Details</button> -->
 
       </div>
 
