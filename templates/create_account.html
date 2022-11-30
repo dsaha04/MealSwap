@@ -36,14 +36,15 @@ var plan= $('#plan').val();
               data: {name:name, number:number, year:year, plan:plan}
           }).done(function(response) {
             // https://pemagrg.medium.com/build-a-web-app-using-pythons-flask-for-beginners-f28315256893
-            var html= "<br><p> <b> Thanks for creating your account. We will note this in our databases. Your name is:  <b><p>";
-            response =response.result;
-                 $.each(response,function(key,val){
-                 console.log(val);
-                    html+="<p>"+val+"<p>"
-                });
-                html +="<br>";
-                $(".show-data").append(html);
+            // var html= "<br><p> <b> Thanks for creating your account. We will note this in our databases. Your name is:  <b><p>";
+            // response =response.result;
+            //      $.each(response,function(key,val){
+            //      console.log(val);
+            //         html+="<p>"+val+"<p>"
+            //     });
+            //     html +="<br>";
+            //     $(".show-data").append(html);
+            // $('html').html(response)
             });
            
 };
@@ -124,7 +125,7 @@ var plan= $('#plan').val();
                 <input type="text" class="form-control" id="contact" placeholder="(201) 951 2312" required>
                 </div>
          
-              <button onclick="createNewUser()" type="button" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Create Account</button>
+              <button onclick="createNewUser()" type="submit" class="btn btn-primary" style="margin-top: 10px; margin-left: 15px;">Create Account</button>
  
         </form>
  

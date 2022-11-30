@@ -6,7 +6,7 @@ import auth
 from django.shortcuts import redirect
 
 import flask
-from flask import Flask, request, render_template, jsonify, redirect, url_for
+# from flask import Flask, request, render_template, jsonify, redirect, url_for
 
 app = flask.Flask(__name__)
 
@@ -24,13 +24,13 @@ def create():
     username = auth.authenticate()
     if flask.request.method == 'POST':
         server.create_user(flask.request.form, username)
-        return 
+        return flask.redirect('/dashboard')
         
     if server.check_user(username) == -1:
         return flask.render_template('create_account.html')
     else:
         # fix url
-        return redirect('/dashboard')
+        return flask.redirect('/dashboard')
         
 
 @app.route('/logoutapp', methods=['GET'])
@@ -46,7 +46,7 @@ def logoutcas():
 def blocked():
     username = auth.authenticate()
     if server.check_user(username) == -1:
-        return redirect('/create')
+        return flask.redirect('/create')
     blocked = server.get_blocked(username)
     return flask.render_template('blocked.html', table = blocked)
 
@@ -54,7 +54,7 @@ def blocked():
 def profile():
     username = auth.authenticate()
     if server.check_user(username) == -1:
-        return redirect('/create')
+        return flask.redirect('/create')
     details = server.profile_details(username)
     name = details[0][1]
     year = details[0][3]
@@ -68,12 +68,12 @@ def update_details():
     username = auth.authenticate()
     if flask.request.method == 'POST':
         server.update_details(flask.request.form, username)
-        return redirect("/profile")
+        return flask.redirect("/profile")
 
     if server.check_user(username) != -1:
         return flask.render_template('update_details.html')       
     else: 
-        return redirect('/create')
+        return flask.redirect('/create')
 
 
 @app.route('/blockuser', methods = ['GET', 'POST'])
@@ -81,14 +81,14 @@ def block_user():
     username = auth.authenticate()
     reqid = int(flask.request.form['reqid'])
     server.block_user(reqid, username)
-    return redirect("/profile")
+    return flask.redirect("/profile")
 
 @app.route('/unblock', methods = ['GET', 'POST'])
 def unblock_user():
     username = auth.authenticate()
     blockid = int(flask.request.form['blockid'])
     server.unblock_user(blockid, username)
-    return redirect("/profile")
+    return flask.redirect("/profile")
 
 
 
@@ -135,7 +135,7 @@ def dashboard():
     if server.check_user(username) != -1:
         return flask.render_template('dashboard.html', table = req_table)       
     else: 
-        return redirect('/create')
+        return flask.redirect('/create')
 
 @app.route('/yourrequests')
 def your_requests():
@@ -163,7 +163,7 @@ def submit_request():
     if server.check_user(username) != -1:
         return flask.render_template('submitrequest.html')       
     else: 
-        return redirect('/create')
+        return flask.redirect('/create')
     
 @app.route('/viewrequest', methods = ['GET', 'POST'])
 def view_request():
@@ -177,7 +177,7 @@ def view_request():
         print()
         reqid = int(flask.request.form['reqid'])
         server.accept_request(reqid, username)
-        return redirect('/exchanges')
+        return flask.redirect('/exchanges')
     
     return flask.render_template('viewrequest.html', req=req)
 
@@ -194,7 +194,7 @@ def delete_request():
         print()
         reqid = int(flask.request.form['reqid'])
         server.delete_request(reqid, username)
-        return redirect('/trashrequest')
+        return flask.redirect('/trashrequest')
     
     return flask.render_template('deleterequest.html', req=req)
 
@@ -208,7 +208,7 @@ def undo_request():
     if flask.request.method == 'POST':
         reqid = int(flask.request.form['reqid'])
         server.undo_request(reqid, username)
-        return redirect('/dashboard')
+        return flask.redirect('/dashboard')
     
     return flask.render_template('undorequest.html', req=req)
 
@@ -220,7 +220,7 @@ def trash_request():
     if server.check_user(username) != -1:
         return flask.render_template('trashrequest.html', table = req_table)       
     else: 
-        return redirect('/create')
+        return flask.redirect('/create')
 
 @app.route('/cancelexchange', methods = ['GET', 'POST'])
 def cancel_exchange():
@@ -232,7 +232,7 @@ def cancel_exchange():
     if flask.request.method == 'POST':
         reqid = int(flask.request.form['reqid'])
         server.cancel_exchange(reqid)
-        return redirect('/exchanges')
+        return flask.redirect('/exchanges')
     
     return flask.render_template('cancelexchange.html', req=req)
 
@@ -247,7 +247,7 @@ def cancel_request():
     if flask.request.method == 'POST':
         reqid = int(flask.request.form['reqid'])
         server.cancel_request(reqid)
-        return redirect('/dashboard')
+        return flask.redirect('/dashboard')
     
     return flask.render_template('cancelrequest.html', req=req)
 

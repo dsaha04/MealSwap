@@ -574,7 +574,7 @@ def get_exchanges(username):
                 requested = []
 
                 cursor.execute(
-                    "SELECT * FROM exchanges WHERE (netid = %s OR swapnetid = %s) AND netid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND swapnetid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s)", [username, username, username, username])
+                    "SELECT * FROM exchanges WHERE (netid = %s OR swapnetid = %s) AND netid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND swapnetid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND netid NOT IN (SELECT netid FROM blocked WHERE block_netid = %s) AND swapnetid NOT IN (SELECT netid FROM blocked WHERE block_netid = %s)", [username, username, username, username, username, username])
 
                 rows = cursor.fetchall()
                 print(rows)

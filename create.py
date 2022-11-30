@@ -52,7 +52,7 @@ def main():
 
                 cursor.execute("DROP TABLE IF EXISTS blocked")
                 cursor.execute("CREATE TABLE blocked "
-                    + "(netid TEXT, block_id TEXT)")
+                    + "(blockid INT GENERATED ALWAYS AS IDENTITY, netid TEXT, block_netid TEXT)")
                 
                 #-------------------------------------------------------
 
