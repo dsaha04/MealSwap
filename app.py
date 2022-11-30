@@ -236,6 +236,14 @@ def cancel_exchange():
     
     return flask.render_template('cancelexchange.html', req=req)
 
+@app.route('/completeexchange', methods = ['GET', 'POST'])
+def complete_exchange():
+    username = auth.authenticate()
+    reqid = int(flask.request.form['reqid'])
+    server.complete_exchange(reqid)
+    return flask.redirect('/exchanges')
+    
+
 
 @app.route('/cancelrequest', methods = ['GET', 'POST'])
 def cancel_request():

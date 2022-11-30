@@ -625,6 +625,18 @@ def unblock_user(blockid, username):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
+def complete_exchange(id):
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute('DELETE FROM exchanges WHERE reqid = %s', [id])
+    
+    except Exception as ex:
+        print(ex, file = sys.stderr)
+        sys.exit(1)
+
 
 def get_exchanges(username):
     username = str(username)
@@ -662,7 +674,7 @@ def get_exchanges(username):
                         contact = cursor.fetchone()
                         phone = contact[1]
                         email = contact[2]
-                        request = [exchange_id, swapnetid, name, year, plan, phone, email, times, completed]
+                        request = [exchange_id, swapnetid, name, year, plan, phone, email, times]
                         print(request)
                         requested.append(request)
 

@@ -51,6 +51,27 @@ function cancelExchange(id) {
            
 };
 
+function completeExchange(id) {
+  $.ajax({
+              url: "/completeexchange",
+              type: "POST",
+              data: {reqid: id}
+          }).done(function(response) {
+ 
+            });
+           
+};
+
+function submitFormcomplete(para) {
+  var string = "Have you completed this exchange?"
+  var answer = confirm(string)
+  if (answer){
+    completeExchange(para);
+    return true;
+  }
+  return false;
+}
+
 function submitForm(para) {
   var string = "Do you want to cancel this exchange?"
   var answer = confirm(string)
@@ -101,7 +122,7 @@ function submitForm1(para) {
                 <th scope="col">Contact</th>
                 <!-- <th scope="col">Email</th> -->
                 <th scope="col">Meal Time</th>
-                <th scope="col">Completed</th>
+                <th scope="col"></th>
                 <th scope="col"></th>
                 <th scope="col"></th>
  
@@ -115,6 +136,16 @@ function submitForm1(para) {
                   <td style="padding-top: 20px;">{{table[i][j]}}</td>
                   {% endif %}
                 {% endfor %}
+
+                <td>
+                  <form action='/dashboard' onSubmit="return submitFormcomplete({{table[i][0]}})">
+                    <button type="submit" class="btn btn-success">
+                      Complete Exchange
+                    </button>
+                  </form>
+                     
+                  </td>
+
                 <td>
                   <form action='/dashboard' onSubmit="return submitForm({{table[i][0]}})">
                     <button type="submit" class="btn btn-warning">
