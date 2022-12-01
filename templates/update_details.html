@@ -29,6 +29,10 @@
   var number = $('#contact').val();
   var year= $('#year').val();
   var plan= $('#plan').val();
+
+  if (number == null) {
+    return false;
+  }
   
   
     $.ajax({

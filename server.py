@@ -3,19 +3,29 @@ import app
 import os
 import psycopg2
 import notifications
+import req_lib
+
 
 numbers = {'6506958443', '2485332973', '2489466588', '2019522343', '3124592594', '7035019474', '6092582211', '2672261984'}
 
 def create_user(details, netid):
     netid = str(netid)
-    year = str(details['year'])
+    # year = str(details['year'])
     plan = str(details['plan'])
     user = 'user'
-    name = str(details['name'])
-    users = (netid, name, user, year, plan)
+    nickname = str(details['name'])
     phone = str(details['number'])
     email = netid + "@princeton.edu"
     contact = (netid, phone, email)
+    lib = req_lib.ReqLib()
+
+    req = lib.getJSON(
+        lib.configs.USERS_BASIC,
+        uid=netid,
+    )
+
+    name = req[0]['displayname']
+    users = (netid, nickname, user, name, plan)
 
     try:
         database_url = os.getenv('DATABASE_URL')
@@ -45,9 +55,9 @@ def get_blocked(username):
 
                 if rows is not None:
                     for row in rows:
-                        cursor.execute("SELECT name FROM users WHERE netid = %s", [row[2]])
+                        cursor.execute("SELECT * FROM users WHERE netid = %s", [row[2]])
                         name = cursor.fetchone()
-                        table.append([row[0], row[2], name[0]])
+                        table.append([row[0], row[2], name[1], name[3]])
             return table
         
     except Exception as ex:
@@ -666,15 +676,15 @@ def get_exchanges(username):
                         cursor.execute(
                             "SELECT * FROM users WHERE netid = %s", [swapnetid])
                         user = cursor.fetchone()
-                        name = user[1]
-                        year = user[3]
+                        nickname = user[1]
+                        name = user[3]
                         plan = user[4]
                         cursor.execute(
                             "SELECT * FROM contact WHERE netid = %s",[swapnetid])
                         contact = cursor.fetchone()
                         phone = contact[1]
                         email = contact[2]
-                        request = [exchange_id, swapnetid, name, year, plan, phone, email, times]
+                        request = [exchange_id, swapnetid, name, nickname, plan, phone, email, times]
                         print(request)
                         requested.append(request)
 

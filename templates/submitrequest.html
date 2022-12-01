@@ -26,6 +26,13 @@
 function createRequest() {
 var plan= $('#plan').val();
 var times= $('#times').val();
+console.log(plan)
+if (plan == null) {
+  return false;
+} 
+if (times == null) {
+  return false;
+} 
 
 
   $.ajax({
@@ -33,15 +40,6 @@ var times= $('#times').val();
               type: "POST",
               data: {plan:plan, times:times}
           }).done(function(response) {
-            // https://pemagrg.medium.com/build-a-web-app-using-pythons-flask-for-beginners-f28315256893
-            var html= "<br><p> <b> Thanks for creating your account. We will note this in our databases. Your name is:  <b><p>";
-            response =response.result;
-                 $.each(response,function(key,val){
-                 console.log(val);
-                    html+="<p>"+val+"<p>"
-                });
-                html +="<br>";
-                $(".show-data").append(html);
             });
             
 };
@@ -63,7 +61,7 @@ var times= $('#times').val();
         <form action="/dashboard" method="get">
               <div class="form-group col-md-4">
                 <label for="inputAddress">Requested Dining Plan</label>
-                <select class="form-select" id="plan" aria-label="Default select example" required>
+                <select class="form-select" id="plan" aria-label="Default select example" required = "true">
                   <option value="" selected disabled>Meal Plan</option>
                   <option value="2D Co-Op">2D Co-Op</option>
                   <option value="IFC Co-Op">IFC Co-Op</option>
@@ -85,7 +83,7 @@ var times= $('#times').val();
 
               <div class="form-group col-md-4">
                 <label for="inputAddress2">Meal Time</label>
-                <select class="form-select" id="times" aria-label="Default select example" required>
+                <select class="form-select" id="times" aria-label="Default select example" required = "true">
                   <option value ="" selected disabled>Meal Time</option>
                   <option value="Breakfast">Breakfast</option>
                   <option value="Lunch">Lunch</option>
