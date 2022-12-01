@@ -44,4 +44,8 @@ border-top-right-radius: 0rem;
 border-bottom-right-radius: 0rem;
 }
 }
-    
+
+.card {
+    border-radius: 2em;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  }

@@ -50,25 +50,28 @@ function submitForm(para) {
  
     {% include 'navbar.html' %}
  
-    <div class="mx-sm-4 mt-4" style="padding-left: 20px">
+    <div class="mx-sm-4 mt-4" style="padding-left: 20px; justify-content: space-between; display: flex; align-items: center;">
       <h2>
-        Dashboard
+      Dashboard
       </h2>
+      <h4>
+      <a style="padding-right: 20px;" href="{{url_for('submit_request')}}">Submit Request</a>
+    </h4>
     </div>
  
     <div class="show-data" >
     </div>
    
-    <div class="container-fluid px-0">
+    <div class="container-fluid">
       <div class="mx-sm-5 mt-4">
         {% with %}
             {% set activeTab = ["", "active", "", ""] %}
             {% include 'tabnav.html' %}
         {% endwith %}
-        <table class="table">
+        <!-- <table class="table">
             <thead class="thead-dark">
               <tr>
-                <!-- <th scope="col">#</th> -->
+                <th scope="col">#</th>
                 <th scope="col">Requested Dining Plan</th>
                 <th scope="col">Meal Time</th>
                 <th scope="col">Netid</th>
@@ -79,7 +82,7 @@ function submitForm(para) {
               {% for i in range(table|length): %}
               <tr>
                
-                <!-- <td>{{i+1}}</td> -->
+                <td>{{i+1}}</td>
                 {% for j in range(table[i]|length - 1): %}
                   <td style="padding-top: 20px;">{{table[i][j]}}</td>
                 {% endfor %}
@@ -94,14 +97,36 @@ function submitForm(para) {
               <tr>
               {% endfor %}
  
-              <!-- <tr>
+              <tr>
                 <th scope="row">3</th>
                 <td>Tiger Inn</td>
                 <td>Ivy</td>
                 <td>Lunch</td>
-              </tr> -->
+              </tr>
             </tbody>
-          </table>
+          </table> -->
+
+          {% for i in range(table|length): %}
+          <div class="card mb-4">
+            <div class="row align-content-center" style="align-items: center;">
+              <div class="card-body col-sm-8">
+                {% for j in range(table[i]|length - 1): %}
+                <strong class="cardText" style="margin-left: 30px;"><b>{{table[i][j]}}</b></strong><br>
+                {% endfor %}
+              </div>
+              <div class="card-body col-sm-4">
+                  <form action="/dashboard" onSubmit="return submitForm({{table[i][3]}})">
+                    <button type="submit" class="btn btn-danger" style="margin-left: 30px;">
+                      Cancel Request
+                    </button>
+                  </form>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+
+
+
  
     </div>
   </div>
