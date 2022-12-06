@@ -159,23 +159,25 @@ def check_for_instant_matches(username):
                 for req in reqs:
                     print(req)
                     
-                    p1_username = req[0]
-                    p2_username = req[1]
-                    p1_reqid = req[2]
-                    p2_reqid = req[3]
+                    p1_username = req[1]
+                    p2_username = req[0]
+                    p1_reqid = req[3]
+                    p2_reqid = req[2]
                     
                     if p1_username != username:
-                        p1_username = req[1]
-                        p2_username = req[0]
-                        p1_reqid = req[3]
-                        p2_reqid = req[2]
+                        p1_username = req[0]
+                        p2_username = req[1]
+                        p1_reqid = req[2]
+                        p2_reqid = req[3]
                     # delete second request
-                    cursor.execute("DELETE FROM requested WHERE reqid=%s", [p2_reqid])
+                    print(f'your username: {p1_username}')
+                    cursor.execute("DELETE FROM requested WHERE reqid=%s", [p1_reqid])
                     
                     # accept first request
-                    accept_request(p1_reqid, p1_username)
+                    accept_request(p2_reqid, p1_username)
+                    return True
                 
-                return True
+                return False
             
     except Exception as ex:
         print(ex, file=sys.stderr)
