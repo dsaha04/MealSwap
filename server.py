@@ -129,6 +129,59 @@ def check_user(username):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
+def check_for_instant_matches(username):
+    
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+
+            with connection.cursor() as cursor:
+                matches = "SELECT p1, p2, p1_reqid, p2_reqid "
+                matches += "FROM(SELECT req1.netid as p1, req2.netid as p2,"
+                matches += "req1.reqid as p1_reqid, req2.reqid as p2_reqid, "
+                matches += "req1.requested as p1_req, req2.requested as p2_req, "
+                matches += "req1.plan as p1_plan, req2.plan as p2_plan "
+                matches += "FROM(SELECT reqid, users.netid, requested, times, plan FROM requested, users WHERE requested.netid=users.netid) req1 "
+                matches +=    "JOIN(SELECT reqid, users.netid, requested, times, plan FROM requested, users WHERE requested.netid=users.netid) req2 "
+                matches +=    "ON req1.netid=%s AND req2.netid != %s AND req1.times=req2.times) reqs "
+                matches += "WHERE p1_req = p2_plan AND p2_req = p1_plan "
+                matches += "AND p2 NOT IN(SELECT block_netid as netid FROM blocked WHERE netid=p1) "
+                matches += "AND p1 NOT IN(SELECT block_netid as netid FROM blocked WHERE netid=p2) "
+                matches += "AND p1_reqid NOT IN(SELECT reqid as p1_reqid FROM deletedrequest WHERE netid=p2) "
+                matches +=  "AND p2_reqid NOT IN(SELECT reqid as p2_reqid FROM deletedrequest WHERE netid=p1) "
+
+                cursor.execute(matches, [
+                    username, username])
+
+                reqs = cursor.fetchall()
+                
+                for req in reqs:
+                    print(req)
+                    
+                    p1_username = req[0]
+                    p2_username = req[1]
+                    p1_reqid = req[2]
+                    p2_reqid = req[3]
+                    
+                    if p1_username != username:
+                        p1_username = req[1]
+                        p2_username = req[0]
+                        p1_reqid = req[3]
+                        p2_reqid = req[2]
+                    # delete second request
+                    cursor.execute("DELETE FROM requested WHERE reqid=%s", [p2_reqid])
+                    
+                    # accept first request
+                    accept_request(p1_reqid, p1_username)
+                
+                return True
+            
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+
 def create_request(details, username):
 
     username = str(username)
@@ -286,7 +339,6 @@ def trash_requests(username):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-    
 
 def get_your_requests(username):
     username = str(username)
@@ -321,28 +373,6 @@ def get_your_requests(username):
         print(ex, file=sys.stderr)
         sys.exit(1)
             
-def get_request(id):
-    try:
-        database_url = os.getenv('DATABASE_URL')
-
-        with psycopg2.connect(database_url) as connection:
-
-            with connection.cursor() as cursor:
-                requested = []
-                print("ID")
-                print(id)
-                cursor.execute(
-                    "SELECT * FROM requested WHERE reqid = %s", [id])
-                req = cursor.fetchone()
-
-        
-                return req
-
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        sys.exit(1)
-        
-
 def get_exchange(id):
     try:
         database_url = os.getenv('DATABASE_URL')
@@ -365,6 +395,7 @@ def get_exchange(id):
         sys.exit(1)
 
 def get_request(id):
+    print('in here')
     try:
         database_url = os.getenv('DATABASE_URL')
 

@@ -88,6 +88,12 @@ def unblock_user():
     username = auth.authenticate()
     blockid = int(flask.request.form['blockid'])
     server.unblock_user(blockid, username)
+    
+    instant_matched = server.check_for_instant_matches(username)
+    if instant_matched:
+        flask.flash(
+            "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
+    
     return flask.redirect("/profile")
 
 
@@ -211,15 +217,22 @@ def delete_request():
 def undo_request():
     username = auth.authenticate()
     
-    reqid = flask.request.args.get('reqid')
+    reqid = int(flask.request.form['reqid'])
+    print(f"TRYING TO GET REQUEST {reqid}")
     req = server.get_request(reqid)
     
     if flask.request.method == 'POST':
-        print("HEREEEE")
-        flask.flash('test flash1')
-        reqid = int(flask.request.form['reqid'])
+        print("UNDOing REQUEST")
+        print(f'req: {req[1]}')
         server.undo_request(reqid, username)
-        return flask.redirect('/dashboard')
+        
+        instant_matched = server.check_for_instant_matches(req[1])
+        if instant_matched:
+            flask.flash(
+                "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
+        reqid = int(flask.request.form['reqid'])
+        
+        return "easter egg 2"
     
     return flask.render_template('undorequest.html', req=req)
 
