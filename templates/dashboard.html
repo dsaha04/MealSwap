@@ -71,12 +71,21 @@ function submitForm1(para) {
   return false;
 }
 
+$( document ).ready(function() {
+    console.log( "ready!" );
+});
 
 </script>
  
 <body>
- 
     {% include 'navbar.html' %}
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
+
     <div class="mx-sm-4 mt-4" style="padding-left: 20px; justify-content: space-between; display: flex; align-items: center;">
       <h2>
       Dashboard

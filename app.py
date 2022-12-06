@@ -132,6 +132,7 @@ def dashboard():
     username = auth.authenticate()
     req_table = server.get_requests(username)
     print(req_table)
+    
     if server.check_user(username) != -1:
         return flask.render_template('dashboard.html', table = req_table)       
     else: 
@@ -154,11 +155,17 @@ def your_exchanges():
 @app.route('/submitrequest', methods = ['GET', 'POST'])
 def submit_request():
     username = auth.authenticate()
-
+    
     if flask.request.method == 'POST':
         print('hi')
-        server.create_request(flask.request.form, username)
-        return 
+        
+        response = server.create_request(flask.request.form, username)
+        print(response)
+        # DEBUGGING, delete
+        if response:
+            flask.flash(
+                "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
+        return "easter egg :)"
 
     if server.check_user(username) != -1:
         return flask.render_template('submitrequest.html')       
@@ -194,7 +201,9 @@ def delete_request():
         print()
         reqid = int(flask.request.form['reqid'])
         server.delete_request(reqid, username)
-        return flask.redirect('/trashrequest')
+        
+        print("FLASHED")
+        return
     
     return flask.render_template('deleterequest.html', req=req)
 
@@ -206,6 +215,8 @@ def undo_request():
     req = server.get_request(reqid)
     
     if flask.request.method == 'POST':
+        print("HEREEEE")
+        flask.flash('test flash1')
         reqid = int(flask.request.form['reqid'])
         server.undo_request(reqid, username)
         return flask.redirect('/dashboard')

@@ -167,7 +167,7 @@ def create_request(details, username):
                     else:
                         print('exchange')
                         accept_request(req[0], username)
-
+                        return True # returns true when instant match
 
     except Exception as ex:
         print(ex, file=sys.stderr)
