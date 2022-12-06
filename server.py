@@ -154,9 +154,14 @@ def create_request(details, username):
                     # seperator = ', '
                     # stmt_str = seperator.join(netids)
                     
-                    cursor.execute("SELECT * FROM requested WHERE requested = %s AND times = %s AND netid IN (SELECT netid FROM users WHERE plan = %s AND netid != %s) AND netid NOT IN (SELECT block_netid as netid FROM blocked WHERE netid= %s)",[user_plan,times, requested_plan, username, username])
+                    statement = "SELECT * FROM requested "
+                    statement += "WHERE requested = %s AND times = %s AND netid IN (SELECT netid FROM users WHERE plan = %s AND netid != %s) "
+                    statement += "AND netid NOT IN (SELECT block_netid as netid FROM blocked WHERE netid= %s) " 
+                    statement += "AND reqid NOT IN (SELECT requested.reqid as reqid FROM requested, deletedrequest WHERE deletedrequest.reqid=requested.reqid AND deletedrequest.netid=%s AND requested =%s AND times =%s)"
                     
-                    # SELECT requested.reqid FROM requested, deletedrequest WHERE deletedrequest.reqid=requested.reqid AND deletedrequest.netid='yongweic' AND requested = 'Colonial' AND times = 'Breakfast'
+                    cursor.execute(statement,[user_plan,times, requested_plan, username, username, username, user_plan, times])
+                    
+                    # 
                     
                     req = cursor.fetchone()
                     print(f'')
