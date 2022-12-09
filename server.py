@@ -62,16 +62,12 @@ def get_blocked(username):
 
 def update_details(details, netid):
 
-    usersOld, contactOld = profile_details(netid)
+    usersOld = profile_details(netid)
 
     netid = str(netid)
-    name = str(usersOld[1])
-    year = str(usersOld[3])
-    plan = str(usersOld[4]) 
-    phone = str(contactOld[1])
-
-    if details['year'] != "":
-        year = str(details['year'])
+    nickname = str(usersOld[2])
+    plan = str(usersOld[3]) 
+    phone = str(usersOld[4])
 
     if details['plan'] != "":
         plan = str(details['plan'])
@@ -86,10 +82,9 @@ def update_details(details, netid):
     # year = str(details['year'])
     # plan = str(details['plan'])
     # name = str(details['name'])
-    users = (name, year, plan, netid)
+    users = (name, plan, phone, netid)
 
     # phone = str(details['number'])
-    contact = (phone, netid)
 
     try:
         database_url = os.getenv('DATABASE_URL')
@@ -97,8 +92,7 @@ def update_details(details, netid):
         with psycopg2.connect(database_url) as connection:
 
             with connection.cursor() as cursor:
-                cursor.execute("UPDATE users SET name=%s, year=%s, plan=%s WHERE netid=%s", users)
-                cursor.execute("UPDATE contact SET phone=%s WHERE netid=%s", contact)
+                cursor.execute("UPDATE users SET nickname=%s, plan=%s, phone=%s WHERE netid=%s", users)
         
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -448,12 +442,12 @@ def accept_request(id, username):
 
                 print('1')
 
-                cursor.execute("SELECT phone FROM contact WHERE netid = %s", [username])
+                cursor.execute("SELECT phone FROM users WHERE netid = %s", [username])
                 num1 = cursor.fetchone()
 
                 print('2')
 
-                cursor.execute("SELECT phone FROM contact WHERE netid = %s", [req[1]])
+                cursor.execute("SELECT phone FROM users WHERE netid = %s", [req[1]])
                 num2 = cursor.fetchone()
 
                 print('3')
@@ -557,7 +551,7 @@ def cancel_exchange(id):
                 place1 = row[4]  
 
                 cursor.execute(
-                    "SELECT phone FROM contact WHERE netid = %s", [netid])  
+                    "SELECT phone FROM users WHERE netid = %s", [netid])  
                 
                 phone = cursor.fetchone()
                 num1 = phone[0]
@@ -570,7 +564,7 @@ def cancel_exchange(id):
                 place2 = row[4]  
 
                 cursor.execute(
-                    "SELECT phone FROM contact WHERE netid = %s", [swapid])  
+                    "SELECT phone FROM users WHERE netid = %s", [swapid])  
                 
                 phone = cursor.fetchone()
                 num2 = phone[0]

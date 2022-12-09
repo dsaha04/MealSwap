@@ -27,7 +27,6 @@
   function updateDetails() {
   var name= $('#name').val();
   var number = $('#contact').val();
-  var year= $('#year').val();
   var plan= $('#plan').val();
 
   if (number == null) {
@@ -38,7 +37,7 @@
     $.ajax({
                 url: "/updatedetails",
                 type: "POST",
-                data: {name:name, number:number, year:year, plan:plan}
+                data: {name:name, number:number, plan:plan}
             }).done(function(response) {
               });
               
@@ -68,10 +67,6 @@
                   <label for="inputEmail4">Preferred Name</label>
                   <input type="text" class="form-control" id="name" placeholder="Ansh">
                 </div>
-              </div>
-              <div class="form-group">
-                <label for="inputAddress2">Class Year</label>
-                <input type="text" class="form-control" id="year" placeholder="2024">
               </div>
 
               <div class="form-row">
