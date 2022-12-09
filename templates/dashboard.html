@@ -151,7 +151,27 @@ $( document ).ready(function() {
  
             </tbody>
           </table> -->
-          
+          <div class="container-fluid mt-4">
+          <form>
+            <div class="row">
+              <div class="col-xl-1">
+              <h5 style="margin-top: 5px;">Search: </h5>
+            </div>
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="By Requested Plan">
+              </div>
+            </div>
+            <div class="col-sm-5">
+              <div class="form-group">
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="By Meal time">
+              </div>
+              
+            </div>
+            </div>
+            
+          </form>
+        </div>
 
           {% for i in range(table|length): %}
           <div class="card mb-4 border-info">
