@@ -42,11 +42,30 @@ def logoutcas():
     return auth.logoutcas()
 
 
-@app.route('/blocked')
+@app.route('/blocked', methods=['GET', 'POST'])
 def blocked():
     username = auth.authenticate()
     if server.check_user(username) == -1:
         return flask.redirect('/create')
+    
+    if flask.request.method == 'POST':
+        print("post request")
+        netid = flask.request.form['netid']
+        success = server.addBlockedUser(username, netid)
+        
+        if success == 1:
+            flask.flash('that is not a valid netid')
+            
+        if success == 2:
+            flask.flash('you cannot block yourself, silly :)')
+         
+        if success == 3:
+            flask.flash('you\'ve already blocked this user')
+        
+        blocked = server.get_blocked(username)
+        print(blocked)
+        return flask.render_template('blocked.html', table = blocked)
+        
     blocked = server.get_blocked(username)
     return flask.render_template('blocked.html', table = blocked)
 
@@ -93,7 +112,8 @@ def unblock_user():
         flask.flash(
             "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
     
-    return flask.redirect("/profile")
+    blocked = server.get_blocked(username)
+    return flask.render_template('blocked.html', table=blocked)
 
 
 

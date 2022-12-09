@@ -50,9 +50,24 @@ def get_blocked(username):
 
                 if rows is not None:
                     for row in rows:
-                        cursor.execute("SELECT * FROM users WHERE netid = %s", [row[2]])
-                        name = cursor.fetchone()
-                        table.append([row[0], row[2], name[1], name[2]])
+                        # cursor.execute("SELECT * FROM users WHERE netid = %s", [row[2]])
+                        # name = cursor.fetchone()
+                        # row = [0, 0, 0, 0]
+                        print(row)
+                        lib = req_lib.ReqLib()
+
+                        req = lib.getJSON(
+                            lib.configs.USERS_BASIC,
+                            uid=row[2],
+                        )
+                        name = ['', '', '']
+                        
+                        if len(req) != 0:
+                            print(req[0]['displayname'])
+                        
+                        name = [0, 0, 0, 0]
+                        table.append(
+                            [row[0], row[2], req[0]['displayname'], name[2]])
             return table
         
     except Exception as ex:
@@ -719,3 +734,48 @@ def get_exchanges(username):
         print(ex, file=sys.stderr)
         sys.exit(1)
         
+        
+        
+
+def addBlockedUser(username, netid):
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+            with connection.cursor() as cursor:
+                lib = req_lib.ReqLib()
+
+                req = lib.getJSON(
+                    lib.configs.USERS_BASIC,
+                    uid=netid,
+                )
+                print("here")
+                if len(req) == 0:
+                    return 1 # not a valid netid
+                
+                
+                print(f'REQ CONTENTS: {req}')
+                
+                if netid == username:
+                    return 2 # cannot be username
+                
+                
+                cursor.execute(
+                    "SELECT * FROM blocked WHERE netid=%s AND block_netid=%s", [username, netid])
+                exists = cursor.fetchall()
+                
+                print(f'EXISTS: {exists}')
+                if exists is not None and len(exists) > 0:
+                    return 3 # cannot exist
+                
+                
+                
+                cursor.execute("INSERT INTO blocked (netid, block_netid) "
+                               + "VALUES (%s, %s)", [username, netid])
+                
+                return 0
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
