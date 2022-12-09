@@ -708,7 +708,7 @@ def get_exchanges(username):
                         nickname = user[2]
                         name = user[1]
                         plan = user[3]
-                        phone = contact[4]
+                        phone = user[4]
                         request = [exchange_id, swapnetid, name, nickname, plan, phone, times]
                         print(request)
                         requested.append(request)
