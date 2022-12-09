@@ -12,11 +12,8 @@ def create_user(details, netid):
     netid = str(netid)
     # year = str(details['year'])
     plan = str(details['plan'])
-    user = 'user'
     nickname = str(details['name'])
     phone = str(details['number'])
-    email = netid + "@princeton.edu"
-    contact = (netid, phone, email)
     lib = req_lib.ReqLib()
 
     req = lib.getJSON(
@@ -25,7 +22,7 @@ def create_user(details, netid):
     )
 
     name = req[0]['displayname']
-    users = (netid, nickname, user, name, plan)
+    users = (netid, name, nickname, plan, phone)
 
     try:
         database_url = os.getenv('DATABASE_URL')
@@ -33,11 +30,9 @@ def create_user(details, netid):
         with psycopg2.connect(database_url) as connection:
 
             with connection.cursor() as cursor:
-                cursor.execute("INSERT INTO users (netid, name, usertype, year, plan) "
+                cursor.execute("INSERT INTO users (netid, name, nickname, plan, phone) "
                     + "VALUES (%s, %s, %s, %s, %s)", users)
     
-                cursor.execute("INSERT INTO contact (netid, phone, email) "
-                    + "VALUES (%s, %s, %s)", contact)
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
@@ -57,7 +52,7 @@ def get_blocked(username):
                     for row in rows:
                         cursor.execute("SELECT * FROM users WHERE netid = %s", [row[2]])
                         name = cursor.fetchone()
-                        table.append([row[0], row[2], name[1], name[3]])
+                        table.append([row[0], row[2], name[1], name[2]])
             return table
         
     except Exception as ex:
@@ -248,9 +243,7 @@ def profile_details(username):
             with connection.cursor() as cursor:
                 cursor.execute("SELECT * FROM users WHERE netid = %s",[username])
                 row = cursor.fetchone()
-                cursor.execute("SELECT * FROM contact WHERE netid = %s",[username])
-                row2 = cursor.fetchone()
-                return (row, row2)     
+                return (row)     
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -718,15 +711,11 @@ def get_exchanges(username):
                         cursor.execute(
                             "SELECT * FROM users WHERE netid = %s", [swapnetid])
                         user = cursor.fetchone()
-                        nickname = user[1]
-                        name = user[3]
-                        plan = user[4]
-                        cursor.execute(
-                            "SELECT * FROM contact WHERE netid = %s",[swapnetid])
-                        contact = cursor.fetchone()
-                        phone = contact[1]
-                        email = contact[2]
-                        request = [exchange_id, swapnetid, name, nickname, plan, phone, email, times]
+                        nickname = user[2]
+                        name = user[1]
+                        plan = user[3]
+                        phone = contact[4]
+                        request = [exchange_id, swapnetid, name, nickname, plan, phone, times]
                         print(request)
                         requested.append(request)
 

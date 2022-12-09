@@ -28,13 +28,12 @@
   var name= $('#name').val();
   var number = $('#contact').val();
   // var number = document.getElementById('contact').value;
-  var year= $('#year').val();
   var plan= $('#plan').val();
   
     $.ajax({
       type: "POST",
       url: "/updatedetails",
-      data: {name:name, number:number, year:year, plan:plan},
+      data: {name:name, number:number, plan:plan},
       success: function() {   
           location.reload();  
       }
@@ -68,14 +67,9 @@
               <td>{{netid}}</td>
             </tr>
 
-
             <tr>
-              <td align="right">
-                <label for="inputAddress2" style="margin-top: 5px; font-weight: bolder">Year:</label>
-              </td>
-              <td>
-                <input type="text" class="form-control" style="color:black" id="year" value="{{class_year}}">
-              </td>
+              <td style="width:40%; font-weight: bolder" align="right">Net ID:</td>
+              <td>{{name}}</td>
             </tr>
             
             <tr>
@@ -83,7 +77,7 @@
                 <label for="inputEmail4" style="margin-top: 5px; font-weight: bolder" >Preferred Name:</label>
               </td>
               <td>
-                <input type="text" class="form-control" style="color:black" id="name" value="{{name}}">
+                <input type="text" class="form-control" style="color:black" id="name" value="{{nickname}}">
               </td>
             </tr>
 
