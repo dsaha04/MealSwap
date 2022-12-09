@@ -23,10 +23,12 @@ def home():
 @app.route('/create', methods = ['GET', 'POST'])
 def create():
     # TODO: fix logic to mirror submit_request
+    print('creating acc')
+    print(flask.request.form)
     username = auth.authenticate()
     if flask.request.method == 'POST':
-        server.create_user(flask.request.form, username)
-        return flask.redirect('/dashboard')
+        print(flask.request.form.to_dict())
+        server.create_user(flask.request.form.to_dict(), username)
         
     if server.check_user(username) == -1:
         return flask.render_template('create_account.html')
@@ -87,8 +89,8 @@ def profile():
 def update_details():
     username = auth.authenticate()
     if flask.request.method == 'POST':
-        server.update_details(flask.request.form, username)
-        return flask.redirect("/profile")
+        server.update_details(flask.request.form.to_dict(), username)
+        return flask.redirect("/dashboard")
 
     if server.check_user(username) != -1:
         return flask.render_template('update_details.html')       
@@ -100,8 +102,9 @@ def update_details():
 def block_user():
     username = auth.authenticate()
     reqid = int(flask.request.form['reqid'])
-    server.block_user(reqid, username)
-    return flask.redirect("/profile")
+    if flask.request.method == 'POST':
+        server.block_user(reqid, username)
+    return flask.redirect("/blocked")
 
 @app.route('/unblock', methods = ['GET', 'POST'])
 def unblock_user():
@@ -184,7 +187,7 @@ def submit_request():
     if flask.request.method == 'POST':
         print('hi')
         
-        response = server.create_request(flask.request.form, username)
+        response = server.create_request(flask.request.form.to_dict(), username)
         print(f'RESPONSE: {response}')
         # DEBUGGING, delete
         if response == 1:
@@ -195,7 +198,9 @@ def submit_request():
         if response == 2:
             flask.flash(
                 "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
-        return "easter egg :)"
+            return flask.redirect('/exchanges')
+            
+        return flask.redirect('/yourrequests')
 
     if server.check_user(username) != -1:
         return flask.render_template('submitrequest.html')       
@@ -233,7 +238,7 @@ def delete_request():
         server.delete_request(reqid, username)
         
         print("FLASHED")
-        return
+        return flask.redirect('/dashboard')
     
     return flask.render_template('deleterequest.html', req=req)
 
@@ -256,7 +261,7 @@ def undo_request():
                 "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
         reqid = int(flask.request.form['reqid'])
         
-        return "easter egg 2"
+        return flask.redirect('/dashboard')
     
     return flask.render_template('undorequest.html', req=req)
 
@@ -303,9 +308,9 @@ def cancel_request():
     if flask.request.method == 'POST':
         reqid = int(flask.request.form['reqid'])
         server.cancel_request(reqid)
-        return flask.redirect('/dashboard')
+        return flask.redirect('/yourrequests')
     
-    return flask.render_template('cancelrequest.html', req=req)
+    return flask.redirect('/dashboard')
 
 
 

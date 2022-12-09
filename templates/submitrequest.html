@@ -62,10 +62,10 @@ if (times == null) {
       
     <!-- <div class = "container-fluid px-4 d-flex"> -->
       <!-- <div class="mx-sm-4 mt-4" style="align-items: center;"> -->
-        <form action="/dashboard" method="get">
+        <form action="/submitrequest" method="post">
               <div class="form-group" style="margin-top: 30px;">
                 <label for="inputAddress"><b>Requested Dining Plan:</b></label>
-                <select class="form-select" id="plan" aria-label="Default select example" required = "true">
+                <select class="form-select" id="plan" name="plan" aria-label="Default select example" required = "true">
                   <option value="" selected disabled>Meal Plan</option>
                   <option value="2D Co-Op">2D Co-Op</option>
                   <option value="IFC Co-Op">IFC Co-Op</option>
@@ -87,7 +87,7 @@ if (times == null) {
 
               <div class="form-group" style="margin-top: 20px;">
                 <label for="inputAddress2"><b>Meal Time:</b></label>
-                <select class="form-select" id="times" aria-label="Default select example" required = "true">
+                <select class="form-select" id="times" name="times" aria-label="Default select example" required = "true">
                   <option value ="" selected disabled>Meal Time</option>
                   <option value="Breakfast">Breakfast</option>
                   <option value="Lunch">Lunch</option>
@@ -95,7 +95,7 @@ if (times == null) {
                   <option value="Brunch">Brunch</option>
                   </select>
               </div>
-              <button onclick="createRequest()" type="submit" class="btn btn-outline-primary" style="margin-top: 10px; margin-bottom: 10px;">Submit Request</button> 
+              <button type="submit" class="btn btn-outline-primary" style="margin-top: 10px; margin-bottom: 10px;">Submit Request</button> 
 
         </form>
 
