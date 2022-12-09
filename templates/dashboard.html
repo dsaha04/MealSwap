@@ -71,9 +71,59 @@ function submitForm1(para) {
   return false;
 }
 
-$( document ).ready(function() {
-    console.log( "ready!" );
-});
+
+// var planInput = document.getElementById('plan');
+// console.log("plan", planInput)
+
+
+function setup()
+        {
+          $('#plan').on('input', function() {
+              var cardTable = document.getElementById('card_table');
+  
+              // Get search query from input
+              var timeQuery = $('#time').val().trim().toLowerCase();
+              var planQuery = $('#plan').val().trim().toLowerCase();
+              // Loop through all cards in table
+              for (var i = 0; i < cardTable.children.length; i++) {
+                var card = cardTable.children[i];
+
+                // Check if card's title or description contains search query
+                if (card.dataset.time.toLowerCase().startsWith(timeQuery) && card.dataset.plan.toLowerCase().startsWith(planQuery)) {
+                  // If it does, show the card
+                  card.style.display = 'block';
+                } else {
+                  // If it doesn't, hide the card
+                  card.style.display = 'none';
+                }
+              }
+            });
+
+            $('#time').on('input', function() {
+              var cardTable = document.getElementById('card_table');
+  
+              // Get search query from input
+              var timeQuery = $('#time').val().trim().toLowerCase();
+              var planQuery = $('#plan').val().trim().toLowerCase();
+              // Loop through all cards in table
+              for (var i = 0; i < cardTable.children.length; i++) {
+                var card = cardTable.children[i];
+
+                // Check if card's title or description contains search query
+                if (card.dataset.time.toLowerCase().startsWith(timeQuery) && card.dataset.plan.toLowerCase().startsWith(planQuery)) {
+                  // If it does, show the card
+                  card.style.display = 'block';
+                } else {
+                  // If it doesn't, hide the card
+                  card.style.display = 'none';
+                }
+              }
+            });
+
+        }
+
+$('document').ready(setup);
+
     
 </script>
  
@@ -164,12 +214,12 @@ $( document ).ready(function() {
             </div>
             <div class="col-sm-5">
               <div class="form-group">
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="By Offered Plan">
+                <input type="text" class="form-control" id="plan"  placeholder="By Offered Plan">
               </div>
             </div>
             <div class="col-sm-5">
               <div class="form-group">
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="By Meal time">
+                <input type="text" class="form-control" id="time"  placeholder="By Meal time">
               </div>
               
             </div>
@@ -178,8 +228,10 @@ $( document ).ready(function() {
           </form>
         </div>
 
+
+        <div id = "card_table">
           {% for i in range(table|length): %}
-          <div class="card mb-4 border-info" style="background-color: rgb(218, 231, 228);">
+          <div class="card mb-4 border-info" data-plan = "{{table[i][1]}}" data-time = "{{table[i][2]}}" style="background-color: rgb(218, 231, 228);">
             <div class="row align-content-center" style="align-items: center;">
               <div class="card-body col-sm-10">
                 <!-- <text class="cardText" style="margin-left: 30px;">
@@ -207,6 +259,7 @@ $( document ).ready(function() {
             </div>
           </div>
           {% endfor %}
+        </div>
  
     </div>
   </div>

@@ -10,7 +10,9 @@ import flask
 
 app = flask.Flask(__name__)
 
+# TODO
 app.secret_key = '1234'
+
 
 
 @app.route('/')

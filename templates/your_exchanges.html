@@ -90,6 +90,85 @@ function submitForm1(para) {
   }
   return false;
 }
+
+
+
+function setup()
+        {
+          $('#name').on('input', function() {
+              var cardTable = document.getElementById('card_table');
+  
+              // Get search query from input
+              var nameQuery = $('#name').val().trim().toLowerCase();
+              var timeQuery = $('#time').val().trim().toLowerCase();
+              var planQuery = $('#plan').val().trim().toLowerCase();
+              
+              // Loop through all cards in table
+              for (var i = 0; i < cardTable.children.length; i++) {
+                var card = cardTable.children[i];
+
+                // Check if card's title or description contains search query
+                if (card.dataset.time.toLowerCase().startsWith(timeQuery) && card.dataset.plan.toLowerCase().startsWith(planQuery) && card.dataset.name.toLowerCase().startsWith(nameQuery)) {
+                  // If it does, show the card
+                  card.style.display = 'block';
+                } else {
+                  // If it doesn't, hide the card
+                  card.style.display = 'none';
+                }
+              }
+            });
+
+
+            $('#plan').on('input', function() {
+              var cardTable = document.getElementById('card_table');
+  
+              // Get search query from input
+              var nameQuery = $('#name').val().trim().toLowerCase();
+              var timeQuery = $('#time').val().trim().toLowerCase();
+              var planQuery = $('#plan').val().trim().toLowerCase();
+              
+              // Loop through all cards in table
+              for (var i = 0; i < cardTable.children.length; i++) {
+                var card = cardTable.children[i];
+
+                // Check if card's title or description contains search query
+                if (card.dataset.time.toLowerCase().startsWith(timeQuery) && card.dataset.plan.toLowerCase().startsWith(planQuery) && card.dataset.name.toLowerCase().startsWith(nameQuery)) {
+                  // If it does, show the card
+                  card.style.display = 'block';
+                } else {
+                  // If it doesn't, hide the card
+                  card.style.display = 'none';
+                }
+              }
+            });
+
+            $('#time').on('input', function() {
+              var cardTable = document.getElementById('card_table');
+  
+              // Get search query from input
+              var nameQuery = $('#name').val().trim().toLowerCase();
+              var timeQuery = $('#time').val().trim().toLowerCase();
+              var planQuery = $('#plan').val().trim().toLowerCase();
+              
+              // Loop through all cards in table
+              for (var i = 0; i < cardTable.children.length; i++) {
+                var card = cardTable.children[i];
+
+                // Check if card's title or description contains search query
+                if (card.dataset.time.toLowerCase().startsWith(timeQuery) && card.dataset.plan.toLowerCase().startsWith(planQuery) && card.dataset.name.toLowerCase().startsWith(nameQuery)) {
+                  // If it does, show the card
+                  card.style.display = 'block';
+                } else {
+                  // If it doesn't, hide the card
+                  card.style.display = 'none';
+                }
+              }
+            });
+
+        }
+
+$('document').ready(setup);
+
  
 </script>
  
@@ -177,8 +256,42 @@ function submitForm1(para) {
             </tbody>
           </table> -->
 
+
+          <div class="container-fluid mt-4" style="margin-bottom: 7px;">
+            <form>
+              <div class="row">
+                <div class="col-xl-1">
+                <h5 style="margin-top: 5px;">Search: </h5>
+              </div>
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="name"  placeholder="By Name">
+                </div>
+              </div>
+
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="plan"  placeholder="By Offered Plan">
+                </div>
+              </div>
+
+
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="time" placeholder="By Meal time">
+                </div>
+                
+              </div>
+              </div>
+          
+            </form>
+          </div>
+
+
+
+          <div id = "card_table">
           {% for i in range(table|length): %}
-          <div class="card mb-4 border-info" style="background-color: rgb(218, 231, 228);">
+          <div class="card mb-4 border-info" data-plan = "{{table[i][4]}}" data-time = "{{table[i][6]}}" data-name = "{{table[i][3]}}" style="background-color: rgb(218, 231, 228);">
             <div class="row align-content-center" style="align-items: center">
               <div class="card-body col-sm-10">
                 <text class="cardText" style="margin-left: 30px;">
@@ -220,6 +333,7 @@ function submitForm1(para) {
             </div>
           </div>
           {% endfor %}
+          </div>
  
     </div>
     </div>

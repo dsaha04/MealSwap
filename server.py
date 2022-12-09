@@ -286,7 +286,7 @@ def get_requests(username):
                 cursor.execute("SELECT plan FROM users WHERE netid = %s",[username])
                 plan = cursor.fetchone()
                 
-                cursor.execute("SELECT * FROM requested WHERE requested = %s AND netid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND netid != %s",[plan, username, username])
+                cursor.execute("SELECT * FROM requested WHERE requested = %s AND netid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND netid NOT IN (SELECT netid FROM blocked WHERE block_netid = %s) AND netid != %s",[plan, username, username, username])
                 rows = cursor.fetchall()
 
                 cursor.execute("SELECT reqid FROM deletedrequest WHERE netid = %s",[username])
