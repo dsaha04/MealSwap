@@ -29,51 +29,26 @@
 </head>
  
 <script>
-function createRequest(id) {
-  $.ajax({
-              url: "/viewrequest",
-              type: "POST",
-              data: {reqid: id}
-          }).done(function(response) {
- 
-            });
-           
-};
- 
-function deleteRequest(id) {
-  $.ajax({
-              url: "/deleterequest",
-              type: "POST",
-              data: {reqid: id}
-          }).done(function(response) {
- 
-            });
-           
-};
 
-function submitForm(para) {
-  var string = "Do you want to accept this request?"
-  var answer = confirm(string)
-  if (answer){
-    createRequest(para);
-    return true;
-  }
-  return false;
+console.log('hey')
+loadTime = new Date()
+console.log(loadTime)
+setInterval(getUpdates, 5000);
+
+function getUpdates() {
+  $.ajax({
+      url: "/getupdates",
+      type: "POST",
+  }).done(function(response) {
+      lastUpdatedTime = new Date(response[0])
+      if (lastUpdatedTime.getTime() > loadTime.getTime()) {
+        console.log("new update")
+        location.reload();
+      }
+    });
+
 }
 
-function submitForm1(para) {
-  var string = "Do you want to decline this request?"
-  var answer = confirm(string)
-  if (answer){
-    deleteRequest(para);
-    return true;
-  }
-  return false;
-}
-
-
-// var planInput = document.getElementById('plan');
-// console.log("plan", planInput)
 
 
 function setup()

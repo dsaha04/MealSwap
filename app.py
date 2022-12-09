@@ -313,6 +313,12 @@ def cancel_request():
     return flask.redirect('/dashboard')
 
 
+@app.route('/getupdates', methods=['GET', 'POST'])
+def get_updates():
+    username = auth.authenticate()
+    timestamp = server.getMostRecentTimestamp(username)
+    return [timestamp]
+    
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)

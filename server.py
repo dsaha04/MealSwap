@@ -794,3 +794,32 @@ def addBlockedUser(username, netid):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
+def getMostRecentTimestamp(username):
+    
+    
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+            with connection.cursor() as cursor:
+                print('getting most recent timestamp...')
+                
+                cursor.execute(
+                    "SELECT plan FROM users WHERE netid=%s", [username])
+
+                plan = cursor.fetchone()[0]
+                print(f'plan: {plan}')
+                
+                cursor.execute(
+                    "SELECT MAX(created_at) FROM requested WHERE requested=%s", [plan])
+                
+                timestamp = cursor.fetchone()[0]
+                # print(f'timestamp: {timestamp}')
+                cursor.close()
+                return timestamp
+                
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+    
+    return 0
