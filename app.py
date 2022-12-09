@@ -185,9 +185,14 @@ def submit_request():
         print('hi')
         
         response = server.create_request(flask.request.form, username)
-        print(response)
+        print(f'RESPONSE: {response}')
         # DEBUGGING, delete
-        if response:
+        if response == 1:
+            print("flashing...")
+            flask.flash(
+                "You cannot open more than 5 pending requests")
+        
+        if response == 2:
             flask.flash(
                 "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
         return "easter egg :)"

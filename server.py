@@ -221,13 +221,27 @@ def create_request(details, username):
                     cursor.execute(statement,[user_plan,times, requested_plan, username, username, username, user_plan, times])
                     
                     # 
-                    
+                    # is there an instant match?
                     req = cursor.fetchone()
-                    print(f'')
 
                     if req is None:
                         requested = (username, requested_plan, times)
                         print(requested)
+                        
+                        count_statement =  '''
+                        SELECT count FROM
+                        (SELECT netid, COUNT(netid) as count FROM requested GROUP BY netid) as db
+                        WHERE netid=%s
+                        '''
+                        
+                        cursor.execute(count_statement, [username])
+                        
+                        reqCount = cursor.fetchone()
+                        
+                        if reqCount is not None and reqCount[0] >= 5:
+                            print(f'reqCount: {reqCount[0]}')
+                            return 1 # you cannot make more than 5 requests
+                        
                         cursor.execute("INSERT INTO requested (netid, requested, times) "
                         + "VALUES (%s, %s, %s)", requested)
 
@@ -235,7 +249,7 @@ def create_request(details, username):
                     else:
                         print('exchange')
                         accept_request(req[0], username)
-                        return True # returns true when instant match
+                        return 2 # returns 2 when instant match
 
     except Exception as ex:
         print(ex, file=sys.stderr)
