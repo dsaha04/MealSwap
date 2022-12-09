@@ -56,12 +56,11 @@ def profile():
     if server.check_user(username) == -1:
         return flask.redirect('/create')
     details = server.profile_details(username)
-    name = details[0][1]
-    year = details[0][3]
-    plan = details[0][4]
-    number = details[1][1]
-    print(name, year, plan, number)
-    return flask.render_template('profile_page.html', name = name, netid = str(username), class_year = year, dining_plan = plan, phone_no = number)
+    name = details[1]
+    nickname = details[2]
+    plan = details[3]
+    number = details[4]
+    return flask.render_template('profile_page.html', name = name, nickname = nickname, netid = str(username), dining_plan = plan, phone_no = number)
 
 @app.route('/updatedetails', methods = ['GET', 'POST'])
 def update_details():
