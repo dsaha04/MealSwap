@@ -92,7 +92,7 @@ if (name == null || number == null || plan == null) {
         <form action="/dashboard" method="get">
               <div class="form-row col-md-8">
                 <div class="form-group col-md-4">
-                  <label for="inputEmail4" style="font-weight: bold;">Preferred Name</label>
+                  <label for="inputEmail4">Preferred Name</label>
                   <input type="text" class="form-control" id="name" placeholder="Ansh" required>
                 </div>
               </div>
@@ -103,7 +103,7 @@ if (name == null || number == null || plan == null) {
  
               <div class="form-row col-md-8">
                 <div class="form-group col-md-4">
-                  <label for="inputCity" style="font-weight: bold; margin-right: 3px;">Dining Plan:</label>
+                  <label for="inputCity">Dining Plan</label>
                   <select required class="form-select" id="plan" aria-label="Default select example">
                     <option value ="" selected disabled>Meal Plan</option>
                     <option value="2D Co-Op">2D Co-Op</option>
@@ -127,48 +127,12 @@ if (name == null || number == null || plan == null) {
               </div>
  
               <div class="form-group col-md-4">
-                <label for="inputCity" style="font-weight: bold;">Phone Number:</label>
+                <label for="inputCity">Phone Number</label>
                 <input type="tel" class="form-control" id="contact" pattern = "[0-9]{10}" placeholder="(201) 951 2312" required>
                 </div>
          
-              <!-- <button onclick="createNewUser()" type="submit" class="btn btn-outline-primary" style="margin-top: 10px; margin-left: 15px;">Create Account</button> -->
-              
-              <!-- Button trigger modal -->
-              <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModalLong" style="margin-top: 10px; margin-left: 15px;">
-                Create Account
-              </button>
-
-              <!-- Modal -->
-              <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLongTitle">Rules and Guidelines</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      
-                      
-                      <ul>
-                      <li>MealSwap is for Princeton University students only. You must login via CAS to use the app.</li>
-                      <li>By using this app you consent to sharing your phone number with other users you are matched with.</li>
-                      <li>Be respectful and polite when communicating with other users. Do not harass, bully, or discriminate against any other user.</li>
-                      <li>MealSwap has the right to remove any user who violates these rules and guidelines.</li>
-                      <li>MealSwap is not responsible for the actions or behavior of any user, nor does it endorse or guarantee the reliability or trustworthiness of any user. Use the app at your own discretion and be cautious when arranging exchanges with other users.</li>
-                      </ul>
-                      <p>By using MealSwap, you agree to these rules and guidelines and assume all risks and responsibilities associated with the use of the app.</p>
-                      <p><b>Contact Us</b></p>
-                    <p>If you have any questions about this app or the rules and guidelines, you can contact us at this page: <a href="https://mealswap.onrender.com/about" rel="external nofollow noopener" target="_blank">https://mealswap.onrender.com/about</a></p>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Decline</button>
-                      <button onclick="createNewUser()" type="submit" class="btn btn-outline-primary" style="margin-left: 5px;">Agree</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <button onclick="createNewUser()" type="submit" class="btn btn-outline-primary" style="margin-top: 10px; margin-left: 15px;">Create Account</button>
+ 
         </form>
  
     </div>
