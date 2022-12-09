@@ -155,9 +155,7 @@ def tutorial():
 @app.route('/dashboard')
 def dashboard():
     username = auth.authenticate()
-    req_table = server.get_requests(username)
-    print(req_table)
-    
+    req_table = server.get_requests(username)    
     if server.check_user(username) != -1:
         return flask.render_template('dashboard.html', table = req_table)       
     else: 

@@ -74,7 +74,7 @@ function submitForm1(para) {
 $( document ).ready(function() {
     console.log( "ready!" );
 });
-
+    
 </script>
  
 <body>
@@ -151,7 +151,12 @@ $( document ).ready(function() {
  
             </tbody>
           </table> -->
-          <div class="container-fluid mt-4">
+          {% if table|length > 0: %}
+            <div class="container-fluid mt-4">The requests below are from users who want to eat at <strong>{{table[0][0]}}</strong>.</div>
+          {% endif %}
+          
+
+          <div class="container-fluid mt-4" style="margin-bottom: 7px;">
           <form>
             <div class="row">
               <div class="col-xl-1">
@@ -159,7 +164,7 @@ $( document ).ready(function() {
             </div>
             <div class="col-sm-5">
               <div class="form-group">
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="By Requested Plan">
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="By Offered Plan">
               </div>
             </div>
             <div class="col-sm-5">
@@ -174,12 +179,12 @@ $( document ).ready(function() {
         </div>
 
           {% for i in range(table|length): %}
-          <div class="card mb-4 border-info">
+          <div class="card mb-4 border-info" style="background-color: rgb(218, 231, 228);">
             <div class="row align-content-center" style="align-items: center;">
               <div class="card-body col-sm-10">
-                <text class="cardText" style="margin-left: 30px;">
+                <!-- <text class="cardText" style="margin-left: 30px;">
                   <b>Requested Dining Plan:</b> {{table[i][0]}}
-                </text><br>
+                </text><br> -->
                 <text class="cardText" style="margin-left: 30px;">
                   <b>Offered Dining Plan:</b> {{table[i][1]}}
                 </text><br>
@@ -190,12 +195,12 @@ $( document ).ready(function() {
               <div class="card-body col-sm-2">
                   <form action='/exchanges' onSubmit="return submitForm({{table[i][4]}})">
                     <button type="submit" class="btn btn-outline-primary float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
-                      Accept Request
+                      Accept
                     </button>
                   </form>
                   <form action='/trashrequest' onSubmit="return submitForm1({{table[i][4]}})">
                     <button type="submit" class="btn btn-outline-danger float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
-                      Decline Request
+                      Decline
                     </button>
                   </form>
               </div>
