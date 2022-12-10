@@ -4,6 +4,9 @@ import os
 import psycopg2
 import notifications
 import req_lib
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 numbers = {'6506958443', '2485332973', '2489466588', '2019522343', '3124592594', '7035019474', '6092582211', '2672261984'}
@@ -40,7 +43,6 @@ def create_user(details, netid):
 
 def get_blocked(username):
     try:
-        1/0
         database_url = os.getenv('DATABASE_URL')
 
         with psycopg2.connect(database_url) as connection:

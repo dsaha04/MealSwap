@@ -5,6 +5,9 @@ import server
 import auth
 from django.shortcuts import redirect
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 import flask
 # from flask import Flask, request, render_template, jsonify, redirect, url_for
@@ -13,7 +16,7 @@ import flask_wtf.csrf
 app = flask.Flask(__name__)
 
 # TODO
-app.secret_key = os.environ['APP_SECRET_KEY']
+app.secret_key = os.getenv('APP_SECRET_KEY')
 
 flask_wtf.csrf.CSRFProtect(app)
 
