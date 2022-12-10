@@ -56,6 +56,7 @@ def blocked():
         print("post request")
         netid = flask.request.form['netid']
         success = server.addBlockedUser(username, netid)
+        print(success)
         
         if success == 1:
             flask.flash('that is not a valid netid')
