@@ -28,6 +28,19 @@
   ></script>
 </head>
  
+
+<script type="text/javascript">
+    var csrf_token = "{{csrf_token()}}";
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrf_token);
+            }
+        }
+    });
+</script>
+
 <script>
 
 console.log('hey')
@@ -179,14 +192,14 @@ $('document').ready(setup);
               </div>
               <div class="card-body col-sm-2">
                   <form action='/viewrequest' method="post" onsubmit="return confirm('Are you sure you wish to confirm?');">
-                    <input type="hidden" name="csrf_token" value = "{{csrf_token}}">
+                    <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
                     <input type="hidden" id="reqid" name="reqid" value="{{table[i][4]}}">
                     <button type="submit" class="btn btn-outline-primary float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
                       Accept
                     </button>
                   </form>
                   <form action='/deleterequest' method="post">
-                    <input type="hidden" name="csrf_token" value = "{{csrf_token}}">
+                    <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
                     <input type="hidden" id="reqid" name="reqid" value="{{table[i][4]}}">
                     <button type="submit" class="btn btn-outline-danger float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
                       Decline

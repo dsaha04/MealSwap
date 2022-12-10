@@ -63,7 +63,7 @@ if (times == null) {
     <!-- <div class = "container-fluid px-4 d-flex"> -->
       <!-- <div class="mx-sm-4 mt-4" style="align-items: center;"> -->
         <form action="/submitrequest" method="post">
-          <input type="hidden" name="csrf_token" value = "{{csrf_token}}">
+          <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
               <div class="form-group" style="margin-top: 30px;">
                 <label for="inputAddress"><b>Requested Dining Plan:</b></label>
                 <select class="form-select" id="plan" name="plan" aria-label="Default select example" required = "true">

@@ -62,7 +62,7 @@
       <div class="mx-0 mt-4" style="align-items: center;">
         <table cellpadding="5" cellspacing="0">
           <form action="/updatedetails" method="post">
-            <input type="hidden" name="csrf_token" value = "{{csrf_token}}">
+            <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
             <tr>
               <td style="width:40%; font-weight: bolder" align="right">Net ID:</td>
               <td>{{netid}}</td>
