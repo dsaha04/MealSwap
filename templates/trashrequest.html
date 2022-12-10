@@ -123,6 +123,7 @@ function submitForm(para) {
               </div>
               <div class="card-body col-sm-2">
                   <form action='/undorequest' method='post'>
+                    <input type="hidden" name="csrf_token" value = "{{csrf_token}}">
                     <input type="hidden" id="reqid" name="reqid" value="{{table[i][4]}}">
                     <button type="submit" class="btn btn-outline-primary float-sm-right" style="margin-left: 30px; margin-right:30px;  margin-top: 5px; margin-bottom: 5px;">
                       Undo

@@ -59,6 +59,7 @@
 
     <form action='/create' method="post">
       <div class="mx-sm-5">
+        <input type="hidden" name="csrf_token" value = "{{csrf_token}}">
         <input type="hidden" id="blockid" name="blockid" value="work">
         <div class="form-row col-md-8">
                 <div class="form-group col-md-4">

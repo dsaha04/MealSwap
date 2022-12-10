@@ -4,15 +4,18 @@
 import server
 import auth
 from django.shortcuts import redirect
+import os
 
 import flask
 # from flask import Flask, request, render_template, jsonify, redirect, url_for
+import flask_wtf.csrf
 
 app = flask.Flask(__name__)
 
 # TODO
-app.secret_key = '1234'
+app.secret_key = os.environ['APP_SECRET_KEY']
 
+flask_wtf.csrf.CSRFProtect(app)
 
 
 @app.route('/')
@@ -56,7 +59,6 @@ def blocked():
         print("post request")
         netid = flask.request.form['netid']
         success = server.addBlockedUser(username, netid)
-        print(success)
         
         if success == 1:
             flask.flash('that is not a valid netid')
