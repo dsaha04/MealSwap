@@ -40,6 +40,7 @@ def create_user(details, netid):
 
 def get_blocked(username):
     try:
+        1/0
         database_url = os.getenv('DATABASE_URL')
 
         with psycopg2.connect(database_url) as connection:
