@@ -15,9 +15,14 @@ twilio_no = os.getenv('TWILIO_NUM')
 
 def send_message(number, msg):
 
+    # client.messages.create(
+    #     to="+1" + number, 
+    #     from_=twilio_no,
+    #     body=msg)
+    
     client.messages.create(
         to="+1" + number, 
-        from_=twilio_no,
+        from_="+12202722148",
         body=msg)
 
 # def verify_acct (name, number):
