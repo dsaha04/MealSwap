@@ -758,6 +758,8 @@ def get_exchanges(username):
 
 def addBlockedUser(username, netid):
     try:
+        if not netid.isalnum():
+            return 1
         database_url = os.getenv('DATABASE_URL')
 
         with psycopg2.connect(database_url) as connection:

@@ -64,7 +64,7 @@ def blocked():
     
     if flask.request.method == 'POST':
         print("post request")
-        netid = flask.request.form['netid']
+        netid = flask.request.form['netid'].strip()
         success = server.addBlockedUser(username, netid)
 
         if success == 0:
