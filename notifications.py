@@ -15,6 +15,11 @@ client = Client(account_sid, auth_token)
 
 def send_message(number, msg):
 
+    # client.messages.create(
+    #     to="+1" + number, 
+    #     from_=twilio_no,
+    #     body=msg)
+    
     client.messages.create(
         to="+1" + number, 
         from_="+12202722148",
