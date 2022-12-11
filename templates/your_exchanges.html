@@ -106,9 +106,9 @@ function setup()
               // Loop through all cards in table
               for (var i = 0; i < cardTable.children.length; i++) {
                 var card = cardTable.children[i];
-
+                // console.log(card.dataset.prefname.toLowerCase().startsWith(nameQuery) || card.dataset.name.toLowerCase().startsWith(nameQuery))
                 // Check if card's title or description contains search query
-                if (card.dataset.time.toLowerCase().startsWith(timeQuery) && card.dataset.plan.toLowerCase().startsWith(planQuery) && card.dataset.name.toLowerCase().startsWith(nameQuery)) {
+                if (card.dataset.time.toLowerCase().startsWith(timeQuery) && card.dataset.plan.toLowerCase().startsWith(planQuery) && (card.dataset.prefname.toLowerCase().startsWith(nameQuery) || card.dataset.name.toLowerCase().startsWith(nameQuery))) {  
                   // If it does, show the card
                   card.style.display = 'block';
                 } else {
@@ -132,7 +132,7 @@ function setup()
                 var card = cardTable.children[i];
 
                 // Check if card's title or description contains search query
-                if (card.dataset.time.toLowerCase().startsWith(timeQuery) && card.dataset.plan.toLowerCase().startsWith(planQuery) && card.dataset.name.toLowerCase().startsWith(nameQuery)) {
+                if (card.dataset.time.toLowerCase().startsWith(timeQuery) && card.dataset.plan.toLowerCase().startsWith(planQuery) && (card.dataset.prefname.toLowerCase().startsWith(nameQuery) || card.dataset.name.toLowerCase().startsWith(nameQuery))) {  
                   // If it does, show the card
                   card.style.display = 'block';
                 } else {
@@ -155,7 +155,7 @@ function setup()
                 var card = cardTable.children[i];
 
                 // Check if card's title or description contains search query
-                if (card.dataset.time.toLowerCase().startsWith(timeQuery) && card.dataset.plan.toLowerCase().startsWith(planQuery) && card.dataset.name.toLowerCase().startsWith(nameQuery)) {
+                if (card.dataset.time.toLowerCase().startsWith(timeQuery) && card.dataset.plan.toLowerCase().startsWith(planQuery) && (card.dataset.prefname.toLowerCase().startsWith(nameQuery) || card.dataset.name.toLowerCase().startsWith(nameQuery))) {  
                   // If it does, show the card
                   card.style.display = 'block';
                 } else {
@@ -223,7 +223,7 @@ $('document').ready(setup);
 
               <div class="col-sm-3">
                 <div class="form-group">
-                  <input type="text" class="form-control" id="time" placeholder="By Meal time">
+                  <input type="text" class="form-control" id="time" placeholder="By Meal Time">
                 </div>
                 
               </div>
@@ -236,12 +236,9 @@ $('document').ready(setup);
 
           <div id = "card_table">
           {% for i in range(table|length): %}
-          <div class="card mb-4 border-info" data-plan = "{{table[i][4]}}" data-time = "{{table[i][6]}}" data-name = "{{table[i][3]}}" style="background-color: rgb(218, 231, 228);">
+          <div class="card mb-4 border-info" data-plan = "{{table[i][4]}}" data-time = "{{table[i][6]}}" data-prefname = "{{table[i][3]}}" data-name = "{{table[i][2]}}" style="background-color: rgb(218, 231, 228);">
             <div class="row align-content-center" style="align-items: center">
               <div class="card-body col-sm-10">
-                <text class="cardText" style="margin-left: 30px;">
-                  <b>NetID:</b> {{table[i][1]}}
-                </text><br>
                 <text class="cardText" style="margin-left: 30px;">
                   <b>Name:</b> {{table[i][2]}}
                 </text><br>
@@ -259,21 +256,21 @@ $('document').ready(setup);
                 </text>
               </div>
               <div class="card-body col-sm-2">
-                  <form action='/completeexchange' method="post">
+                  <form action='/completeexchange' method="post" onsubmit="return confirm('Completing this is an indication that you have fulfiled both ends of the exchange. This will remove the exchange from both users\' dashboards. Do you wish to mark this exchange as complete?');">
                     <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
                     <input type="hidden" id="reqid" name="reqid" value="{{table[i][0]}}">
                     <button type="submit" class="btn btn-outline-success float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
                       Complete
                     </button>
                   </form>
-                 <form action='/cancelexchange' method="post" onsubmit="return confirm('Are you sure you wish to cancel this exchange?');">
+                 <form action='/cancelexchange' method="post" onsubmit="return confirm('Are you sure you want to cancel this exchange?');">
                     <input type="hidden" id="reqid" name="reqid" value="{{table[i][0]}}">
                     <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
                     <button type="submit" class="btn btn-outline-warning float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
                       Cancel
                     </button>
                   </form>
-                 <form action='/blockuser' method="post">
+                 <form action='/blockuser' method="post" onsubmit="return confirm('Are you sure you want to block this user?');">
                     <input type="hidden" id="reqid" name="reqid" value="{{table[i][0]}}">
                     <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
                     <button type="submit" class="btn btn-outline-danger float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
