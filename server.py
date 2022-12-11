@@ -39,7 +39,7 @@ def create_user(details, netid):
     
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 def get_blocked(username):
     try:
@@ -76,7 +76,7 @@ def get_blocked(username):
         
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 
 def update_details(details, netid):
@@ -115,7 +115,7 @@ def update_details(details, netid):
         
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 def check_user(username):
 
@@ -135,29 +135,30 @@ def check_user(username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 def check_for_instant_matches(username):
     
     try:
+        print('instant match check')
         database_url = os.getenv('DATABASE_URL')
 
         with psycopg2.connect(database_url) as connection:
 
             with connection.cursor() as cursor:
-                matches = "SELECT p1, p2, p1_reqid, p2_reqid "
-                matches += "FROM(SELECT req1.netid as p1, req2.netid as p2,"
-                matches += "req1.reqid as p1_reqid, req2.reqid as p2_reqid, "
-                matches += "req1.requested as p1_req, req2.requested as p2_req, "
-                matches += "req1.plan as p1_plan, req2.plan as p2_plan "
-                matches += "FROM(SELECT reqid, users.netid, requested, times, plan FROM requested, users WHERE requested.netid=users.netid) req1 "
-                matches +=    "JOIN(SELECT reqid, users.netid, requested, times, plan FROM requested, users WHERE requested.netid=users.netid) req2 "
-                matches +=    "ON req1.netid=%s AND req2.netid != %s AND req1.times=req2.times) reqs "
-                matches += "WHERE p1_req = p2_plan AND p2_req = p1_plan "
-                matches += "AND p2 NOT IN(SELECT block_netid as netid FROM blocked WHERE netid=p1) "
-                matches += "AND p1 NOT IN(SELECT block_netid as netid FROM blocked WHERE netid=p2) "
-                matches += "AND p1_reqid NOT IN(SELECT reqid as p1_reqid FROM deletedrequest WHERE netid=p2) "
-                matches +=  "AND p2_reqid NOT IN(SELECT reqid as p2_reqid FROM deletedrequest WHERE netid=p1) "
+                matches = '''SELECT p1, p2, p1_reqid, p2_reqid 
+                FROM(SELECT req1.netid as p1, req2.netid as p2,
+                req1.reqid as p1_reqid, req2.reqid as p2_reqid, 
+                req1.requested as p1_req, req2.requested as p2_req, 
+                req1.plan as p1_plan, req2.plan as p2_plan 
+                FROM(SELECT reqid, users.netid, requested, times, plan FROM requested, users WHERE requested.netid=users.netid) req1 
+                JOIN(SELECT reqid, users.netid, requested, times, plan FROM requested, users WHERE requested.netid=users.netid) req2 
+                ON req1.netid=%s AND req2.netid != %s AND req1.times=req2.times) reqs 
+                WHERE p1_req = p2_plan AND p2_req = p1_plan 
+                AND p2 NOT IN(SELECT block_netid as netid FROM blocked WHERE netid=p1) 
+                AND p1 NOT IN(SELECT block_netid as netid FROM blocked WHERE netid=p2) 
+                AND p1_reqid NOT IN(SELECT reqid as p1_reqid FROM deletedrequest WHERE netid=p2) 
+                AND p2_reqid NOT IN(SELECT reqid as p2_reqid FROM deletedrequest WHERE netid=p1) '''
 
                 cursor.execute(matches, [
                     username, username])
@@ -189,7 +190,7 @@ def check_for_instant_matches(username):
             
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return -1
 
 
 def create_request(details, username):
@@ -257,7 +258,7 @@ def create_request(details, username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 def profile_details(username):
 
@@ -274,7 +275,7 @@ def profile_details(username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 def get_requests(username):
 
@@ -321,7 +322,7 @@ def get_requests(username):
             
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 def trash_requests(username):
 
@@ -359,7 +360,7 @@ def trash_requests(username):
             
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 
 def get_your_requests(username):
@@ -393,7 +394,7 @@ def get_your_requests(username):
             
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
             
 def get_exchange(id):
     try:
@@ -414,7 +415,7 @@ def get_exchange(id):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 def get_request(id):
     print('in here')
@@ -436,7 +437,7 @@ def get_request(id):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 
 def accept_request(id, username):
@@ -521,7 +522,7 @@ def accept_request(id, username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 
 def delete_request(id, username):
@@ -555,7 +556,7 @@ def delete_request(id, username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 
 def cancel_exchange(id):
@@ -624,7 +625,7 @@ def cancel_exchange(id):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 
 def cancel_request(id):
@@ -641,7 +642,7 @@ def cancel_request(id):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 def undo_request(id, username):
     
@@ -656,7 +657,7 @@ def undo_request(id, username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 def block_user(reqid, username):
     
@@ -681,7 +682,7 @@ def block_user(reqid, username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 def unblock_user(blockid, username):
     
@@ -695,7 +696,7 @@ def unblock_user(blockid, username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 def complete_exchange(id):
     try:
@@ -707,7 +708,7 @@ def complete_exchange(id):
     
     except Exception as ex:
         print(ex, file = sys.stderr)
-        sys.exit(1)
+        return 0
 
 
 def get_exchanges(username):
@@ -750,7 +751,7 @@ def get_exchanges(username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
         
         
         
@@ -791,11 +792,11 @@ def addBlockedUser(username, netid):
                 cursor.execute("INSERT INTO blocked (netid, block_netid) "
                                + "VALUES (%s, %s)", [username, netid])
                 
-                return 0
+                return 4
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
 
 def getMostRecentTimestamp(username):
     
@@ -823,6 +824,6 @@ def getMostRecentTimestamp(username):
                 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        return 0
     
     return 0
