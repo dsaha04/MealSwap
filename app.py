@@ -227,7 +227,7 @@ def view_request():
         server.accept_request(reqid, username)
         return flask.redirect('/exchanges')
     
-    return flask.render_template('viewrequest.html', req=req)
+    # return flask.render_template('viewrequest.html', req=req)
 
 
 @app.route('/deleterequest', methods = ['GET', 'POST'])
