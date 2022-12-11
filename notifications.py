@@ -11,7 +11,7 @@ account_sid = os.getenv('ACCOUNT_SID')
 auth_token  = os.getenv('AUTH_TOKEN')
 # "ca2a25e6f1924da875e868f2a3a59eea"
 client = Client(account_sid, auth_token)
-# twilio_no = os.getenv('TWILIO_NUM')
+twilio_no = os.getenv('TWILIO_NUM')
 
 def send_message(number, msg):
 
@@ -22,7 +22,7 @@ def send_message(number, msg):
     
     client.messages.create(
         to="+1" + number, 
-        from_="+12202722148",
+        from_=twilio_no,
         body=msg)
 
 # def verify_acct (name, number):
