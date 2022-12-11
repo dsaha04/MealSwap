@@ -1,8 +1,8 @@
 from twilio.rest import Client
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 # Your Account SID from twilio.com/console
 account_sid = os.getenv('ACCOUNT_SID')

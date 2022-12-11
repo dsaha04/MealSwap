@@ -5,9 +5,9 @@ import server
 import auth
 from django.shortcuts import redirect
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 import flask
 # from flask import Flask, request, render_template, jsonify, redirect, url_for
