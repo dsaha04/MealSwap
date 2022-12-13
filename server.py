@@ -820,7 +820,7 @@ def getMostRecentTimestamp(username):
                     "SELECT MAX(created_at) FROM requested WHERE requested=%s", [plan])
                 
                 timestamp = cursor.fetchone()[0]
-                # print(f'timestamp: {timestamp}')
+                print(f'timestamp: {timestamp}')
                 cursor.close()
                 return timestamp
                 
@@ -828,4 +828,54 @@ def getMostRecentTimestamp(username):
         print(ex, file=sys.stderr)
         return 0
     
+    return 0
+
+
+def getMostRecentBlockedTimestamp(username):
+
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+            with connection.cursor() as cursor:
+                print('getting most recent blocked timestamp...')
+
+                cursor.execute(
+                    "SELECT MAX(created_at) FROM blocked WHERE block_netid=%s", [username])
+
+                timestamp = cursor.fetchone()[0]
+                print(f'blocked timestamp: {timestamp}')
+                cursor.close()
+                return timestamp
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        return 0
+
+    return 0
+
+
+def getMostRecentExchangeTimestamp(username):
+
+    try:
+        database_url = os.getenv('DATABASE_URL')
+
+        with psycopg2.connect(database_url) as connection:
+            with connection.cursor() as cursor:
+                print('getting most recent exchange timestamp...')
+
+                cursor.execute(
+                    "SELECT MAX(created_at) FROM exchanges WHERE swapnetid=%s OR netid=%s", [username, username])
+
+                
+                timestamp = cursor.fetchone()[0]
+                
+                print(f'timestamp: {timestamp}')
+                cursor.close()
+                return timestamp
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        return 0
+
     return 0

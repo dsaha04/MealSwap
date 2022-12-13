@@ -21,6 +21,18 @@
     <!-- AJAX for Flask -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
+
+<script type="text/javascript">
+    var csrf_token = "{{csrf_token()}}";
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrf_token);
+            }
+        }
+    });
+</script>
  
 <script>
     function blockuser(id) {    
@@ -39,59 +51,41 @@
 </script>
  
 <script>
- 
-function cancelExchange(id) {
-  $.ajax({
-              url: "/cancelexchange",
-              type: "POST",
-              data: {reqid: id}
-          }).done(function(response) {
- 
-            });
-           
-};
 
-function completeExchange(id) {
-  $.ajax({
-              url: "/completeexchange",
-              type: "POST",
-              data: {reqid: id}
-          }).done(function(response) {
- 
-            });
-           
-};
+  console.log('hey')
+  loadTime = new Date()
 
-function submitFormcomplete(para) {
-  var string = "Have you completed this exchange?"
-  var answer = confirm(string)
-  if (answer){
-    completeExchange(para);
-    return true;
-  }
-  return false;
+  prevTime = null
+  prevTime2 = null
+
+  console.log(loadTime)
+  setInterval(getUpdates, 5000);
+
+  function getUpdates() {
+    $.ajax({
+        url: "/getexchangeupdates",
+        type: "POST",
+    }).done(function(response) {
+        let lastUpdatedTime = new Date(response[0])
+        let lastUpdatedTime2 = new Date(response[1])
+        console.log(response[1])
+        console.log(lastUpdatedTime2)
+        if (lastUpdatedTime2 == NaN || lastUpdatedTime2.getTime() == 0) {
+          location.reload()
+        } 
+
+        if (lastUpdatedTime.getTime() > loadTime.getTime() || 
+            lastUpdatedTime2.getTime() > loadTime.getTime()) {
+          console.log("new update")
+          location.reload();
+        }
+
+        prevTime = lastUpdatedTime
+        prevTime2 = lastUpdatedTime2
+
+      });
+
 }
-
-function submitForm(para) {
-  var string = "Do you want to cancel this exchange?"
-  var answer = confirm(string)
-  if (answer){
-    cancelExchange(para);
-    return true;
-  }
-  return false;
-}
-
-function submitForm1(para) {
-  var answer = confirm('Do you wish to block this user?')
-  if (answer){
-    blockuser(para);
-    return true;
-  }
-  return false;
-}
-
-
 
 function setup()
         {
@@ -240,19 +234,19 @@ $('document').ready(setup);
             <div class="row align-content-center" style="align-items: center">
               <div class="card-body col-sm-10">
                 <text class="cardText" style="margin-left: 30px;">
-                  <b>Name:</b> {{table[i][2]}}
+                  <b>Name:</b> {{table[table|length - i - 1][2]}}
                 </text><br>
                 <text class="cardText" style="margin-left: 30px;">
-                  <b>Preferred Name:</b> {{table[i][3]}}
+                  <b>Preferred Name:</b> {{table[table|length - i - 1][3]}}
                 </text><br>
                 <text class="cardText" style="margin-left: 30px;">
-                  <b>Dining Plan:</b> {{table[i][4]}}
+                  <b>Dining Plan:</b> {{table[table|length - i - 1][4]}}
                 </text><br>
                 <text class="cardText" style="margin-left: 30px;">
-                  <b>Contact:</b> {{table[i][5]}}
+                  <b>Contact:</b> {{table[table|length - i - 1][5]}}
                 </text><br>
                 <text class="cardText" style="margin-left: 30px;">
-                  <b>Meal Time:</b> {{table[i][6]}}
+                  <b>Meal Time:</b> {{table[table|length - i - 1][6]}}
                 </text>
               </div>
               <div class="card-body col-sm-2">

@@ -187,6 +187,7 @@ def tutorial():
 @app.route('/dashboard')
 def dashboard():
     username = auth.authenticate()
+    print('in dashboard')
     req_table = server.get_requests(username) 
     if req_table == 0:
             return flask.render_template('error.html')   
@@ -380,9 +381,26 @@ def cancel_request():
 def get_updates():
     username = auth.authenticate()
     timestamp = server.getMostRecentTimestamp(username)
-    if timestamp == 0:
+    timestamp2 = server.getMostRecentBlockedTimestamp(username)
+    
+    if timestamp == 0 or timestamp2 == 0:
         return flask.render_template('error.html')
-    return [timestamp]
+    
+    
+    return [timestamp, timestamp2]
+
+
+@app.route('/getexchangeupdates', methods=['POST'])
+def get_exchange_updates():
+    username = auth.authenticate()
+    
+    timestamp = server.getMostRecentExchangeTimestamp(username)
+    timestamp2 = server.getMostRecentBlockedTimestamp(username)
+
+    if timestamp == 0 or timestamp2 == 0:
+        return flask.render_template('error.html')
+
+    return [timestamp, timestamp2]
     
 
 if __name__ == '__main__':

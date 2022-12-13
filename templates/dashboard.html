@@ -45,6 +45,10 @@
 
 console.log('hey')
 loadTime = new Date()
+
+prevTime = null
+prevTime2 = null
+
 console.log(loadTime)
 setInterval(getUpdates, 5000);
 
@@ -53,11 +57,23 @@ function getUpdates() {
       url: "/getupdates",
       type: "POST",
   }).done(function(response) {
-      lastUpdatedTime = new Date(response[0])
-      if (lastUpdatedTime.getTime() > loadTime.getTime()) {
+      let lastUpdatedTime = new Date(response[0])
+      let lastUpdatedTime2 = new Date(response[1])
+
+      console.log(lastUpdatedTime2)
+      if (lastUpdatedTime2 == NaN || lastUpdatedTime2.getTime() == 0) {
+        location.reload()
+      } 
+
+      if (lastUpdatedTime.getTime() > loadTime.getTime() || 
+          lastUpdatedTime2.getTime() > loadTime.getTime()) {
         console.log("new update")
         location.reload();
       }
+
+      prevTime = lastUpdatedTime
+      prevTime2 = lastUpdatedTime2
+
     });
 
 }
@@ -184,10 +200,10 @@ $('document').ready(setup);
                   <b>Requested Dining Plan:</b> {{table[i][0]}}
                 </text><br> -->
                 <text class="cardText" style="margin-left: 30px;">
-                  <b>Offered Dining Plan:</b> {{table[i][1]}}
+                  <b>Offered Dining Plan:</b> {{table[table|length - i - 1][1]}}
                 </text><br>
                 <text class="cardText" style="margin-left: 30px;">
-                  <b>Meal Time:</b> {{table[i][2]}}
+                  <b>Meal Time:</b> {{table[table|length - i - 1][2]}}
                 </text>
               </div>
               <div class="card-body col-sm-2">
