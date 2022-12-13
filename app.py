@@ -105,7 +105,9 @@ def profile():
 @app.route('/updatedetails', methods = ['GET', 'POST'])
 def update_details():
     username = auth.authenticate()
+    print('updatedetails')
     if flask.request.method == 'POST':
+        print(flask.request.form)
         success = server.update_details(flask.request.form.to_dict(), username)
         if success == 0:
             return flask.render_template('error.html')
@@ -192,6 +194,7 @@ def dashboard():
     if req_table == 0:
             return flask.render_template('error.html')   
     if server.check_user(username) != -1:
+        print('checked')
         return flask.render_template('dashboard.html', table = req_table)       
     else: 
         return flask.redirect('/create')
@@ -248,8 +251,9 @@ def submit_request():
 def view_request():
     username = auth.authenticate()
     
-    reqid = flask.request.args.get('reqid')
+    reqid = flask.request.form['reqid']
     req = server.get_request(reqid)
+    print(req)
     if req == 0:
         return flask.render_template('error.html')
     
@@ -270,7 +274,8 @@ def view_request():
 def delete_request():
     username = auth.authenticate()
     
-    reqid = flask.request.args.get('reqid')
+    reqid = flask.request.form['reqid']
+    print(reqid)
     req = server.get_request(reqid)
     if req == 0:
         return flask.render_template('error.html')
@@ -333,7 +338,7 @@ def trash_request():
 def cancel_exchange():
     username = auth.authenticate()
     
-    reqid = flask.request.args.get('reqid')
+    reqid = flask.request.form['reqid']
     req = server.get_exchange(reqid)
     if req == 0:
         return flask.render_template('error.html')
@@ -362,7 +367,8 @@ def complete_exchange():
 def cancel_request():
     username = auth.authenticate()
     
-    reqid = flask.request.args.get('reqid')
+    reqid = int(flask.request.form['reqid'])
+    print(reqid)
     req = server.get_request(reqid)
     if req == 0:
         return flask.render_template('error.html')

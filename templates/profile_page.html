@@ -29,6 +29,7 @@
   var number = $('#contact').val();
   // var number = document.getElementById('contact').value;
   var plan= $('#plan').val();
+  console.log(plan)
   
     $.ajax({
       type: "POST",
@@ -89,7 +90,7 @@
               </td>
               <td>
                 <select class="form-select" id="plan" name="plan" aria-label="Default select example">
-                  <option selected disabled>{{dining_plan}}</option>
+                  <option selected>{{dining_plan}}</option>
                   <option value="2D Co-Op">2D Co-Op</option>
                   <option value="IFC Co-Op">IFC Co-Op</option>
                   <option value="Brown Co-Op">Brown Co-Op</option>

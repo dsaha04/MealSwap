@@ -4,12 +4,22 @@ import os
 import psycopg2
 import notifications
 import req_lib
+import sqlalchemy
+import sqlalchemy.orm
+import createorm
 # from dotenv import load_dotenv
 
 # load_dotenv()
 
 
 numbers = {'6506958443', '2485332973', '2489466588', '2019522343', '3124592594', '7035019474', '6092582211', '2672261984'}
+
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+engine = sqlalchemy.create_engine(DATABASE_URL)
+
+# createorm.Base.metadata.drop_all(engine)
+# createorm.Base.metadata.create_all(engine)
 
 def create_user(details, netid):
     netid = str(netid)
@@ -29,14 +39,14 @@ def create_user(details, netid):
     users = (netid, name, nickname, plan, phone)
 
     try:
-        database_url = os.getenv('DATABASE_URL')
 
-        with psycopg2.connect(database_url) as connection:
+        with sqlalchemy.orm.Session(engine) as session:
 
-            with connection.cursor() as cursor:
-                cursor.execute("INSERT INTO users (netid, name, nickname, plan, phone) "
-                    + "VALUES (%s, %s, %s, %s, %s)", users)
-    
+            user = createorm.Users(netid = netid, name = name, nickname = nickname, plan = plan, phone = phone)
+            session.add(user)
+            session.commit()
+        engine.dispose()
+
     except Exception as ex:
         print(ex, file=sys.stderr)
         print(ex, "Server Error")
@@ -44,36 +54,38 @@ def create_user(details, netid):
 
 def get_blocked(username):
     try:
-        database_url = os.getenv('DATABASE_URL')
 
-        with psycopg2.connect(database_url) as connection:
+        with sqlalchemy.orm.Session(engine) as session:
 
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM blocked WHERE netid = %s", [username])
-                rows = cursor.fetchall()
-                table = []
+            query = (session.query(createorm.Blocked))
+            rows = query.all()
+            print(rows)
+            table = []
 
-                if rows is not None:
-                    for row in rows:
-                        # cursor.execute("SELECT * FROM users WHERE netid = %s", [row[2]])
-                        # name = cursor.fetchone()
-                        # row = [0, 0, 0, 0]
-                        print(row)
-                        lib = req_lib.ReqLib()
+            if rows is not None:
+                for row in rows:
+                    # cursor.execute("SELECT * FROM users WHERE netid = %s", [row[2]])
+                    # name = cursor.fetchone()
+                    # row = [0, 0, 0, 0]
+                    print(row)
+                    lib = req_lib.ReqLib()
 
-                        req = lib.getJSON(
-                            lib.configs.USERS_BASIC,
-                            uid=row[2],
-                        )
-                        name = ['', '', '']
-                        
-                        if len(req) != 0:
-                            print(req[0]['displayname'])
-                        
-                        name = [0, 0, 0, 0]
-                        table.append(
-                            [row[0], row[2], req[0]['displayname'], name[2]])
-            return table
+                    req = lib.getJSON(
+                        lib.configs.USERS_BASIC,
+                        uid=row.block_netid,
+                    )
+                    name = ['', '', '']
+                    
+                    if len(req) != 0:
+                        print(req[0]['displayname'])
+                    
+                    name = [0, 0, 0, 0]
+                    table.append(
+                        [row.blockid, row.block_netid, req[0]['displayname'], name[2]])
+        engine.dispose()
+        return table
+
+
         
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -89,6 +101,7 @@ def update_details(details, netid):
     nickname = str(usersOld[2])
     plan = str(usersOld[3]) 
     phone = str(usersOld[4])
+    print(details)
 
     if details['plan'] != "":
         plan = str(details['plan'])
@@ -108,33 +121,40 @@ def update_details(details, netid):
     # phone = str(details['number'])
 
     try:
-        database_url = os.getenv('DATABASE_URL')
 
-        with psycopg2.connect(database_url) as connection:
+        with sqlalchemy.orm.Session(engine) as session:
 
-            with connection.cursor() as cursor:
-                cursor.execute("UPDATE users SET nickname=%s, plan=%s, phone=%s WHERE netid=%s", users)
+            query = (session.query(createorm.Users).filter(createorm.Users.netid == netid))
+            row = query.one_or_none()
+            row.nickname = name
+            row.plan = plan
+            row.phone = phone
+            session.commit()
         
+        engine.dispose()
+       
     except Exception as ex:
         print(ex, file=sys.stderr)
         print(ex, "Server Error")
         return 0
 
 def check_user(username):
+    print('checking')
 
     username = str(username)
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
+            query = (session.query(createorm.Users).filter(createorm.Users.netid == username))
 
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM users WHERE netid = %s",[username])
-                row = cursor.fetchone()
-                if row is None:
-                    return -1
-                else:
-                    return 0
+            row = query.one_or_none()
+            if row is None:
+                return -1
+            else:
+                return 0
+            
+        engine.dispose()
+
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -144,53 +164,100 @@ def check_user(username):
 def check_for_instant_matches(username):
     
     try:
-        print('instant match check')
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
+            query = (session.query(createorm.Users).filter(createorm.Users.netid == username))
+            row = query.one_or_none()
+            matched = False
+            if row is not None:
+                user_plan = row.plan
+                print(user_plan)
 
-            with connection.cursor() as cursor:
-                matches = '''SELECT p1, p2, p1_reqid, p2_reqid 
-                FROM(SELECT req1.netid as p1, req2.netid as p2,
-                req1.reqid as p1_reqid, req2.reqid as p2_reqid, 
-                req1.requested as p1_req, req2.requested as p2_req, 
-                req1.plan as p1_plan, req2.plan as p2_plan 
-                FROM(SELECT reqid, users.netid, requested, times, plan FROM requested, users WHERE requested.netid=users.netid) req1 
-                JOIN(SELECT reqid, users.netid, requested, times, plan FROM requested, users WHERE requested.netid=users.netid) req2 
-                ON req1.netid=%s AND req2.netid != %s AND req1.times=req2.times) reqs 
-                WHERE p1_req = p2_plan AND p2_req = p1_plan 
-                AND p2 NOT IN(SELECT block_netid as netid FROM blocked WHERE netid=p1) 
-                AND p1 NOT IN(SELECT block_netid as netid FROM blocked WHERE netid=p2) 
-                AND p1_reqid NOT IN(SELECT reqid as p1_reqid FROM deletedrequest WHERE netid=p2) 
-                AND p2_reqid NOT IN(SELECT reqid as p2_reqid FROM deletedrequest WHERE netid=p1) '''
+                # query = (session.query(createorm.Requested).filter(createorm.Requested.requested == plan))
 
-                cursor.execute(matches, [
-                    username, username])
+                query = (session.query(createorm.Requested).filter(createorm.Requested.netid == username))
+                table = query.all()
+                print(table)
+                if table is not None:
+                    print('xx')
+                    for request in table:
+                        plan = request.requested
+                        time = request.times
+                        query = (session.query(createorm.Requested).filter(createorm.Requested.requested == user_plan).filter(createorm.Requested.times == time))
+                        matches = query.all()
+                        if matches is not None:
+                            for match in matches:
+                                netid = match.netid
+                                query = (session.query(createorm.Blocked).filter(createorm.Blocked.netid == username).filter(createorm.Blocked.block_netid == netid))
+                                blocked = query.one_or_none()
+                                if blocked is not None:
+                                    continue
+                                query = (session.query(createorm.Blocked).filter(createorm.Blocked.netid == netid).filter(createorm.Blocked.block_netid == username))
+                                blocked = query.one_or_none()
+                                if blocked is not None:
+                                    continue     
+                                reqid = match.reqid
+                                query = (session.query(createorm.Deletedrequest).filter(createorm.Deletedrequest.reqid == reqid))
+                                deleted = query.one_or_none()
+                                if deleted is not None:
+                                    continue
+                                if netid != username:
+                                    query = (session.query(createorm.Users).filter(createorm.Users.netid == netid))
+                                    user = query.one_or_none()
+                                    if plan == user.plan:
+                                        accept_request(reqid, username)
+                                        matched = True
+                                        break
+            
+        engine.dispose()
+        return matched
 
-                reqs = cursor.fetchall()
+
+
+
+    #             matches = '''SELECT p1, p2, p1_reqid, p2_reqid 
+    #             FROM(SELECT req1.netid as p1, req2.netid as p2,
+    #             req1.reqid as p1_reqid, req2.reqid as p2_reqid, 
+    #             req1.requested as p1_req, req2.requested as p2_req, 
+    #             req1.plan as p1_plan, req2.plan as p2_plan 
+    #             FROM(SELECT reqid, users.netid, requested, times, plan FROM requested, users WHERE requested.netid=users.netid) req1 
+    #             JOIN(SELECT reqid, users.netid, requested, times, plan FROM requested, users WHERE requested.netid=users.netid) req2 
+    #             ON req1.netid=%s AND req2.netid != %s AND req1.times=req2.times) reqs 
+    #             WHERE p1_req = p2_plan AND p2_req = p1_plan 
+    #             AND p2 NOT IN(SELECT block_netid as netid FROM blocked WHERE netid=p1) 
+    #             AND p1 NOT IN(SELECT block_netid as netid FROM blocked WHERE netid=p2) 
+    #             AND p1_reqid NOT IN(SELECT reqid as p1_reqid FROM deletedrequest WHERE netid=p2) 
+    #             AND p2_reqid NOT IN(SELECT reqid as p2_reqid FROM deletedrequest WHERE netid=p1) '''
+
+    #             cursor.execute(matches, [
+    #                 username, username])
+
+    #             reqs = cursor.fetchall()
                 
-                for req in reqs:
-                    print(req)
+    #             for req in reqs:
+    #                 print(req)
                     
-                    p1_username = req[1]
-                    p2_username = req[0]
-                    p1_reqid = req[3]
-                    p2_reqid = req[2]
+    #                 p1_username = req[1]
+    #                 p2_username = req[0]
+    #                 p1_reqid = req[3]
+    #                 p2_reqid = req[2]
                     
-                    if p1_username != username:
-                        p1_username = req[0]
-                        p2_username = req[1]
-                        p1_reqid = req[2]
-                        p2_reqid = req[3]
-                    # delete second request
-                    print(f'your username: {p1_username}')
-                    cursor.execute("DELETE FROM requested WHERE reqid=%s", [p1_reqid])
+    #                 if p1_username != username:
+    #                     p1_username = req[0]
+    #                     p2_username = req[1]
+    #                     p1_reqid = req[2]
+    #                     p2_reqid = req[3]
+    #                 # delete second request
+    #                 print(f'your username: {p1_username}')
+    #                 cursor.execute("DELETE FROM requested WHERE reqid=%s", [p1_reqid])
                     
-                    # accept first request
-                    accept_request(p2_reqid, p1_username)
-                    return True
+    #                 # accept first request
+    #                 accept_request(p2_reqid, p1_username)
+    #                 return True
                 
-                return False
+    #             return False
+
+
             
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -205,14 +272,23 @@ def create_request(details, username):
     times = details['times']
 
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
+            count = (session.query(createorm.Requested).filter(createorm.Requested.netid == username)).count()
+            if count >= 5:
+                return 1 # you cannot make more than 5 requests
+            request = createorm.Requested(netid = username, requested = requested_plan, times = times)
+            session.add(request)
+            session.commit()
 
-        with psycopg2.connect(database_url) as connection:
-
-            with connection.cursor() as cursor:
-
-                    cursor.execute("SELECT plan FROM users WHERE netid = %s",[username])
-                    user_plan = cursor.fetchone()
+            match = check_for_instant_matches(username)
+            if match:
+                query = (session.query(createorm.Requested).filter(createorm.Requested.netid == username).filter(createorm.Requested.requested == requested_plan).filter(createorm.Requested.times == times))
+                query.delete()
+                session.commit()
+                return 2
+        
+                    # cursor.execute("SELECT plan FROM users WHERE netid = %s",[username])
+                    # user_plan = cursor.fetchone()
 
                     # cursor.execute("SELECT netid FROM users WHERE plan = %s",[user_plan])
                     # netids = []
@@ -223,43 +299,44 @@ def create_request(details, username):
                     # seperator = ', '
                     # stmt_str = seperator.join(netids)
                     
-                    statement = "SELECT * FROM requested "
-                    statement += "WHERE requested = %s AND times = %s AND netid IN (SELECT netid FROM users WHERE plan = %s AND netid != %s) "
-                    statement += "AND netid NOT IN (SELECT block_netid as netid FROM blocked WHERE netid= %s) " 
-                    statement += "AND reqid NOT IN (SELECT requested.reqid as reqid FROM requested, deletedrequest WHERE deletedrequest.reqid=requested.reqid AND deletedrequest.netid=%s AND requested =%s AND times =%s)"
+#                     statement = "SELECT * FROM requested "
+#                     statement += "WHERE requested = %s AND times = %s AND netid IN (SELECT netid FROM users WHERE plan = %s AND netid != %s) "
+#                     statement += "AND netid NOT IN (SELECT block_netid as netid FROM blocked WHERE netid= %s) " 
+#                     statement += "AND reqid NOT IN (SELECT requested.reqid as reqid FROM requested, deletedrequest WHERE deletedrequest.reqid=requested.reqid AND deletedrequest.netid=%s AND requested =%s AND times =%s)"
                     
-                    cursor.execute(statement,[user_plan,times, requested_plan, username, username, username, user_plan, times])
+#                     cursor.execute(statement,[user_plan,times, requested_plan, username, username, username, user_plan, times])
                     
-                    # 
-                    # is there an instant match?
-                    req = cursor.fetchone()
+#                     # 
+#                     # is there an instant match?
+#                     req = cursor.fetchone()
 
-                    if req is None:
-                        requested = (username, requested_plan, times)
-                        print(requested)
+#                     if req is None:
+#                         requested = (n, requested_plan, times)
+#                         print(requested)
                         
-                        count_statement =  '''
-                        SELECT count FROM
-                        (SELECT netid, COUNT(netid) as count FROM requested GROUP BY netid) as db
-                        WHERE netid=%s
-                        '''
+#                         count_statement =  '''
+#                         SELECT count FROM
+#                         (SELECT netid, COUNT(netid) as count FROM requested GROUP BY netid) as db
+#                         WHERE netid=%s
+#                         '''
                         
-                        cursor.execute(count_statement, [username])
+#                         cursor.execute(count_statement, [username])
                         
-                        reqCount = cursor.fetchone()
+#                         reqCount = cursor.fetchone()
                         
-                        if reqCount is not None and reqCount[0] >= 5:
-                            print(f'reqCount: {reqCount[0]}')
-                            return 1 # you cannot make more than 5 requests
+#                         if reqCount is not None and reqCount[0] >= 5:
+#                             print(f'reqCount: {reqCount[0]}')
+#                             return 1 # you cannot make more than 5 requests
                         
-                        cursor.execute("INSERT INTO requested (netid, requested, times) "
-                        + "VALUES (%s, %s, %s)", requested)
+#                         cursor.execute("INSERT INTO requested (netid, requested, times) "
+#                         + "VALUES (%s, %s, %s)", requested)
 
-# need to add notification
-                    else:
-                        print('exchange')
-                        accept_request(req[0], username)
-                        return 2 # returns 2 when instant match
+# # need to add notification
+#                     else:
+#                         print('exchange')
+#                         accept_request(req[0], username)
+#                         return 2 # returns 2 when instant match
+
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -270,14 +347,12 @@ def profile_details(username):
 
     username = str(username)
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
+            
+            query = (session.query(createorm.Users).filter(createorm.Users.netid == username))
+            row = query.one()
 
-        with psycopg2.connect(database_url) as connection:
-
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM users WHERE netid = %s",[username])
-                row = cursor.fetchone()
-                return (row)     
+            return [row.netid, row.name, row.nickname, row.plan, row.phone]     
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -288,44 +363,67 @@ def get_requests(username):
 
     username = str(username)
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
+            requested = []
 
-            with connection.cursor() as cursor:
-                requested = []
+            query = (session.query(createorm.Users).filter(createorm.Users.netid == username))
+            user = query.one_or_none()
+            if user is not None:
+                plan = user.plan
 
-                cursor.execute("SELECT plan FROM users WHERE netid = %s",[username])
-                plan = cursor.fetchone()
-                
-                cursor.execute("SELECT * FROM requested WHERE requested = %s AND netid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND netid NOT IN (SELECT netid FROM blocked WHERE block_netid = %s) AND netid != %s",[plan, username, username, username])
-                rows = cursor.fetchall()
+            # cursor.execute("SELECT plan FROM users WHERE netid = %s",[username])
+            # plan = cursor.fetchone()
 
-                cursor.execute("SELECT reqid FROM deletedrequest WHERE netid = %s",[username])
-                deleted = cursor.fetchall()
-                
-                
+                query = (session.query(createorm.Requested).filter(createorm.Requested.requested == plan))
+                rows = query.all()
+            
+            # cursor.execute("SELECT * FROM requested WHERE requested = %s AND netid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND netid NOT IN (SELECT netid FROM blocked WHERE block_netid = %s) AND netid != %s",[plan, username, username, username])
+            # rows = cursor.fetchall()
+
+                query = (session.query(createorm.Deletedrequest).filter(createorm.Deletedrequest.netid == username))
+                deleted = query.all()
+
+            # cursor.execute("SELECT reqid FROM deletedrequest WHERE netid = %s",[username])
+            # deleted = cursor.fetchall()
+            
+            
                 if rows is not None:
                     for row in rows:
-                        reqid = row[0]
+                        reqid = row.reqid
+                        netid = row.netid
+
+                        query = (session.query(createorm.Blocked).filter(createorm.Blocked.netid == username).filter(createorm.Blocked.block_netid == netid))
+                        blocked = query.one_or_none()
+                        if blocked is not None:
+                            continue
+                        query = (session.query(createorm.Blocked).filter(createorm.Blocked.netid == netid).filter(createorm.Blocked.block_netid == username))
+                        blocked = query.one_or_none()
+                        if blocked is not None:
+                            continue  
 
                         flag = False
                         for delete in deleted:
-                            if reqid == delete[0]:
+                            if reqid == delete.reqid:
                                 flag = True
+                                break
+                        
+                        if flag:
+                            continue
+                        requested_dining_plan = row.requested
+                        times = row.times
+                        query = (session.query(createorm.Users).filter(createorm.Users.netid == netid))
+                        user = query.one_or_none()
+                        offer_dining_plan = user.plan
 
-                        if flag == False:        
-                            
-                            netid = row[1]
-                            requested_dining_plan = row[2]
-                            times = row[3]
-                            cursor.execute("SELECT plan FROM users WHERE netid = %s",[netid])
-                            offer_dining_plan = cursor.fetchone()
-                            request = [requested_dining_plan, offer_dining_plan[0], times, netid, reqid]
+
+                        # cursor.execute("SELECT plan FROM users WHERE netid = %s",[netid])
+                        # offer_dining_plan = query.fetchone()
+                        request = [requested_dining_plan, offer_dining_plan, times, netid, reqid]
                     
-                            requested.append(request)
+                        requested.append(request)
 
-                return requested    
+            return requested    
             
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -336,35 +434,38 @@ def trash_requests(username):
 
     username = str(username)
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
+            requested = []
+            query = (session.query(createorm.Deletedrequest).filter(createorm.Deletedrequest.netid == username))
+            deleted = query.all()
 
-        with psycopg2.connect(database_url) as connection:
 
-            with connection.cursor() as cursor:
-                requested = []
+            # cursor.execute("SELECT reqid FROM deletedrequest WHERE netid = %s",[username])
+            # deleted = cursor.fetchall()
 
-                cursor.execute("SELECT reqid FROM deletedrequest WHERE netid = %s",[username])
-                deleted = cursor.fetchall()
+            if deleted is not None:
+                for delete in deleted:
+                    reqid = delete.reqid
+                    query = (session.query(createorm.Requested).filter(createorm.Requested.reqid == reqid))
+                    row = query.one_or_none()
 
-                if deleted is not None:
-                    for delete in deleted:
+                    # cursor.execute("SELECT * FROM requested WHERE reqid = %s",[delete[0]])
+                    # row = cursor.fetchone()
 
-                        cursor.execute("SELECT * FROM requested WHERE reqid = %s",[delete[0]])
-                        row = cursor.fetchone()
-
-                        if row is not None:
-                            netid = row[1]
-                            requested_dining_plan = row[2]
-                            times = row[3]
-                            cursor.execute("SELECT plan FROM users WHERE netid = %s",[netid])
-                            offer_dining_plan = cursor.fetchone()
-                            request = [requested_dining_plan, offer_dining_plan[0], times, netid, delete[0]]
-                    
-                            requested.append(request)
+                    if row is not None:
+                        netid = row.netid
+                        requested_dining_plan = row.requested
+                        times = row.times
+                        query = (session.query(createorm.Users).filter(createorm.Users.netid == netid))
+                        user = query.one_or_none()
+                        # cursor.execute("SELECT plan FROM users WHERE netid = %s",[netid])
+                        offer_dining_plan = user.plan
+                        request = [requested_dining_plan, offer_dining_plan, times, netid, reqid]
+                        requested.append(request)
 
                             
 
-                return requested    
+            return requested    
             
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -375,31 +476,32 @@ def trash_requests(username):
 def get_your_requests(username):
     username = str(username)
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
+            requested = []
+            query = (session.query(createorm.Requested).filter(createorm.Requested.netid == username))
+            rows = query.all()
 
-            with connection.cursor() as cursor:
-                requested = []
+            # cursor.execute(
+            #     "SELECT * FROM requested WHERE netid = %s", [username])
+            # rows = cursor.fetchall()
 
-                cursor.execute(
-                    "SELECT * FROM requested WHERE netid = %s", [username])
-                rows = cursor.fetchall()
+            if rows is not None:
+                for row in rows:
+                    reqid = row.reqid
+                    netid = row.netid
+                    requested_dining_plan = row.requested
+                    times = row.times
+                    # query = (session.query(createorm.Users).filter(createorm.Users.netid) == netid)
+                    # # cursor.execute(
+                    # #     "SELECT plan FROM users WHERE netid = %s", [netid])
+                    # user = query.one()
+                    # offer_dining_plan = user.plan
+                    request = [requested_dining_plan, times, netid, reqid]
 
-                if rows is not None:
-                    for row in rows:
-                        reqid = row[0]
-                        netid = row[1]
-                        requested_dining_plan = row[2]
-                        times = row[3]
-                        cursor.execute(
-                            "SELECT plan FROM users WHERE netid = %s", [netid])
-                        offer_dining_plan = cursor.fetchone()
-                        request = [requested_dining_plan, times, netid, reqid]
+                    requested.append(request)
 
-                        requested.append(request)
-
-                return requested
+            return requested
             
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -408,20 +510,17 @@ def get_your_requests(username):
             
 def get_exchange(id):
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
+            print("ID")
+            print(id)
+            query = (session.query(createorm.Exchanges).filter(createorm.Exchanges.reqid == id))
+            # cursor.execute(
+            #     "SELECT * FROM exchanges WHERE reqid = %s", [id])
+            req = query.one_or_none()
+            requested = [req.reqid, req.netid, req.swapnetid, req.times, req.completed, req.created_at]
 
-            with connection.cursor() as cursor:
-                requested = []
-                print("ID")
-                print(id)
-                cursor.execute(
-                    "SELECT * FROM exchanges WHERE reqid = %s", [id])
-                req = cursor.fetchone()
-
-        
-                return req
+            return requested
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -431,20 +530,20 @@ def get_exchange(id):
 def get_request(id):
     print('in here')
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
+            print("ID")
+            print(id)
+            query = (session.query(createorm.Requested).filter(createorm.Requested.reqid == id))
+            req = query.one_or_none()
+            requested = [req.reqid, req.netid, req.requested, req.times, req.created_at]
 
-            with connection.cursor() as cursor:
-                requested = []
-                print("ID")
-                print(id)
-                cursor.execute(
-                    "SELECT * FROM requested WHERE reqid = %s", [id])
-                req = cursor.fetchone()
+            # cursor.execute(
+            #     "SELECT * FROM requested WHERE reqid = %s", [id])
+            # req = cursor.fetchone()
 
-        
-                return req
+    
+            return requested
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -456,79 +555,98 @@ def accept_request(id, username):
     print("accepting request")
     
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
+            requested = []
+            print("ID")
+            print(id)
+            query = (session.query(createorm.Requested).filter(createorm.Requested.reqid == id))
+            req = query.one_or_none()
+            # cursor.execute(
+            #     "SELECT * FROM requested WHERE reqid = %s", [id])
+            # req = cursor.fetchone()
+            # print("REQ")
+            # print(req)
+            # print(username)
+            
+            info = (id, username, req.netid, req.times, "FALSE")
+            print("INFO")
+            print(info)
 
-            with connection.cursor() as cursor:
-                requested = []
-                print("ID")
-                print(id)
-                cursor.execute(
-                    "SELECT * FROM requested WHERE reqid = %s", [id])
-                req = cursor.fetchone()
-                print("REQ")
-                print(req)
-                print(username)
-                
-                info = (id, username, req[1], req[3], "FALSE")
-                print("INFO")
-                print(info)
+            # notifications.send_message(num1, create_message(name1, name2))
+            # notifications.send_message(num2, create_message(name2, name1))
 
-                # notifications.send_message(num1, create_message(name1, name2))
-                # notifications.send_message(num2, create_message(name2, name1))
+            exchange = createorm.Exchanges(reqid = id, netid = username, swapnetid = req.netid, times = req.times, completed = "FALSE")
+            session.add(exchange)
+            session.commit()
 
+            query = (session.query(createorm.Users).filter(createorm.Users.netid == username))
+            user = query.one_or_none()
+            num1 = user.phone
+            name1 = user.name
+            place1 = user.plan
 
-                
-                cursor.execute("INSERT INTO exchanges (reqid, netid, swapnetid, times, completed) "
-                               + "VALUES (%s, %s, %s, %s, %s)", info)
-                
-                cursor.execute(
-                    "DELETE FROM requested WHERE reqid = %s", [id])
+            query = (session.query(createorm.Users).filter(createorm.Users.netid == req.netid))
+            user = query.one_or_none()
+            num2 = user.phone
+            name2 = user.name
+            place2 = user.plan
 
-                print('1')
-
-                cursor.execute("SELECT phone FROM users WHERE netid = %s", [username])
-                num1 = cursor.fetchone()
-
-                print('2')
-
-                cursor.execute("SELECT phone FROM users WHERE netid = %s", [req[1]])
-                num2 = cursor.fetchone()
-
-                print('3')
-
-                cursor.execute("SELECT name FROM users WHERE netid = %s", [username])
-                name1 = cursor.fetchone()
-                cursor.execute("SELECT plan FROM users WHERE netid = %s", [username])
-                place1 = cursor.fetchone()
+            query = (session.query(createorm.Requested).filter(createorm.Requested.reqid == id))
+            query.delete()
+            session.commit()
 
 
+            
+            # cursor.execute("INSERT INTO exchanges (reqid, netid, swapnetid, times, completed) "
+            #                 + "VALUES (%s, %s, %s, %s, %s)", info)
+            
+            # cursor.execute(
+            #     "DELETE FROM requested WHERE reqid = %s", [id])
 
-                print('4')
+            # print('1')
 
-                cursor.execute("SELECT name FROM users WHERE netid = %s", [req[1]])
-                name2 = cursor.fetchone()
-                cursor.execute("SELECT plan FROM users WHERE netid = %s", [req[1]])
-                place2 = cursor.fetchone()
+            # cursor.execute("SELECT phone FROM users WHERE netid = %s", [username])
+            # num1 = cursor.fetchone()
 
-                print(req[3])
+            # print('2')
 
-                print(num1[0])
-                print(num2[0])
+            # cursor.execute("SELECT phone FROM users WHERE netid = %s", [req[1]])
+            # num2 = cursor.fetchone()
+
+            # print('3')
+
+            # cursor.execute("SELECT name FROM users WHERE netid = %s", [username])
+            # name1 = cursor.fetchone()
+            # cursor.execute("SELECT plan FROM users WHERE netid = %s", [username])
+            # place1 = cursor.fetchone()
 
 
-                # msg = 'Hello, ' + str(name1[0]) + '! Great news, you have been matched with ' + str(name2[0]) + ' for ' + str(req[3])
-                # msg += '. Please visit https://mealswap.onrender.com/exchanges to view more details about your exchange.'
 
-                def create_message(name1, name2, place):
-                    msg = 'Hello, ' + name1 + '! Great news, you have been matched with ' + name2 + ' for ' + req[3]
-                    msg += ' at ' + place + '. Please visit https://mealswap.onrender.com/exchanges to view more details about your exchange.'
-                    return msg
+            # print('4')
 
-                if num1[0] in numbers and num2[0] in numbers:           
-                    notifications.send_message(num1[0], create_message(name1[0], name2[0], place2[0]))
-                    notifications.send_message(num2[0], create_message(name2[0], name1[0], place1[0]))
+            # cursor.execute("SELECT name FROM users WHERE netid = %s", [req[1]])
+            # name2 = cursor.fetchone()
+            # cursor.execute("SELECT plan FROM users WHERE netid = %s", [req[1]])
+            # place2 = cursor.fetchone()
+
+            # print(req[3])
+
+            # print(num1[0])
+            # print(num2[0])
+
+
+            # msg = 'Hello, ' + str(name1[0]) + '! Great news, you have been matched with ' + str(name2[0]) + ' for ' + str(req[3])
+            # msg += '. Please visit https://mealswap.onrender.com/exchanges to view more details about your exchange.'
+
+            def create_message(name1, name2, place):
+                msg = 'Hello, ' + name1 + '! Great news, you have been matched with ' + name2 + ' for ' + req.times
+                msg += ' at ' + place + '. Please visit https://mealswap.onrender.com/exchanges to view more details about your exchange.'
+                return msg
+
+            if num1 in numbers and num2 in numbers:           
+                notifications.send_message(num1, create_message(name1, name2, place2))
+                notifications.send_message(num2, create_message(name2, name1, place1))
 
 
 
@@ -542,27 +660,28 @@ def delete_request(id, username):
     print("deleting request")
     
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
+            requested = []
+            print("ID")
+            print(id)
+            # cursor.execute(
+            #     "SELECT * FROM requested WHERE reqid = %s", [id])
+            # req = cursor.fetchone()
+            print("REQ")
+            # print(req)
+            print(username)
+            
+            info = (id, username)
+            print("INFO")
+            print(info)
 
-            with connection.cursor() as cursor:
-                requested = []
-                print("ID")
-                print(id)
-                # cursor.execute(
-                #     "SELECT * FROM requested WHERE reqid = %s", [id])
-                # req = cursor.fetchone()
-                print("REQ")
-                # print(req)
-                print(username)
-                
-                info = (id, username)
-                print("INFO")
-                print(info)
-                
-                cursor.execute("INSERT INTO deletedrequest (reqid, netid) "
-                               + "VALUES (%s, %s)", info)
+            deletedrequest = createorm.Deletedrequest(reqid = id, netid = username)
+            session.add(deletedrequest)
+            session.commit()
+            
+            # cursor.execute("INSERT INTO deletedrequest (reqid, netid) "
+            #                 + "VALUES (%s, %s)", info)
                 
                 # cursor.execute(
                 #     "DELETE FROM requested WHERE reqid = %s", [id])
@@ -577,62 +696,75 @@ def cancel_exchange(id):
     print("cancelling exchange")
     
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
+            query = (session.query(createorm.Exchanges).filter(createorm.Exchanges.reqid == id))
+            exchange = query.one_or_none()
+            netid = exchange.netid
+            swapid = exchange.swapnetid
 
-            with connection.cursor() as cursor:
                 
-                cursor.execute(
-                    "SELECT * FROM exchanges WHERE reqid = %s", [id])
+                # cursor.execute(
+                #     "SELECT * FROM exchanges WHERE reqid = %s", [id])
                 
-                exchange = cursor.fetchone()
+                # exchange = cursor.fetchone()
 
-                netid = exchange[1]
-                swapid = exchange[2]    
+                # netid = exchange[1]
+                # swapid = exchange[2]    
+            
+            query = (session.query(createorm.Users).filter(createorm.Users.netid == netid))
+            row = query.one_or_none()
+            name1 = row.name
+            place1 = row.plan
+            num1 = row.phone
 
-                cursor.execute(
-                    "SELECT * FROM users WHERE netid = %s", [netid])  
+            query = (session.query(createorm.Users).filter(createorm.Users.netid == swapid))
+            row = query.one_or_none()
+            name2 = row.name
+            place2 = row.plan
+            num2 = row.phone
 
-                row = cursor.fetchone()
-                name1 = row[1]  
-                place1 = row[4]  
+            query = (session.query(createorm.Exchanges).filter(createorm.Exchanges.reqid == id))
+            query.delete()
+            session.commit()
 
-                cursor.execute(
-                    "SELECT phone FROM users WHERE netid = %s", [netid])  
+
+                # cursor.execute(
+                #     "SELECT * FROM users WHERE netid = %s", [netid])  
+
+                # row = cursor.fetchone()
+                # name1 = row[1]  
+                # place1 = row[4]  
+
+                # cursor.execute(
+                #     "SELECT phone FROM users WHERE netid = %s", [netid])  
                 
-                phone = cursor.fetchone()
-                num1 = phone[0]
+                # phone = cursor.fetchone()
+                # num1 = phone[0]
 
-                cursor.execute(
-                    "SELECT * FROM users WHERE netid = %s", [swapid])  
+                # cursor.execute(
+                #     "SELECT * FROM users WHERE netid = %s", [swapid])  
 
-                row = cursor.fetchone()
-                name2 = row[1]  
-                place2 = row[4]  
+                # row = cursor.fetchone()
+                # name2 = row[1]  
+                # place2 = row[4]  
 
-                cursor.execute(
-                    "SELECT phone FROM users WHERE netid = %s", [swapid])  
+                # cursor.execute(
+                #     "SELECT phone FROM users WHERE netid = %s", [swapid])  
                 
-                phone = cursor.fetchone()
-                num2 = phone[0]
+                # phone = cursor.fetchone()
+                # num2 = phone[0]
 
-                cursor.execute(
-                    "DELETE FROM exchanges WHERE reqid = %s", [id])
 
-                def create_message(name1, name2, place):
-                    msg = 'Hello, ' + name1 + '! Unfortunately, your exchange with ' + name2 + ' at ' + place + ' has been cancelled. '
-                    msg += 'Please visit https://mealswap.onrender.com/exchanges to view your current exchanges.'
-                    return msg
+            def create_message(name1, name2, place):
+                msg = 'Hello, ' + name1 + '! Unfortunately, your exchange with ' + name2 + ' at ' + place + ' has been cancelled. '
+                msg += 'Please visit https://mealswap.onrender.com/exchanges to view your current exchanges.'
+                return msg
 
-                print(num1)
-                print(name1)
-                print(name2)
-                print(place2)
 
-                if num1 in numbers and num2 in numbers: 
-                    notifications.send_message(num1, create_message(name1, name2, place2))
-                    notifications.send_message(num2, create_message(name2, name1, place1))
+            if num1 in numbers and num2 in numbers: 
+                notifications.send_message(num1, create_message(name1, name2, place2))
+                notifications.send_message(num2, create_message(name2, name1, place1))
 
                 
 
@@ -647,13 +779,14 @@ def cancel_request(id):
     print("cancelling exchange")
     
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
+            
+            query = (session.query(createorm.Requested).filter(createorm.Requested.reqid == id))
+            query.delete()
+            session.commit()
 
-        with psycopg2.connect(database_url) as connection:
-
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    "DELETE FROM requested WHERE reqid = %s", [id])
+                # cursor.execute(
+                #     "DELETE FROM requested WHERE reqid = %s", [id])
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -663,13 +796,14 @@ def cancel_request(id):
 def undo_request(id, username):
     
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
+            query = (session.query(createorm.Deletedrequest).filter(createorm.Deletedrequest.reqid == id).filter(createorm.Deletedrequest.netid == username))
+            query.delete()
+            session.commit()
 
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    "DELETE FROM deletedrequest WHERE reqid = %s AND netid = %s", [id, username])
+                # cursor.execute(
+                #     "DELETE FROM deletedrequest WHERE reqid = %s AND netid = %s", [id, username])
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -679,23 +813,27 @@ def undo_request(id, username):
 def block_user(reqid, username):
     
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
+            print(reqid)
+            query = (session.query(createorm.Exchanges).filter(createorm.Exchanges.reqid == reqid))
+            exchange = query.one_or_none()
+            # cursor.execute("SELECT * FROM exchanges WHERE reqid = %s", [reqid])
 
-            with connection.cursor() as cursor:
-                print(reqid)
-                cursor.execute("SELECT * FROM exchanges WHERE reqid = %s", [reqid])
+            # exchange = cursor.fetchone()
+            # print(exchange)
 
-                exchange = cursor.fetchone()
-                print(exchange)
+            netid = exchange.netid
+            if netid == username:
+                netid = exchange.swapnetid
+            
+            blocked = createorm.Blocked(netid = username, block_netid = netid)
+            session.add(blocked)
+            session.commit()
 
-                netid = exchange[1]
-                if netid == username:
-                    netid = exchange[2]
 
-                cursor.execute("INSERT INTO blocked (netid, block_netid) "
-                    + "VALUES (%s, %s)", [username, netid])
+            # cursor.execute("INSERT INTO blocked (netid, block_netid) "
+            #     + "VALUES (%s, %s)", [username, netid])
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -705,12 +843,12 @@ def block_user(reqid, username):
 def unblock_user(blockid, username):
     
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
+            query = (session.query(createorm.Blocked).filter(createorm.Blocked.blockid == blockid))
+            query.delete()
+            session.commit()
 
-        with psycopg2.connect(database_url) as connection:
-
-            with connection.cursor() as cursor:
-                cursor.execute("DELETE FROM blocked WHERE blockid = %s", [blockid])
+                # cursor.execute("DELETE FROM blocked WHERE blockid = %s", [blockid])
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -719,31 +857,41 @@ def unblock_user(blockid, username):
 
 def complete_exchange(id, username):
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
-            with connection.cursor() as cursor:
-                cursor.execute('SELECT * FROM exchanges WHERE reqid = %s', [id])
-                row = cursor.fetchone()
-                netid = row[1]
-                if netid == username:
-                    netid = row[2]
-                cursor.execute('SELECT * FROM users WHERE netid = %s', [netid])
-                row = cursor.fetchone()
-                phone = row[4]
-                name1 = row[1]
-                cursor.execute('SELECT * FROM users WHERE netid = %s', [username])
-                row = cursor.fetchone()
-                name2 = row[1]
+            query = (session.query(createorm.Exchanges).filter(createorm.Exchanges.reqid == id))
+            row = query.one_or_none()
+            netid = row.netid
 
-                def create_message(name1, name2):
-                    msg = 'Hello, ' + name1 + '! ' + name2 + ' has marked your exchange as complete. Please visit https://mealswap.onrender.com/exchanges to view your pending exchanges.'
-                    return msg
+                # cursor.execute('SELECT * FROM exchanges WHERE reqid = %s', [id])
+                # row = cursor.fetchone()
+                # netid = row[1]
+            if netid == username:
+                netid = row.swapnetid
+            
+            query = (session.query(createorm.Users).filter(createorm.Users.netid == netid))
+            # cursor.execute('SELECT * FROM users WHERE netid = %s', [netid])
+            row = query.one_or_none()
+            phone = row.phone
+            name1 = row.name
+            query = (session.query(createorm.Users).filter(createorm.Users.netid == username))
+            # cursor.execute('SELECT * FROM users WHERE netid = %s', [username])
+            row = query.one_or_none()
+            name2 = row.name
 
-                cursor.execute('DELETE FROM exchanges WHERE reqid = %s', [id])
-                
-                msg = create_message(name1, name2)
-                notifications.send_message(phone, msg)
+            def create_message(name1, name2):
+                msg = 'Hello, ' + name1 + '! ' + name2 + ' has marked your exchange as complete. Please visit https://mealswap.onrender.com/exchanges to view your pending exchanges.'
+                return msg
+
+
+            query = (session.query(createorm.Exchanges).filter(createorm.Exchanges.reqid == id))
+            query.delete()
+            session.commit()
+
+            # cursor.execute('DELETE FROM exchanges WHERE reqid = %s', [id])
+            
+            msg = create_message(name1, name2)
+            notifications.send_message(phone, msg)
     
     except Exception as ex:
         print(ex, file = sys.stderr)
@@ -754,40 +902,55 @@ def complete_exchange(id, username):
 def get_exchanges(username):
     username = str(username)
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
+            requested = []
 
-            with connection.cursor() as cursor:
-                requested = []
+            query = (session.query(createorm.Exchanges).filter((createorm.Exchanges.netid == username) | (createorm.Exchanges.swapnetid == username)))
+            rows = query.all()
 
-                cursor.execute(
-                    "SELECT * FROM exchanges WHERE (netid = %s OR swapnetid = %s) AND netid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND swapnetid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND netid NOT IN (SELECT netid FROM blocked WHERE block_netid = %s) AND swapnetid NOT IN (SELECT netid FROM blocked WHERE block_netid = %s)", [username, username, username, username, username, username])
 
-                rows = cursor.fetchall()
-                print(rows)
+            # cursor.execute(
+            #     "SELECT * FROM exchanges WHERE (netid = %s OR swapnetid = %s) AND netid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND swapnetid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND netid NOT IN (SELECT netid FROM blocked WHERE block_netid = %s) AND swapnetid NOT IN (SELECT netid FROM blocked WHERE block_netid = %s)", [username, username, username, username, username, username])
 
-                if rows is not None:
-                    for row in rows:
-                        exchange_id = row[0]
-                        netid = row[1]
-                        swapnetid = row[2]
-                        times = row[3]
-                        completed = row[4]
-                        if swapnetid == username:
-                            swapnetid = netid
-                        cursor.execute(
-                            "SELECT * FROM users WHERE netid = %s", [swapnetid])
-                        user = cursor.fetchone()
-                        nickname = user[2]
-                        name = user[1]
-                        plan = user[3]
-                        phone = user[4]
-                        request = [exchange_id, swapnetid, name, nickname, plan, phone, times]
-                        print(request)
-                        requested.append(request)
+            # rows = cursor.fetchall()
+            # print(rows)
 
-                return requested
+            if rows is not None:
+                for row in rows:
+
+                    exchange_id = row.reqid
+                    netid = row.netid
+                    swapnetid = row.swapnetid
+
+                    query = (session.query(createorm.Blocked).filter(createorm.Blocked.netid == netid).filter(createorm.Blocked.block_netid == swapnetid))
+                    blocked = query.one_or_none()
+                    if blocked is not None:
+                        continue
+                    
+                    query = (session.query(createorm.Blocked).filter(createorm.Blocked.netid == swapnetid).filter(createorm.Blocked.block_netid == netid))
+                    blocked = query.one_or_none()
+                    if blocked is not None:
+                        continue
+
+                    times = row.times
+                    completed = row.completed
+                    if swapnetid == username:
+                        swapnetid = netid
+                    
+                    query = (session.query(createorm.Users).filter(createorm.Users.netid == swapnetid))
+                    # cursor.execute(
+                    #     "SELECT * FROM users WHERE netid = %s", [swapnetid])
+                    user = query.one_or_none()
+                    nickname = user.nickname
+                    name = user.name
+                    plan = user.plan
+                    phone = user.phone
+                    request = [exchange_id, swapnetid, name, nickname, plan, phone, times]
+                    print(request)
+                    requested.append(request)
+
+            return requested
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -801,41 +964,48 @@ def addBlockedUser(username, netid):
     try:
         if not netid.isalnum():
             return 1
-        database_url = os.getenv('DATABASE_URL')
 
-        with psycopg2.connect(database_url) as connection:
-            with connection.cursor() as cursor:
-                lib = req_lib.ReqLib()
+        with sqlalchemy.orm.Session(engine) as session:
 
-                req = lib.getJSON(
-                    lib.configs.USERS_BASIC,
-                    uid=netid,
-                )
-                print("here")
-                if len(req) == 0:
-                    return 1 # not a valid netid
+            lib = req_lib.ReqLib()
+
+            req = lib.getJSON(
+                lib.configs.USERS_BASIC,
+                uid=netid,
+            )
+            print("here")
+            if len(req) == 0:
+                return 1 # not a valid netid
+            
+            
+            print(f'REQ CONTENTS: {req}')
+            
+            if netid == username:
+                print('2')
+                return 2 # cannot be username
+
+            query = (session.query(createorm.Blocked).filter(createorm.Blocked.netid == username).filter(createorm.Blocked.block_netid == netid))
+            exists = query.one_or_none()
+            if exists is not None:    
+                print('3') 
+                return 3       
+            # cursor.execute(
+            #     "SELECT * FROM blocked WHERE netid=%s AND block_netid=%s", [username, netid])
+            # exists = cursor.fetchall()
+            
+            # # print(f'EXISTS: {exists}')
+            # if exists is not None and count > 0:
+            #     return 3 # cannot exist
+            
+            print('4') 
+            blocked = createorm.Blocked(netid = username, block_netid = netid)
+            session.add(blocked)
+            session.commit()
                 
+                # cursor.execute("INSERT INTO blocked (netid, block_netid) "
+                #                 + "VALUES (%s, %s)", [username, netid])
                 
-                print(f'REQ CONTENTS: {req}')
-                
-                if netid == username:
-                    return 2 # cannot be username
-                
-                
-                cursor.execute(
-                    "SELECT * FROM blocked WHERE netid=%s AND block_netid=%s", [username, netid])
-                exists = cursor.fetchall()
-                
-                print(f'EXISTS: {exists}')
-                if exists is not None and len(exists) > 0:
-                    return 3 # cannot exist
-                
-                
-                
-                cursor.execute("INSERT INTO blocked (netid, block_netid) "
-                               + "VALUES (%s, %s)", [username, netid])
-                
-                return 4
+            return 4
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -846,25 +1016,30 @@ def getMostRecentTimestamp(username):
     
     
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
-            with connection.cursor() as cursor:
-                print('getting most recent timestamp...')
-                
-                cursor.execute(
-                    "SELECT plan FROM users WHERE netid=%s", [username])
+            print('getting most recent timestamp...')
 
-                plan = cursor.fetchone()[0]
-                print(f'plan: {plan}')
-                
-                cursor.execute(
-                    "SELECT MAX(created_at) FROM requested WHERE requested=%s", [plan])
-                
-                timestamp = cursor.fetchone()[0]
-                print(f'timestamp: {timestamp}')
-                return timestamp
-                
+            query = (session.query(createorm.Users).filter(createorm.Users.netid == username))
+            user = query.one_or_none()
+            plan = user.plan
+            
+            
+            # cursor.execute(
+            #     "SELECT plan FROM users WHERE netid=%s", [username])
+
+            # plan = cursor.fetchone()[0]
+            print(f'plan: {plan}')
+
+            count = (session.query(createorm.Requested).filter(createorm.Requested.requested == plan)).count()
+            
+            # cursor.execute(
+            #     "SELECT MAX(created_at) FROM requested WHERE requested=%s", [plan])
+            
+            # timestamp = cursor.fetchone()[0]
+            print(f'count: {count}')
+            return count
+            
     except Exception as ex:
         print(ex, file=sys.stderr)
         print(ex, "Server Error")
@@ -875,18 +1050,18 @@ def getMostRecentTimestamp(username):
 def getMostRecentBlockedTimestamp(username):
 
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
-            with connection.cursor() as cursor:
-                print('getting most recent blocked timestamp...')
+            print('getting most recent blocked timestamp...')
 
-                cursor.execute(
-                    "SELECT MAX(created_at) FROM blocked WHERE block_netid=%s", [username])
+            count = (session.query(createorm.Blocked).filter(createorm.Blocked.block_netid == username)).count()
 
-                timestamp = cursor.fetchone()[0]
-                print(f'blocked timestamp: {timestamp}')
-                return timestamp
+            # cursor.execute(
+            #     "SELECT MAX(created_at) FROM blocked WHERE block_netid=%s", [username])
+
+            # timestamp = cursor.fetchone()[0]
+            print(f'blocked count: {count}')
+            return count
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -898,20 +1073,20 @@ def getMostRecentBlockedTimestamp(username):
 def getMostRecentExchangeTimestamp(username):
 
     try:
-        database_url = os.getenv('DATABASE_URL')
+        with sqlalchemy.orm.Session(engine) as session:
 
-        with psycopg2.connect(database_url) as connection:
-            with connection.cursor() as cursor:
-                print('getting most recent exchange timestamp...')
+            print('getting most recent exchange timestamp...')
 
-                cursor.execute(
-                    "SELECT MAX(created_at) FROM exchanges WHERE swapnetid=%s OR netid=%s", [username, username])
+            count = (session.query(createorm.Exchanges).filter((createorm.Exchanges.swapnetid == username) | (createorm.Exchanges.netid == username))).count()
 
-                
-                timestamp = cursor.fetchone()[0]
-                
-                print(f'timestamp: {timestamp}')
-                return timestamp
+            # cursor.execute(
+            #     "SELECT MAX(created_at) FROM exchanges WHERE swapnetid=%s OR netid=%s", [username, username])
+
+            
+            # count = cursor.fetchone()[0]
+            
+            print(f'count: {count}')
+            return count
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -921,13 +1096,13 @@ def getMostRecentExchangeTimestamp(username):
 
 def getExchangeBlocked(username):
     t1 = getMostRecentExchangeTimestamp(username)
-    # t2 = getMostRecentBlockedTimestamp(username)
+    t2 = getMostRecentBlockedTimestamp(username)
 
     return [t1, t2]
 
 
 def getRequestBlocked(username):
     t1 = getMostRecentTimestamp(username)
-    # t2 = getMostRecentBlockedTimestamp(username)
+    t2 = getMostRecentBlockedTimestamp(username)
 
     return [t1, t2]
