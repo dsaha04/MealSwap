@@ -351,7 +351,7 @@ def cancel_exchange():
 def complete_exchange():
     username = auth.authenticate()
     reqid = int(flask.request.form['reqid'])
-    success = server.complete_exchange(reqid)
+    success = server.complete_exchange(reqid, username)
     if success == 0:
         return flask.render_template('error.html')
     return flask.redirect('/exchanges')

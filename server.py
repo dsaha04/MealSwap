@@ -698,13 +698,33 @@ def unblock_user(blockid, username):
         print(ex, file=sys.stderr)
         return 0
 
-def complete_exchange(id):
+def complete_exchange(id, username):
     try:
         database_url = os.getenv('DATABASE_URL')
 
         with psycopg2.connect(database_url) as connection:
             with connection.cursor() as cursor:
+                cursor.execute('SELECT * FROM exchanges WHERE reqid = %s', [id])
+                row = cursor.fetchone()
+                netid = row[1]
+                if netid == username:
+                    netid = row[2]
+                cursor.execute('SELECT * FROM users WHERE netid = %s', [netid])
+                row = cursor.fetchone()
+                phone = row[4]
+                name1 = row[1]
+                cursor.execute('SELECT * FROM users WHERE netid = %s', [username])
+                row = cursor.fetchone()
+                name2 = row[1]
+
+                def create_message(name1, name2):
+                    msg = 'Hello, ' + name1 + '! ' + name2 + ' has marked your exchange as complete. Please visit https://mealswap.onrender.com/exchanges to view your pending exchanges.'
+                    return msg
+
                 cursor.execute('DELETE FROM exchanges WHERE reqid = %s', [id])
+                
+                msg = create_message(name1, name2)
+                notifications.send_message(phone, msg)
     
     except Exception as ex:
         print(ex, file = sys.stderr)
@@ -821,7 +841,6 @@ def getMostRecentTimestamp(username):
                 
                 timestamp = cursor.fetchone()[0]
                 print(f'timestamp: {timestamp}')
-                cursor.close()
                 return timestamp
                 
     except Exception as ex:
@@ -845,7 +864,6 @@ def getMostRecentBlockedTimestamp(username):
 
                 timestamp = cursor.fetchone()[0]
                 print(f'blocked timestamp: {timestamp}')
-                cursor.close()
                 return timestamp
 
     except Exception as ex:
@@ -871,7 +889,6 @@ def getMostRecentExchangeTimestamp(username):
                 timestamp = cursor.fetchone()[0]
                 
                 print(f'timestamp: {timestamp}')
-                cursor.close()
                 return timestamp
 
     except Exception as ex:
