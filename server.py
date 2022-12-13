@@ -57,7 +57,7 @@ def get_blocked(username):
 
         with sqlalchemy.orm.Session(engine) as session:
 
-            query = (session.query(createorm.Blocked))
+            query = (session.query(createorm.Blocked).filter(createorm.Blocked.netid == username))
             rows = query.all()
             print(rows)
             table = []
