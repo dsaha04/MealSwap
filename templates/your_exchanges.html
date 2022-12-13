@@ -51,41 +51,40 @@
 </script>
  
 <script>
+prev = null
+prev2 = null
 
-  console.log('hey')
-  loadTime = new Date()
+$.ajax({
+      url: "/getexchangeupdates",
+      type: "POST",
+  }).done(function(response) {
 
-  prevTime = null
-  prevTime2 = null
+      prev = response[0]
+      prev2 = response[1]
 
-  console.log(loadTime)
-  setInterval(getUpdates, 5000);
+    });
 
-  function getUpdates() {
-    $.ajax({
-        url: "/getexchangeupdates",
-        type: "POST",
-    }).done(function(response) {
-        let lastUpdatedTime = new Date(response[0])
-        let lastUpdatedTime2 = new Date(response[1])
-        console.log(response[1])
-        console.log(lastUpdatedTime2)
-        if (lastUpdatedTime2 == NaN || lastUpdatedTime2.getTime() == 0) {
-          location.reload()
-        } 
+setInterval(getUpdates, 5000);
 
-        if (lastUpdatedTime.getTime() > loadTime.getTime() || 
-            lastUpdatedTime2.getTime() > loadTime.getTime()) {
-          console.log("new update")
-          location.reload();
-        }
+function getUpdates() {
+  $.ajax({
+      url: "/getexchangeupdates",
+      type: "POST",
+  }).done(function(response) {
+      console.log(response)
 
-        prevTime = lastUpdatedTime
-        prevTime2 = lastUpdatedTime2
+      if (response[0] != prev || response[1] != prev2) {
+        location.reload()
+      }
 
-      });
+      prev = response[0]
+      prev2 = response[1]
+
+    });
 
 }
+
+
 
 function setup()
         {

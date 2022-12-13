@@ -43,13 +43,19 @@
 
 <script>
 
-console.log('hey')
-loadTime = new Date()
+prev = null
+prev2 = null
 
-prevTime = null
-prevTime2 = null
+$.ajax({
+      url: "/getupdates",
+      type: "POST",
+  }).done(function(response) {
 
-console.log(loadTime)
+      prev = response[0]
+      prev2 = response[1]
+
+    });
+
 setInterval(getUpdates, 5000);
 
 function getUpdates() {
@@ -57,22 +63,14 @@ function getUpdates() {
       url: "/getupdates",
       type: "POST",
   }).done(function(response) {
-      let lastUpdatedTime = new Date(response[0])
-      let lastUpdatedTime2 = new Date(response[1])
+      console.log(response)
 
-      console.log(lastUpdatedTime2.getTime())
-      if (lastUpdatedTime2 == NaN || lastUpdatedTime2.getTime() == 0) {
+      if (response[0] != prev || response[1] != prev2) {
         location.reload()
-      } 
-
-      if (lastUpdatedTime.getTime() > loadTime.getTime() || 
-          lastUpdatedTime2.getTime() > loadTime.getTime()) {
-        console.log("new update")
-        location.reload();
       }
 
-      prevTime = lastUpdatedTime
-      prevTime2 = lastUpdatedTime2
+      prev = response[0]
+      prev2 = response[1]
 
     });
 
@@ -209,14 +207,14 @@ $('document').ready(setup);
               <div class="card-body col-sm-2">
                   <form action='/viewrequest' method="post" onsubmit="return confirm('Are you sure you want to accept this request?');">
                     <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
-                    <input type="hidden" id="reqid" name="reqid" value="{{table[table|length - i - 1][4]}}">
+                    <input type="hidden" id="reqid" name="reqid" value="{{table[i][4]}}">
                     <button type="submit" class="btn btn-outline-primary float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
                       Accept
                     </button>
                   </form>
                   <form action='/deleterequest' method="post" onsubmit="return confirm('Are you sure you want to move this request to your Declined Requests?');">
                     <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
-                    <input type="hidden" id="reqid" name="reqid" value="{{table[table|length - i - 1][4]}}">
+                    <input type="hidden" id="reqid" name="reqid" value="{{table[i][4]}}">
                     <button type="submit" class="btn btn-outline-danger float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
                       Decline
                     </button>
