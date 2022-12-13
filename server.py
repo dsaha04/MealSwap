@@ -879,3 +879,16 @@ def getMostRecentExchangeTimestamp(username):
         return 0
 
     return 0
+
+def getExchangeBlocked(username):
+    t1 = getMostRecentExchangeTimestamp(username)
+    t2 = getMostRecentBlockedTimestamp(username)
+
+    return [t1, t2]
+
+
+def getRequestBlocked(username):
+    t1 = getMostRecentTimestamp(username)
+    t2 = getMostRecentBlockedTimestamp(username)
+
+    return [t1, t2]

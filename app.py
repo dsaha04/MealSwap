@@ -380,8 +380,7 @@ def cancel_request():
 @app.route('/getupdates', methods=['GET', 'POST'])
 def get_updates():
     username = auth.authenticate()
-    timestamp = server.getMostRecentTimestamp(username)
-    timestamp2 = server.getMostRecentBlockedTimestamp(username)
+    timestamp, timestamp2 = server.getRequestBlocked(username)
     
     if timestamp == 0 or timestamp2 == 0:
         return flask.render_template('error.html')
@@ -394,8 +393,7 @@ def get_updates():
 def get_exchange_updates():
     username = auth.authenticate()
     
-    timestamp = server.getMostRecentExchangeTimestamp(username)
-    timestamp2 = server.getMostRecentBlockedTimestamp(username)
+    timestamp, timestamp2 = server.getExchangeBlocked(username)
 
     if timestamp == 0 or timestamp2 == 0:
         return flask.render_template('error.html')
