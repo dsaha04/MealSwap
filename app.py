@@ -229,6 +229,7 @@ def submit_request():
             print("flashing...")
             flask.flash(
                 "You cannot open more than 5 pending requests")
+            return flask.redirect('/yourrequests')
         
         if response == 2:
             flask.flash(
