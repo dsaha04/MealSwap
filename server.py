@@ -39,6 +39,7 @@ def create_user(details, netid):
     
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 def get_blocked(username):
@@ -76,6 +77,7 @@ def get_blocked(username):
         
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 
@@ -115,6 +117,7 @@ def update_details(details, netid):
         
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 def check_user(username):
@@ -135,6 +138,7 @@ def check_user(username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 def check_for_instant_matches(username):
@@ -190,6 +194,7 @@ def check_for_instant_matches(username):
             
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return -1
 
 
@@ -258,6 +263,7 @@ def create_request(details, username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 def profile_details(username):
@@ -275,6 +281,7 @@ def profile_details(username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 def get_requests(username):
@@ -322,6 +329,7 @@ def get_requests(username):
             
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 def trash_requests(username):
@@ -360,6 +368,7 @@ def trash_requests(username):
             
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 
@@ -394,6 +403,7 @@ def get_your_requests(username):
             
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
             
 def get_exchange(id):
@@ -415,6 +425,7 @@ def get_exchange(id):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 def get_request(id):
@@ -437,6 +448,7 @@ def get_request(id):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 
@@ -522,6 +534,7 @@ def accept_request(id, username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 
@@ -556,6 +569,7 @@ def delete_request(id, username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 
@@ -625,6 +639,7 @@ def cancel_exchange(id):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 
@@ -642,6 +657,7 @@ def cancel_request(id):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 def undo_request(id, username):
@@ -657,6 +673,7 @@ def undo_request(id, username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 def block_user(reqid, username):
@@ -682,6 +699,7 @@ def block_user(reqid, username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 def unblock_user(blockid, username):
@@ -696,6 +714,7 @@ def unblock_user(blockid, username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 def complete_exchange(id, username):
@@ -728,6 +747,7 @@ def complete_exchange(id, username):
     
     except Exception as ex:
         print(ex, file = sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 
@@ -771,6 +791,7 @@ def get_exchanges(username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
         
         
@@ -818,6 +839,7 @@ def addBlockedUser(username, netid):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
 def getMostRecentTimestamp(username):
@@ -845,9 +867,9 @@ def getMostRecentTimestamp(username):
                 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
     
-    return 0
 
 
 def getMostRecentBlockedTimestamp(username):
@@ -868,9 +890,9 @@ def getMostRecentBlockedTimestamp(username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
-    return 0
 
 
 def getMostRecentExchangeTimestamp(username):
@@ -893,9 +915,9 @@ def getMostRecentExchangeTimestamp(username):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        print(ex, "Server Error")
         return 0
 
-    return 0
 
 def getExchangeBlocked(username):
     t1 = getMostRecentExchangeTimestamp(username)
