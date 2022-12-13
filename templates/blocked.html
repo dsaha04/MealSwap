@@ -78,12 +78,12 @@ function submitForm(para) {
       <div class="container-fluid">
         <form action='/blocked' method='post'>
           <div class="row align-items-end">
-            <label class="col-sm-auto">Enter the netid for user you want to block:</label>
+            <label class="col-sm-auto ml-1">Enter the netid for user you want to block:</label>
             <div class="col-sm-4">
               <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
               <input type="text" class="form-control" id="netid" name="netid" placeholder="netid">
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-2 pt-2">
               <button type="submit" class="btn btn-outline-primary">Submit</button>
             </div>
           </div>
