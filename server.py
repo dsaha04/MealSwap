@@ -375,7 +375,7 @@ def get_requests(username):
             # cursor.execute("SELECT plan FROM users WHERE netid = %s",[username])
             # plan = cursor.fetchone()
 
-                query = (session.query(createorm.Requested).filter(createorm.Requested.requested == plan))
+                query = (session.query(createorm.Requested).filter(createorm.Requested.requested == plan).filter(createorm.Requested.netid != username))
                 rows = query.all()
             
             # cursor.execute("SELECT * FROM requested WHERE requested = %s AND netid NOT IN (SELECT block_netid FROM blocked WHERE netid = %s) AND netid NOT IN (SELECT netid FROM blocked WHERE block_netid = %s) AND netid != %s",[plan, username, username, username])

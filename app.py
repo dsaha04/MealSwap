@@ -267,7 +267,7 @@ def view_request():
 
         return flask.redirect('/exchanges')
     
-    # return flask.render_template('viewrequest.html', req=req)
+    return flask.redirect('/exchanges')
 
 
 @app.route('/deleterequest', methods = ['GET', 'POST'])
@@ -291,7 +291,7 @@ def delete_request():
         print("FLASHED")
         return flask.redirect('/dashboard')
     
-    return flask.render_template('deleterequest.html', req=req)
+    return flask.redirect('/dashboard')
 
 @app.route('/undorequest', methods = ['GET', 'POST'])
 def undo_request():
@@ -320,7 +320,7 @@ def undo_request():
         
         return flask.redirect('/dashboard')
     
-    return flask.render_template('undorequest.html', req=req)
+    return flask.redirect('/dashboard')
 
 @app.route('/trashrequest', methods = ['GET', 'POST'])
 def trash_request():
@@ -350,7 +350,7 @@ def cancel_exchange():
             return flask.render_template('error.html')
         return flask.redirect('/exchanges')
     
-    return flask.render_template('cancelexchange.html', req=req)
+    return flask.redirect('/exchanges')
 
 @app.route('/completeexchange', methods = ['GET', 'POST'])
 def complete_exchange():
