@@ -891,7 +891,8 @@ def complete_exchange(id, username):
             # cursor.execute('DELETE FROM exchanges WHERE reqid = %s', [id])
             
             msg = create_message(name1, name2)
-            notifications.send_message(phone, msg)
+            if phone in numbers:           
+                notifications.send_message(phone, msg)
     
     except Exception as ex:
         print(ex, file = sys.stderr)
