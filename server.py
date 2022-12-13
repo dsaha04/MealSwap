@@ -921,13 +921,13 @@ def getMostRecentExchangeTimestamp(username):
 
 def getExchangeBlocked(username):
     t1 = getMostRecentExchangeTimestamp(username)
-    t2 = getMostRecentBlockedTimestamp(username)
+    # t2 = getMostRecentBlockedTimestamp(username)
 
     return [t1, t2]
 
 
 def getRequestBlocked(username):
     t1 = getMostRecentTimestamp(username)
-    t2 = getMostRecentBlockedTimestamp(username)
+    # t2 = getMostRecentBlockedTimestamp(username)
 
     return [t1, t2]
