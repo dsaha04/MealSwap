@@ -274,7 +274,10 @@ def create_request(details, username):
     try:
         with sqlalchemy.orm.Session(engine) as session:
             count = (session.query(createorm.Requested).filter(createorm.Requested.netid == username)).count()
-            if count >= 5:
+            exchange1 = (session.query(createorm.Exchanges).filter(createorm.Exchanges.netid == username)).count()
+            exchange2 = (session.query(createorm.Exchanges).filter(createorm.Exchanges.swapnetid == username)).count()
+
+            if count + exchange1 + exchange2 >= 5:
                 return 1 # you cannot make more than 5 requests
             request = createorm.Requested(netid = username, requested = requested_plan, times = times)
             session.add(request)
@@ -556,6 +559,11 @@ def accept_request(id, username):
     
     try:
         with sqlalchemy.orm.Session(engine) as session:
+
+            count1 = (session.query(createorm.Exchanges).filter(createorm.Exchanges.netid == username)).count()
+            count2 = (session.query(createorm.Exchanges).filter(createorm.Exchanges.swapnetid == username)).count()
+            if (count1 + count2) >= 5:
+                return 1 # you cannot make more than 5 requests
 
             requested = []
             print("ID")

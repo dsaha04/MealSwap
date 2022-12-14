@@ -232,7 +232,7 @@ def submit_request():
         if response == 1:
             print("flashing...")
             flask.flash(
-                "You cannot open more than 5 pending requests")
+                "You cannot have more than 5 pending requests/exchanges. Please cancel some of your requests or complete some of your exchanges to submit more requests.")
             return flask.redirect('/yourrequests')
         
         if response == 2:
@@ -262,6 +262,10 @@ def view_request():
         print()
         reqid = int(flask.request.form['reqid'])
         success = server.accept_request(reqid, username)
+        if success == 1:
+            flask.flash(
+                "You cannot have more than 5 pending exchanges at one time.")
+
         if success == 0:
             return flask.render_template('error.html')
 
