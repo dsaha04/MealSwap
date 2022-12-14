@@ -79,7 +79,7 @@
                 <label for="inputEmail4" style="margin-top: 5px; font-weight: bolder" >Preferred Name:</label>
               </td>
               <td>
-                <input type="text" class="form-control" style="color:black" id="name" name="name" value="{{nickname}}">
+                <input type="text" title="This field is required" pattern="\S(.*\S)?" class="form-control" style="color:black" id="name" name="name" value="{{nickname}}" required>
               </td>
             </tr>
 
@@ -116,7 +116,7 @@
                 <label for="inputCity" style="margin-top: 5px; font-weight: bolder">Phone Number:</label>
               </td>
               <td>
-                <input class="form-control profileInput" type="tel" pattern="[0-9]{10}" style="color:black" id="contact" name="number" value="{{phone_no}}" required>
+                <input class="form-control profileInput" title="10 digit number" type="tel" pattern="[0-9]{10}" style="color:black" id="contact" name="number" value="{{phone_no}}" required>
                 <tr>
                   <td></td>
                   <td>
