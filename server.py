@@ -8,13 +8,17 @@ import sqlalchemy
 import sqlalchemy.orm
 import createorm
 
-numbers = {'6506958443', '2485332973', '2489466588', '2019522343', '3124592594', '7035019474', '6092582211', '2672261984'}
+numbers = {'6506958443', '2485332973', '2489466588', '2019522343', '3124592594', '7035019474', '6092582211', '2672261984', '7328533443', '2157422798'}
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 engine = sqlalchemy.create_engine(DATABASE_URL)
 
 def create_user(details, netid):
+    if 'plan' not in details.keys() or 'name' not in details.keys() or 'number' not in details.keys() or not details['plan'] or not details['name'] or not details['number']:
+        return -1
+    if  not netid:
+        return -2
     netid = str(netid)
     print(f'details: {details}')
     plan = str(details['plan'])
@@ -44,6 +48,8 @@ def create_user(details, netid):
         return 0
 
 def get_blocked(username):
+    if not username:
+        return -1
     try:
 
         with sqlalchemy.orm.Session(engine) as session:
@@ -80,6 +86,11 @@ def get_blocked(username):
 
 def update_details(details, netid):
 
+    if 'plan' not in details.keys() or 'name' not in details.keys() or 'number' not in details.keys():
+        return -1
+    if not netid:
+        return -2
+
     usersOld = profile_details(netid)
 
     netid = str(netid)
@@ -99,8 +110,6 @@ def update_details(details, netid):
 
     users = (name, plan, phone, netid)
 
-    # phone = str(details['number'])
-
     try:
 
         with sqlalchemy.orm.Session(engine) as session:
@@ -118,6 +127,8 @@ def update_details(details, netid):
         return 0
 
 def check_user(username):
+    if not username:
+        return -2
     print('checking')
 
     username = str(username)
@@ -135,9 +146,11 @@ def check_user(username):
     except Exception as ex:
         print(ex, file=sys.stderr)
         print(ex, "Server Error")
-        return 0
+        return 1
 
 def check_for_instant_matches(username):
+    if not username:
+        return -2
     
     try:
         with sqlalchemy.orm.Session(engine) as session:
@@ -179,7 +192,7 @@ def check_for_instant_matches(username):
                                     query = (session.query(createorm.Users).filter(createorm.Users.netid == netid))
                                     user = query.one_or_none()
                                     if plan == user.plan:
-                                        accept_request(reqid, username)
+                                        accept_request(int(reqid), username)
                                         matched = True
                                         break
             
@@ -191,6 +204,12 @@ def check_for_instant_matches(username):
         return -1
 
 def create_request(details, username):
+
+    if 'plan' not in details.keys() or 'times' not in details.keys() or not details['plan'] or not details['times']:
+        return -1
+    
+    if not username:
+        return -2
 
     username = str(username)
     requested_plan = details['plan']
@@ -222,6 +241,9 @@ def create_request(details, username):
 
 def profile_details(username):
 
+    if not username:
+        return -1
+
     username = str(username)
     try:
         with sqlalchemy.orm.Session(engine) as session:
@@ -237,6 +259,9 @@ def profile_details(username):
         return 0
 
 def get_requests(username):
+
+    if not username:
+        return -1
 
     username = str(username)
     try:
@@ -296,6 +321,9 @@ def get_requests(username):
 
 def trash_requests(username):
 
+    if not username:
+        return -1
+
     username = str(username)
     try:
         with sqlalchemy.orm.Session(engine) as session:
@@ -328,6 +356,8 @@ def trash_requests(username):
 
 
 def get_your_requests(username):
+    if not username:
+        return -1
     username = str(username)
     try:
         with sqlalchemy.orm.Session(engine) as session:
@@ -352,24 +382,9 @@ def get_your_requests(username):
         print(ex, "Server Error")
         return 0
             
-def get_exchange(id):
-    try:
-        with sqlalchemy.orm.Session(engine) as session:
-
-            print("ID")
-            print(id)
-            query = (session.query(createorm.Exchanges).filter(createorm.Exchanges.reqid == id))
-            req = query.one_or_none()
-            requested = [req.reqid, req.netid, req.swapnetid, req.times, req.completed, req.created_at]
-
-            return requested
-
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        print(ex, "Server Error")
-        return 0
-
 def get_request(id):
+    if not isinstance(id, int):
+        return -1
     print('in here')
     try:
         with sqlalchemy.orm.Session(engine) as session:
@@ -388,6 +403,10 @@ def get_request(id):
 
 
 def accept_request(id, username):
+    if not isinstance(id, int):
+        return -1
+    if not username:
+        return -2
     print("accepting request")
     
     try:
@@ -445,6 +464,12 @@ def accept_request(id, username):
         return 0
 
 def delete_request(id, username):
+
+    if not isinstance(id, int):
+        return -1
+    if not username:
+        return -2
+
     print("deleting request")
     
     try:
@@ -471,6 +496,9 @@ def delete_request(id, username):
 
 
 def cancel_exchange(id):
+
+    if not isinstance(id, int):
+        return -1
     print("cancelling exchange")
     
     try:
@@ -513,6 +541,9 @@ def cancel_exchange(id):
 
 
 def cancel_request(id):
+
+    if not isinstance(id, int):
+        return -1 
     print("cancelling exchange")
     
     try:
@@ -528,7 +559,11 @@ def cancel_request(id):
         return 0
 
 def undo_request(id, username):
-    
+
+    if not isinstance(id, int):
+        return -1
+    if not username:
+        return -2
     try:
         with sqlalchemy.orm.Session(engine) as session:
 
@@ -542,7 +577,11 @@ def undo_request(id, username):
         return 0
 
 def block_user(reqid, username):
-    
+
+    if not isinstance(id, int):
+        return -1
+    if not username:
+        return -2
     try:
         with sqlalchemy.orm.Session(engine) as session:
 
@@ -563,6 +602,11 @@ def block_user(reqid, username):
         return 0
 
 def unblock_user(blockid, username):
+
+    if not isinstance(id, int):
+        return -1
+    if not username:
+        return -2
     
     try:
         with sqlalchemy.orm.Session(engine) as session:
@@ -576,6 +620,12 @@ def unblock_user(blockid, username):
         return 0
 
 def complete_exchange(id, username):
+
+    if not isinstance(id, int):
+        return -1
+    if not username:
+        return -2
+
     try:
         with sqlalchemy.orm.Session(engine) as session:
 
@@ -594,6 +644,8 @@ def complete_exchange(id, username):
             name2 = row.name
 
             def create_message(name1, name2):
+                if not name1 or not name2:
+                    return -1
                 msg = 'Hello, ' + name1 + '! ' + name2 + ' has marked your exchange as complete. Please visit https://mealswap.onrender.com/exchanges to view your pending exchanges.'
                 return msg
 
@@ -613,6 +665,8 @@ def complete_exchange(id, username):
 
 
 def get_exchanges(username):
+    if not username:
+        return -1
     username = str(username)
     try:
         with sqlalchemy.orm.Session(engine) as session:
@@ -662,9 +716,11 @@ def get_exchanges(username):
         return 0
         
 def addBlockedUser(username, netid):
+    if not netid.isalnum():
+        return 1
+    if not username:
+        return -1
     try:
-        if not netid.isalnum():
-            return 1
 
         with sqlalchemy.orm.Session(engine) as session:
 
@@ -703,7 +759,9 @@ def addBlockedUser(username, netid):
         return 0
 
 def getMostRecentTimestamp(username):
-    
+
+    if not username:
+        return -2 
     
     try:
         with sqlalchemy.orm.Session(engine) as session:
@@ -726,6 +784,9 @@ def getMostRecentTimestamp(username):
     
 def getMostRecentBlockedTimestamp(username):
 
+    if not username:
+        return -2
+
     try:
         with sqlalchemy.orm.Session(engine) as session:
 
@@ -741,9 +802,10 @@ def getMostRecentBlockedTimestamp(username):
         print(ex, "Server Error")
         return -1
 
-
-
 def getMostRecentExchangeTimestamp(username):
+
+    if not username:
+        return -2
 
     try:
         with sqlalchemy.orm.Session(engine) as session:
@@ -761,12 +823,16 @@ def getMostRecentExchangeTimestamp(username):
         return -1
 
 def getExchangeBlocked(username):
+    if not username:
+        return [-2,-2]
     t1 = getMostRecentExchangeTimestamp(username)
     t2 = getMostRecentBlockedTimestamp(username)
 
     return [t1, t2]
 
 def getRequestBlocked(username):
+    if not username:
+        return [-2,-2]
     t1 = getMostRecentTimestamp(username)
     t2 = getMostRecentBlockedTimestamp(username)
 

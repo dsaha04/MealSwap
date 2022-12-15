@@ -9,7 +9,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
  
-    <title>Server</title>
+    <title>Error</title>
  
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
  
@@ -48,7 +48,7 @@
  
       <div class="mx-sm-5">
     <h2 style="padding-top: 30px; padding-left: 15px;">
-        Unable to connect to database. Please try again later.
+There was an error with authenticating your netid. Please <a href="{{url_for('logoutcas')}}">logout</a> and try again later.
     </h2>
     </div>
 </body>

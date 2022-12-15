@@ -30,13 +30,23 @@ def create():
         if success == 0:
             return flask.render_template('error.html')
         
-    if server.check_user(username) == -1:
-        return flask.render_template('create_account.html')
+        if success == -1:
+            return flask.render_template('errorparam.html')
 
-    else:
-        return flask.redirect('/dashboard')
+        if success == -2:
+            return flask.render_template('erroruser.html')
         
+    check = server.check_user(username)
 
+    if check == 0:
+        return flask.redirect('/dashboard')
+    elif check == -1: 
+        return flask.redirect('/create')
+    elif check == -2:
+        return flask.render_template('erroruser.html')
+    else:
+        return flask.render_template('error.html')        
+        
 @app.route('/logoutapp', methods=['GET'])
 def logoutapp():
     return auth.logoutapp()
@@ -66,6 +76,9 @@ def blocked():
             
             if success == 3:
                 flask.flash('you\'ve already blocked this user')
+            
+            if success == -1:
+                return flask.render_template('erroruser.html')
 
         elif flask.request.form['server'] == 'user':
             reqid = int(flask.request.form['reqid'])
@@ -78,16 +91,26 @@ def blocked():
             instant_matched = server.check_for_instant_matches(username)
             if instant_matched == -1:
                 return flask.render_template('error.html')
+            if instant_matched == -2:
+                return flask.render_template('erroruser.html')
             if instant_matched:
                 flask.flash(
                     "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
 
         if success == 0:
             return flask.render_template('error.html')
+        if success == -1:
+            return flask.render_template('errorparam.html')
+        if success == -2:
+            return flask.render_template('erroruser.html')
    
     blocked = server.get_blocked(username)
     if blocked == 0:
         return flask.render_template('error.html')
+    
+    elif blocked == -1:
+        return flask.render_template('erroruser.html')
+
     else:
         return flask.render_template('blocked.html', table = blocked)
 
@@ -100,10 +123,17 @@ def profile():
         success = server.update_details(flask.request.form.to_dict(), username)
         if success == 0:
             return flask.render_template('error.html')
+        if success == -1:
+            return flask.render_template('errorparam.html')
+        if success == -2:
+            return flask.render_template('erroruser.html')
+        return flask.redirect('/dashboard')
     
     details = server.profile_details(username)
     if details == 0:
         return flask.render_template('error.html')
+    if details == -1:
+        return flask.render_template('erroruser.html')
     name = details[1]
     nickname = details[2]
     plan = details[3]
@@ -136,10 +166,16 @@ def dashboard():
         
         if success == 0:
             return flask.render_template('error.html')
+        elif success == -1:
+            flask.render_template('errorparam.html')
+        elif success == -2:
+            flask.render_template('erroruser.html')
 
     req_table = server.get_requests(username) 
     if req_table == 0:
-            return flask.render_template('error.html')   
+            return flask.render_template('error.html') 
+    if req_table == -1:
+        return flask.render_template('erroruser.html') 
     if server.check_user(username) != -1:
         print('checked')
         return flask.render_template('dashboard.html', table = req_table)       
@@ -154,10 +190,15 @@ def your_requests():
         success = server.cancel_request(reqid)
         if success == 0:
             return flask.render_template('error.html')
+        elif success == -1:
+            return flask.render_template('errorparam.html')
     req_table = server.get_your_requests(username)
     if req_table == 0:
         return flask.render_template('error.html')
-    
+
+    if req_table == -1:
+        return flask.render_template('erroruser.html') 
+
     return flask.render_template('your_requests.html', table= req_table)
 
 @app.route('/exchanges', methods = ['GET', 'POST'])
@@ -169,13 +210,19 @@ def your_exchanges():
             success = server.cancel_exchange(reqid)
         if flask.request.form['server'] == 'complete':
             success = server.complete_exchange(reqid, username)
+            if success == -2:
+            return flask.render_template('erroruser.html')
         if success == 0:
             return flask.render_template('error.html')
+        elif success == -1:
+            return flask.render_template('errorparam.html')
 
     req_table = server.get_exchanges(username)
     print(req_table)
     if req_table == 0:
         return flask.render_template('error.html')
+    if req_table == -1:
+        return flask.render_template('erroruser.html')
     
     return flask.render_template('your_exchanges.html', table= req_table)
 
@@ -191,6 +238,10 @@ def submit_request():
         # DEBUGGING, delete
         if response == 0:
             return flask.render_template('error.html')
+        if response == -1:
+            return flask.render_template('errorparam.html')
+        if response == -2:
+            return flask.render_template('erroruser.html')
         if response == 1:
             print("flashing...")
             flask.flash(
@@ -203,11 +254,17 @@ def submit_request():
             return flask.redirect('/exchanges')
             
         return flask.redirect('/yourrequests')
+    
+    check = server.check_user(username)
 
-    if server.check_user(username) != -1:
+    if check == 0:
         return flask.render_template('submitrequest.html')       
-    else: 
+    elif check == -1: 
         return flask.redirect('/create')
+    elif check == -2:
+        return flask.render_template('erroruser.html')
+    else:
+        return flask.render_template('error.html')
     
 @app.route('/trashrequest', methods = ['GET', 'POST'])
 def trash_request():
@@ -217,13 +274,21 @@ def trash_request():
         req = server.get_request(reqid)
         if req == 0:
             return flask.render_template('error.html')
+        if req == -1:
+            return flask.render_template('errorparam.html')
         success = server.undo_request(reqid, username)
         if success == 0:
             return flask.render_template('error.html')
+        elif success == -1:
+            return flask.render_template('errorparam.html')
+        elif success == -2:
+            return flask.render_template('erroruser.html')
         
         instant_matched = server.check_for_instant_matches(req[1])
         if instant_matched == -1:
             return flask.render_template('error.html')
+        if instant_matched == -2:
+            return flask.render_template('erroruser.html')
         if instant_matched:
             flask.flash(
                 "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
@@ -231,11 +296,20 @@ def trash_request():
     req_table = server.trash_requests(username)
     if req_table == 0:
         return flask.render_template('error.html')
-    
-    if server.check_user(username) != -1:
+
+     if req_table == -1:
+        return flask.render_template('erroruser.html')   
+
+    check = server.check_user(username)
+
+    if check == 0:
         return flask.render_template('trashrequest.html', table = req_table)       
-    else: 
+    elif check == -1: 
         return flask.redirect('/create')
+    elif check == -2:
+        return flask.render_template('erroruser.html')
+    else:
+        return flask.render_template('error.html')
 
 @app.route('/getupdates', methods=['GET', 'POST'])
 def get_updates():
@@ -245,6 +319,8 @@ def get_updates():
     print(f'timestamp: {timestamp}, {timestamp2}')
     if timestamp == -1 or timestamp2 == -1:
         return flask.render_template('error.html')
+    if timestamp == -2 or timestamp2 == -2:
+        return flask.render_template('erroruser.html')
     
     
     return [timestamp, timestamp2]
@@ -259,6 +335,8 @@ def get_exchange_updates():
     print(f'timestamp: {timestamp}, {timestamp2}')
     if timestamp == -1 or timestamp2 == -1:
         return flask.render_template('error.html')
+    if timestamp == -2 or timestamp2 == -2:
+        return flask.render_template('erroruser.html')
 
     return [timestamp, timestamp2]
     
