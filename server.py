@@ -782,6 +782,27 @@ def getMostRecentTimestamp(username):
         print(ex, "Server Error")
         return -1
     
+
+def getMostRecentRequestTimestamp(username):
+
+    if not username:
+        return -2
+
+    try:
+        with sqlalchemy.orm.Session(engine) as session:
+
+            print('getting most recent timestamp...')
+
+            count = (session.query(createorm.Requested).filter(
+                createorm.Requested.netid == username)).count()
+            print(f'count: {count}')
+            return count
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        print(ex, "Server Error")
+        return -1
+    
 def getMostRecentBlockedTimestamp(username):
 
     if not username:
@@ -837,3 +858,11 @@ def getRequestBlocked(username):
     t2 = getMostRecentBlockedTimestamp(username)
 
     return [t1, t2]
+
+
+def getNumRequests(username):
+    if not username:
+        return -2
+    t1 = getMostRecentRequestTimestamp(username)
+
+    return t1

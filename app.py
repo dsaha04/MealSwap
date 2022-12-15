@@ -348,6 +348,23 @@ def get_exchange_updates():
     return [timestamp, timestamp2]
     
 
+@app.route('/getrequestupdates', methods=['GET', 'POST'])
+def get_request_updates():
+    if flask.request.method == 'GET':
+        return flask.redirect('/dashboard')
+    username = auth.authenticate()
+
+    timestamp = server.getNumRequests(username)
+
+    print(f'request timestamp: {timestamp}')
+    
+    if timestamp == -1:
+        return flask.render_template('error.html')
+    if timestamp == -2:
+        return flask.render_template('erroruser.html')
+
+    return [timestamp]
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
 
