@@ -211,7 +211,7 @@ def your_exchanges():
         if flask.request.form['server'] == 'complete':
             success = server.complete_exchange(reqid, username)
             if success == -2:
-            return flask.render_template('erroruser.html')
+                return flask.render_template('erroruser.html')
         if success == 0:
             return flask.render_template('error.html')
         elif success == -1:
@@ -297,7 +297,7 @@ def trash_request():
     if req_table == 0:
         return flask.render_template('error.html')
 
-     if req_table == -1:
+    if req_table == -1:
         return flask.render_template('erroruser.html')   
 
     check = server.check_user(username)
