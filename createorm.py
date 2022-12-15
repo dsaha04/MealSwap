@@ -41,9 +41,9 @@ class Exchanges (Base):
 
 class Deletedrequest (Base):
     __tablename__ = 'deletedrequest'
-    delid = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    reqid = sqlalchemy.Column(sqlalchemy.Integer)
-    netid = sqlalchemy.Column(sqlalchemy.String)
+    # delid = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    reqid = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    netid = sqlalchemy.Column(sqlalchemy.String, primary_key=True)
 
 class Blocked (Base):
     __tablename__ = 'blocked'
