@@ -395,6 +395,7 @@ def accept_request(id, username):
 
             count1 = (session.query(createorm.Exchanges).filter(createorm.Exchanges.netid == username)).count()
             count2 = (session.query(createorm.Exchanges).filter(createorm.Exchanges.swapnetid == username)).count()
+            count3 = (session.query(createorm.Requested).filter(createorm.Requested.netid == username)).count()
             if (count1 + count2) >= 5:
                 return 1 # you cannot make more than 5 requests
 
