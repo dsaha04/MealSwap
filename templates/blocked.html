@@ -81,6 +81,7 @@ function submitForm(para) {
             <label class="col-sm-auto ml-1">Enter the netid for user you want to block:</label>
             <div class="col-sm-4">
               <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
+              <input type="hidden" name="server" value = "search">
               <input type="text" class="form-control" id="netid" name="netid" placeholder="netid">
             </div>
             <div class="col-sm-2 pt-2">
@@ -107,8 +108,9 @@ function submitForm(para) {
             </text>
           </div>
           <div class="card-body col-sm-2">
-              <form action='/unblock' method="post">
+              <form action='/blocked' method="post">
                 <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
+                <input type="hidden" name="server" value = "unblock">
                 <input type="hidden" id="blockid" name="blockid" value="{{table[i][0]}}">
                 <button type="submit" class="btn btn-outline-primary float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
                   Unblock User

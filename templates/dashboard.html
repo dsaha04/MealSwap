@@ -205,16 +205,18 @@ $('document').ready(setup);
                 </text>
               </div>
               <div class="card-body col-sm-2">
-                  <form action='/viewrequest' method="post" onsubmit="return confirm('Are you sure you want to accept this request?');">
+                  <form action='/dashboard' method="post" onsubmit="return confirm('Are you sure you want to accept this request?');">
                     <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
                     <input type="hidden" id="reqid" name="reqid" value="{{table[i][4]}}">
+                    <input type="hidden" id="server" name="server" value="accept">
                     <button type="submit" class="btn btn-outline-primary float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
                       Accept
                     </button>
                   </form>
-                  <form action='/deleterequest' method="post" onsubmit="return confirm('Are you sure you want to move this request to your Declined Requests?');">
+                  <form action='/dashboard' method="post" onsubmit="return confirm('Are you sure you want to move this request to your Declined Requests?');">
                     <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
                     <input type="hidden" id="reqid" name="reqid" value="{{table[i][4]}}">
+                    <input type="hidden" id="server" name="server" value="decline">
                     <button type="submit" class="btn btn-outline-danger float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
                       Decline
                     </button>

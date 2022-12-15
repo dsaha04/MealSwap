@@ -249,22 +249,25 @@ $('document').ready(setup);
                 </text>
               </div>
               <div class="card-body col-sm-2">
-                  <form action='/completeexchange' method="post" onsubmit="return confirm('Completing this is an indication that you have fulfiled both ends of the exchange. This will remove the exchange from both users\' dashboards. Do you wish to mark this exchange as complete?');">
+                  <form action='/exchanges' method="post" onsubmit="return confirm('Completing this is an indication that you have fulfiled both ends of the exchange. This will remove the exchange from both users\' dashboards. Do you wish to mark this exchange as complete?');">
                     <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
                     <input type="hidden" id="reqid" name="reqid" value="{{table[i][0]}}">
+                    <input type="hidden" id="server" name="server" value="complete">
                     <button type="submit" class="btn btn-outline-success float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
                       Complete
                     </button>
                   </form>
-                 <form action='/cancelexchange' method="post" onsubmit="return confirm('Are you sure you want to cancel this exchange?');">
+                 <form action='/exchanges' method="post" onsubmit="return confirm('Are you sure you want to cancel this exchange?');">
                     <input type="hidden" id="reqid" name="reqid" value="{{table[i][0]}}">
                     <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
+                    <input type="hidden" id="server" name="server" value="cancel">
                     <button type="submit" class="btn btn-outline-warning float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
                       Cancel
                     </button>
                   </form>
-                 <form action='/blockuser' method="post" onsubmit="return confirm('Are you sure you want to block this user?');">
+                 <form action='/blocked' method="post" onsubmit="return confirm('Are you sure you want to block this user?');">
                     <input type="hidden" id="reqid" name="reqid" value="{{table[i][0]}}">
+                    <input type="hidden" id="server" name="server" value="user">
                     <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
                     <button type="submit" class="btn btn-outline-danger float-sm-right" style="margin-left: 30px; margin-right: 30px; margin-top: 5px; margin-bottom: 5px;">
                       Block User

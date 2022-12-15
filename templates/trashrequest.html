@@ -49,6 +49,13 @@ function submitForm(para) {
 <body>
  
     {% include 'navbar.html' %}
+
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
    
     <div class="mx-sm-4 mt-4" style="padding-left: 20px; justify-content: space-between; display: flex; align-items: center;">
       <h2>
@@ -122,7 +129,7 @@ function submitForm(para) {
                 </text>
               </div>
               <div class="card-body col-sm-2">
-                  <form action='/undorequest' method='post'>
+                  <form action='/trashrequest' method='post'>
                     <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
                     <input type="hidden" id="reqid" name="reqid" value="{{table[i][4]}}">
                     <button type="submit" class="btn btn-outline-primary float-sm-right" style="margin-left: 30px; margin-right:30px;  margin-top: 5px; margin-bottom: 5px;">

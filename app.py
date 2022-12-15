@@ -1,16 +1,8 @@
-# https://pemagrg.medium.com/build-a-web-app-using-pythons-flask-for-beginners-f28315256893
-# https://stackoverflow.com/questions/42465768/jinja2-template-not-found-and-internal-server-error
-
 import server
 import auth
 from django.shortcuts import redirect
 import os
-# from dotenv import load_dotenv
-
-# load_dotenv()
-
 import flask
-# from flask import Flask, request, render_template, jsonify, redirect, url_for
 import flask_wtf.csrf
 
 app = flask.Flask(__name__)
@@ -28,7 +20,6 @@ def home():
 
 @app.route('/create', methods = ['GET', 'POST'])
 def create():
-    # TODO: fix logic to mirror submit_request
     print('creating acc')
     print(flask.request.form)
     username = auth.authenticate()
@@ -43,7 +34,6 @@ def create():
         return flask.render_template('create_account.html')
 
     else:
-        # fix url
         return flask.redirect('/dashboard')
         
 
@@ -63,36 +53,54 @@ def blocked():
         return flask.redirect('/create')
     
     if flask.request.method == 'POST':
-        print("post request")
-        netid = flask.request.form['netid'].strip()
-        success = server.addBlockedUser(username, netid)
+        if flask.request.form['server'] == 'search':
+            print("post request")
+            netid = flask.request.form['netid'].strip()
+            success = server.addBlockedUser(username, netid)
+            
+            if success == 1:
+                flask.flash('that is not a valid netid')
+                
+            if success == 2:
+                flask.flash('you cannot block yourself, silly :)')
+            
+            if success == 3:
+                flask.flash('you\'ve already blocked this user')
+
+        elif flask.request.form['server'] == 'user':
+            reqid = int(flask.request.form['reqid'])
+            success = server.block_user(reqid, username)
+        else:
+            blockid = int(flask.request.form['blockid'])
+            success = server.unblock_user(blockid, username)
+            if success == 0:
+                return flask.render_template('error.html')
+            instant_matched = server.check_for_instant_matches(username)
+            if instant_matched == -1:
+                return flask.render_template('error.html')
+            if instant_matched:
+                flask.flash(
+                    "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
 
         if success == 0:
             return flask.render_template('error.html')
-        
-        if success == 1:
-            flask.flash('that is not a valid netid')
-            
-        if success == 2:
-            flask.flash('you cannot block yourself, silly :)')
-         
-        if success == 3:
-            flask.flash('you\'ve already blocked this user')
-        
-        blocked = server.get_blocked(username)
-        if blocked == 0:
-            return flask.render_template('error.html')
-        print(blocked)
-        return flask.render_template('blocked.html', table = blocked)
-        
+   
     blocked = server.get_blocked(username)
-    return flask.render_template('blocked.html', table = blocked)
+    if blocked == 0:
+        return flask.render_template('error.html')
+    else:
+        return flask.render_template('blocked.html', table = blocked)
 
-@app.route('/profile')
+@app.route('/profile', methods = ['GET', 'POST'])
 def profile():
     username = auth.authenticate()
     if server.check_user(username) == -1:
         return flask.redirect('/create')
+    if flask.request.method == 'POST':
+        success = server.update_details(flask.request.form.to_dict(), username)
+        if success == 0:
+            return flask.render_template('error.html')
+    
     details = server.profile_details(username)
     if details == 0:
         return flask.render_template('error.html')
@@ -102,82 +110,6 @@ def profile():
     number = details[4]
     return flask.render_template('profile_page.html', name = name, nickname = nickname, netid = str(username), dining_plan = plan, phone_no = number)
 
-@app.route('/updatedetails', methods = ['GET', 'POST'])
-def update_details():
-    username = auth.authenticate()
-    print('updatedetails')
-    if flask.request.method == 'POST':
-        print(flask.request.form)
-        success = server.update_details(flask.request.form.to_dict(), username)
-        if success == 0:
-            return flask.render_template('error.html')
-        return flask.redirect("/dashboard")
-
-    if server.check_user(username) != -1:
-        return flask.render_template('update_details.html')       
-    else: 
-        return flask.redirect('/create')
-
-
-@app.route('/blockuser', methods = ['GET', 'POST'])
-def block_user():
-    username = auth.authenticate()
-    reqid = int(flask.request.form['reqid'])
-    if flask.request.method == 'POST':
-        success = server.block_user(reqid, username)
-        if success == 0:
-            return flask.render_template('error.html')
-    return flask.redirect("/blocked")
-
-@app.route('/unblock', methods = ['GET', 'POST'])
-def unblock_user():
-    username = auth.authenticate()
-    blockid = int(flask.request.form['blockid'])
-    success = server.unblock_user(blockid, username)
-    if success == 0:
-        return flask.render_template('error.html')
-    
-    instant_matched = server.check_for_instant_matches(username)
-    if instant_matched == -1:
-        return flask.render_template('error.html')
-    if instant_matched:
-        flask.flash(
-            "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
-    
-    blocked = server.get_blocked(username)
-    if blocked == 0:
-            return flask.render_template('error.html')
-    return flask.render_template('blocked.html', table=blocked)
-
-
-
-@app.route('/test')
-def test():
-    return flask.render_template('test.html')
-
-'''
-@app.route('/create-new-user', methods=['GET', 'POST'])
-def my_form_post():
-   if request.method == 'POST':
-       firstname = request.form['firstname']
-       result = {
-           "output": firstname
-       }
-
-       server.create_user(request.form, username)
-
-        
-    
-        
-        TODO: ADD TO DATABASE HERE
-        
-        TODO; Redirect the user instead of calling jsonify
-        
-       return jsonify(result=result)
-
-   return render_template('create_account.html')
-'''
-
 @app.route('/about')
 def about():
     return flask.render_template('about.html')
@@ -186,10 +118,25 @@ def about():
 def tutorial():
     return flask.render_template('tutorial.html')
 
-@app.route('/dashboard')
+@app.route('/dashboard', methods = ['GET', 'POST'])
 def dashboard():
     username = auth.authenticate()
     print('in dashboard')
+    if flask.request.method == 'POST':
+        reqid = int(flask.request.form['reqid'])
+        if flask.request.form['server'] == 'accept':
+            success = server.accept_request(reqid, username)
+            if success == 1:
+                flask.flash(
+                "You cannot have more than 5 pending exchanges at one time.")
+            elif success ==2:
+                flask.flash("This request has been accepted! Please navigate to your exchanges to view more details about this exchange.")
+        else:
+            success = server.delete_request(reqid, username)
+        
+        if success == 0:
+            return flask.render_template('error.html')
+
     req_table = server.get_requests(username) 
     if req_table == 0:
             return flask.render_template('error.html')   
@@ -199,19 +146,34 @@ def dashboard():
     else: 
         return flask.redirect('/create')
 
-@app.route('/yourrequests')
+@app.route('/yourrequests', methods = ['GET', 'POST'])
 def your_requests():
     username = auth.authenticate()
+    if flask.request.method == 'POST':
+        reqid = int(flask.request.form['reqid'])
+        success = server.cancel_request(reqid)
+        if success == 0:
+            return flask.render_template('error.html')
     req_table = server.get_your_requests(username)
     if req_table == 0:
         return flask.render_template('error.html')
     
     return flask.render_template('your_requests.html', table= req_table)
 
-@app.route('/exchanges')
+@app.route('/exchanges', methods = ['GET', 'POST'])
 def your_exchanges():
     username = auth.authenticate()
+    if flask.request.method == 'POST':
+        reqid = int(flask.request.form['reqid'])
+        if flask.request.form['server'] == 'cancel':
+            success = server.cancel_exchange(reqid)
+        if flask.request.form['server'] == 'complete':
+            success = server.complete_exchange(reqid, username)
+        if success == 0:
+            return flask.render_template('error.html')
+
     req_table = server.get_exchanges(username)
+    print(req_table)
     if req_table == 0:
         return flask.render_template('error.html')
     
@@ -247,69 +209,14 @@ def submit_request():
     else: 
         return flask.redirect('/create')
     
-@app.route('/viewrequest', methods = ['GET', 'POST'])
-def view_request():
+@app.route('/trashrequest', methods = ['GET', 'POST'])
+def trash_request():
     username = auth.authenticate()
-    
-    reqid = flask.request.form['reqid']
-    req = server.get_request(reqid)
-    print(req)
-    if req == 0:
-        return flask.render_template('error.html')
-    
     if flask.request.method == 'POST':
-        print("REQUEST FORM:")
-        print()
         reqid = int(flask.request.form['reqid'])
-        success = server.accept_request(reqid, username)
-        if success == 1:
-            flask.flash(
-                "You cannot have more than 5 pending exchanges at one time.")
-
-        if success == 0:
+        req = server.get_request(reqid)
+        if req == 0:
             return flask.render_template('error.html')
-
-        return flask.redirect('/exchanges')
-    
-    return flask.redirect('/exchanges')
-
-
-@app.route('/deleterequest', methods = ['GET', 'POST'])
-def delete_request():
-    username = auth.authenticate()
-    
-    reqid = flask.request.form['reqid']
-    print(reqid)
-    req = server.get_request(reqid)
-    if req == 0:
-        return flask.render_template('error.html')
-    
-    if flask.request.method == 'POST':
-        print("REQUEST FORM:")
-        print()
-        reqid = int(flask.request.form['reqid'])
-        success = server.delete_request(reqid, username)
-        if success == 0:
-            return flask.render_template('error.html')
-        
-        print("FLASHED")
-        return flask.redirect('/dashboard')
-    
-    return flask.redirect('/dashboard')
-
-@app.route('/undorequest', methods = ['GET', 'POST'])
-def undo_request():
-    username = auth.authenticate()
-    
-    reqid = int(flask.request.form['reqid'])
-    print(f"TRYING TO GET REQUEST {reqid}")
-    req = server.get_request(reqid)
-    if req == 0:
-        return flask.render_template('error.html')
-    
-    if flask.request.method == 'POST':
-        print("UNDOing REQUEST")
-        print(f'req: {req[1]}')
         success = server.undo_request(reqid, username)
         if success == 0:
             return flask.render_template('error.html')
@@ -320,15 +227,7 @@ def undo_request():
         if instant_matched:
             flask.flash(
                 "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
-        reqid = int(flask.request.form['reqid'])
-        
-        return flask.redirect('/dashboard')
     
-    return flask.redirect('/dashboard')
-
-@app.route('/trashrequest', methods = ['GET', 'POST'])
-def trash_request():
-    username = auth.authenticate()
     req_table = server.trash_requests(username)
     if req_table == 0:
         return flask.render_template('error.html')
@@ -337,55 +236,6 @@ def trash_request():
         return flask.render_template('trashrequest.html', table = req_table)       
     else: 
         return flask.redirect('/create')
-
-@app.route('/cancelexchange', methods = ['GET', 'POST'])
-def cancel_exchange():
-    username = auth.authenticate()
-    
-    reqid = flask.request.form['reqid']
-    req = server.get_exchange(reqid)
-    if req == 0:
-        return flask.render_template('error.html')
-    
-    if flask.request.method == 'POST':
-        reqid = int(flask.request.form['reqid'])
-        success = server.cancel_exchange(reqid)
-        if success == 0:
-            return flask.render_template('error.html')
-        return flask.redirect('/exchanges')
-    
-    return flask.redirect('/exchanges')
-
-@app.route('/completeexchange', methods = ['GET', 'POST'])
-def complete_exchange():
-    username = auth.authenticate()
-    reqid = int(flask.request.form['reqid'])
-    success = server.complete_exchange(reqid, username)
-    if success == 0:
-        return flask.render_template('error.html')
-    return flask.redirect('/exchanges')
-    
-
-
-@app.route('/cancelrequest', methods = ['GET', 'POST'])
-def cancel_request():
-    username = auth.authenticate()
-    
-    reqid = int(flask.request.form['reqid'])
-    print(reqid)
-    req = server.get_request(reqid)
-    if req == 0:
-        return flask.render_template('error.html')
-    
-    if flask.request.method == 'POST':
-        reqid = int(flask.request.form['reqid'])
-        success = server.cancel_request(reqid)
-        if success == 0:
-            return flask.render_template('error.html')
-        return flask.redirect('/yourrequests')
-    
-    return flask.redirect('/dashboard')
-
 
 @app.route('/getupdates', methods=['GET', 'POST'])
 def get_updates():
