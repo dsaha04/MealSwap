@@ -331,7 +331,6 @@ def get_updates():
     
     return [timestamp, timestamp2]
 
-
 @app.route('/getexchangeupdates', methods=['POST'])
 def get_exchange_updates():
     if flask.request.method == 'GET':
