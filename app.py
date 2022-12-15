@@ -83,7 +83,7 @@ def blocked():
         elif flask.request.form['server'] == 'user':
             reqid = int(flask.request.form['reqid'])
             success = server.block_user(reqid, username)
-        else:
+        elif flask.request.form['server'] == 'unblock':
             blockid = int(flask.request.form['blockid'])
             success = server.unblock_user(blockid, username)
             if success == 0:
@@ -161,7 +161,7 @@ def dashboard():
                 "You cannot have more than 5 pending exchanges at one time.")
             elif success ==2:
                 flask.flash("This request has been accepted! Please navigate to your exchanges to view more details about this exchange.")
-        else:
+        elif flask.request.form['server'] == 'decline':
             success = server.delete_request(reqid, username)
         
         if success == 0:

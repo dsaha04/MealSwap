@@ -176,22 +176,31 @@ def check_for_instant_matches(username):
                             for match in matches:
                                 netid = match.netid
                                 query = (session.query(createorm.Blocked).filter(createorm.Blocked.netid == username).filter(createorm.Blocked.block_netid == netid))
+                                print(query.count())
                                 blocked = query.one_or_none()
                                 if blocked is not None:
+                                    print('xy')
                                     continue
                                 query = (session.query(createorm.Blocked).filter(createorm.Blocked.netid == netid).filter(createorm.Blocked.block_netid == username))
+                                print(query.count())
                                 blocked = query.one_or_none()
                                 if blocked is not None:
+                                    print('xz')
                                     continue     
                                 reqid = match.reqid
-                                query = (session.query(createorm.Deletedrequest).filter(createorm.Deletedrequest.reqid == reqid))
+                                print(reqid)
+                                query = (session.query(createorm.Deletedrequest).filter(createorm.Deletedrequest.reqid == reqid).filter(createorm.Deletedrequest.netid == username))
+                                print(query.count())
                                 deleted = query.one_or_none()
                                 if deleted is not None:
+                                    print('yz')
                                     continue
                                 if netid != username:
                                     query = (session.query(createorm.Users).filter(createorm.Users.netid == netid))
+                                    print(query.count())
                                     user = query.one_or_none()
                                     if plan == user.plan:
+                                        print('match')
                                         accept_request(int(reqid), username)
                                         matched = True
                                         break
