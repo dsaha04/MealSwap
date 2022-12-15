@@ -41,7 +41,7 @@ def create():
     if check == 0:
         return flask.redirect('/dashboard')
     elif check == -1: 
-        return flask.redirect('/create')
+        return flask.render_template('create_account.html')
     elif check == -2:
         return flask.render_template('erroruser.html')
     else:
@@ -82,7 +82,6 @@ def blocked():
 
         elif flask.request.form['server'] == 'user':
             reqid = int(flask.request.form['reqid'])
-            print('into server')
             success = server.block_user(reqid, username)
         else:
             blockid = int(flask.request.form['blockid'])
