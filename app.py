@@ -82,6 +82,7 @@ def blocked():
 
         elif flask.request.form['server'] == 'user':
             reqid = int(flask.request.form['reqid'])
+            print('into server')
             success = server.block_user(reqid, username)
         else:
             blockid = int(flask.request.form['blockid'])

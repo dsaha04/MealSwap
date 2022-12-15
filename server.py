@@ -578,7 +578,7 @@ def undo_request(id, username):
 
 def block_user(reqid, username):
 
-    if not isinstance(id, int):
+    if not isinstance(reqid, int):
         return -1
     if not username:
         return -2
@@ -603,7 +603,7 @@ def block_user(reqid, username):
 
 def unblock_user(blockid, username):
 
-    if not isinstance(id, int):
+    if not isinstance(blockid, int):
         return -1
     if not username:
         return -2
