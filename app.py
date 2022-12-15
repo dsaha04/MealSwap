@@ -185,6 +185,8 @@ def dashboard():
 @app.route('/yourrequests', methods = ['GET', 'POST'])
 def your_requests():
     username = auth.authenticate()
+    if server.check_user(username) == -1:
+        return flask.redirect('/create')
     if flask.request.method == 'POST':
         reqid = int(flask.request.form['reqid'])
         success = server.cancel_request(reqid)
@@ -204,6 +206,8 @@ def your_requests():
 @app.route('/exchanges', methods = ['GET', 'POST'])
 def your_exchanges():
     username = auth.authenticate()
+    if server.check_user(username) == -1:
+        return flask.redirect('/create')
     if flask.request.method == 'POST':
         reqid = int(flask.request.form['reqid'])
         if flask.request.form['server'] == 'cancel':
@@ -313,6 +317,8 @@ def trash_request():
 
 @app.route('/getupdates', methods=['GET', 'POST'])
 def get_updates():
+    if flask.request.method == 'GET':
+        return flask.redirect('/dashboard')
     username = auth.authenticate()
     timestamp, timestamp2 = server.getRequestBlocked(username)
     
@@ -328,6 +334,8 @@ def get_updates():
 
 @app.route('/getexchangeupdates', methods=['POST'])
 def get_exchange_updates():
+    if flask.request.method == 'GET':
+        return flask.redirect('/dashboard')
     username = auth.authenticate()
     
     timestamp, timestamp2 = server.getExchangeBlocked(username)
