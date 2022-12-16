@@ -127,6 +127,8 @@ def profile():
             return flask.render_template('errorparam.html')
         if success == -2:
             return flask.render_template('erroruser.html')
+        flask.flash(
+            "You have successfully changed your profile information.")
         return flask.redirect('/dashboard')
     
     details = server.profile_details(username)

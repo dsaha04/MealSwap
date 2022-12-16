@@ -62,7 +62,7 @@ if (times == null) {
       
     <!-- <div class = "container-fluid px-4 d-flex"> -->
       <!-- <div class="mx-sm-4 mt-4" style="align-items: center;"> -->
-        <form action="/submitrequest" method="post">
+        <form action="/submitrequest" method="post" onsubmit="return confirm('Are you sure you want to submit this request?');">
           <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
               <div class="form-group" style="margin-top: 30px;">
                 <label for="inputAddress"><b>Requested Dining Plan:</b></label>

@@ -76,7 +76,7 @@ function submitForm(para) {
     <div class="container-fluid">
     <div class="mx-sm-5 mt-4">
       <div class="container-fluid">
-        <form action='/blocked' method='post'>
+        <form action='/blocked' method='post' onsubmit="return confirm('Are you sure you want to block this user?');">
           <div class="row align-items-end">
             <label class="col-sm-auto ml-1">Enter the netid for user you want to block:</label>
             <div class="col-sm-4">
@@ -108,7 +108,7 @@ function submitForm(para) {
             </text>
           </div>
           <div class="card-body col-sm-2">
-              <form action='/blocked' method="post">
+              <form action='/blocked' method="post" onsubmit="return confirm('Are you sure you want to unblock this user?');">
                 <input type="hidden" name="csrf_token" value = "{{csrf_token()}}">
                 <input type="hidden" name="server" value = "unblock">
                 <input type="hidden" id="blockid" name="blockid" value="{{table[i][0]}}">
