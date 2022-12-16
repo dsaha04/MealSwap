@@ -260,6 +260,10 @@ def submit_request():
                 "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
             return flask.redirect('/exchanges')
             
+        if response != 1 and response != 2:
+            flask.flash(
+                "Successfully submitted request.")
+
         return flask.redirect('/yourrequests')
     
     check = server.check_user(username)
