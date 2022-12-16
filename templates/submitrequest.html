@@ -23,6 +23,12 @@
 </head>
 
 <script>
+  if ( window.history.replaceState ) {
+      window.history.replaceState( null, null, window.location.href );
+  }
+</script>
+
+<script>
 function createRequest() {
 var plan= $('#plan').val();
 var times= $('#times').val();

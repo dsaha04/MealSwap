@@ -165,6 +165,7 @@ def dashboard():
                 flask.flash("This request has been accepted! Please navigate to your exchanges to view more details about this exchange.")
         elif flask.request.form['server'] == 'decline':
             success = server.delete_request(reqid, username)
+            flask.flash("That request has been sent to the trash. To undo this, go to the \'Decline Requests\' Page. ")
         
         if success == 0:
             return flask.render_template('error.html')
@@ -298,7 +299,10 @@ def trash_request():
         if instant_matched:
             flask.flash(
                 "You have just been instant-matched! Check the 'Your Exchanges' Page to see your new match Info.")
-    
+
+        if not instant_matched:
+            flask.flash(
+                "Successfully undone the trashed request ")
     req_table = server.trash_requests(username)
     if req_table == 0:
         return flask.render_template('error.html')
