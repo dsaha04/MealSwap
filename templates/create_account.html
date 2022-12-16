@@ -61,7 +61,7 @@
         <div class="form-row col-md-8">
                 <div class="form-group col-md-4">
                   <label for="inputEmail4" style="font-weight: bold;">Preferred Name</label>
-                  <input type="text" class="form-control" id="name" name="name" placeholder="" required>
+                  <input type="text" class="form-control" title="This field is required" pattern="\S(.*\S)?" id="name" name="name" placeholder="" required>
                 </div>
               </div>
  
@@ -94,7 +94,7 @@
  
               <div class="form-group col-md-4">
                 <label for="inputCity" style="font-weight: bold;">Phone Number: (required to facilitate exchanges)</label>
-                <input type="tel" class="form-control" id="contact" name="number" pattern = "[0-9]{10}" placeholder="10 digits, no spaces or special characters" required>
+                <input type="tel" class="form-control" title="10 digits, no spaces or special characters" id="contact" name="number" pattern = "[0-9]{10}" placeholder="10 digits, no spaces or special characters" required>
                 </div>
          
               <!-- <button onclick="createNewUser()" type="submit" class="btn btn-outline-primary" style="margin-top: 10px; margin-left: 15px;">Create Account</button> -->
