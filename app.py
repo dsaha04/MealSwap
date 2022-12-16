@@ -159,7 +159,7 @@ def dashboard():
             success = server.accept_request(reqid, username)
             if success == 1:
                 flask.flash(
-                "You cannot have more than 5 pending exchanges at one time.")
+                "You cannot have more than 5 open requests and pending exchanges at one time.")
             elif success ==2:
                 flask.flash("This request has been accepted! Please navigate to your exchanges to view more details about this exchange.")
         elif flask.request.form['server'] == 'decline':
@@ -305,7 +305,7 @@ def trash_request():
 
         if not instant_matched:
             flask.flash(
-                "Successfully undone the trashed request ")
+                "Successfully restored the declined request ")
     req_table = server.trash_requests(username)
     if req_table == 0:
         return flask.render_template('error.html')
