@@ -1,6 +1,5 @@
 import server
 import auth
-from django.shortcuts import redirect
 import os
 import flask
 import flask_wtf.csrf
@@ -341,7 +340,7 @@ def get_updates():
     
     return [timestamp, timestamp2]
 
-@app.route('/getexchangeupdates', methods=['POST'])
+@app.route('/getexchangeupdates', methods=['GET', 'POST'])
 def get_exchange_updates():
     if flask.request.method == 'GET':
         return flask.redirect('/dashboard')
